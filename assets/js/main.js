@@ -4,7 +4,7 @@
 
 // ===== SITE CONFIG =====
 const WHATSAPP_NUMBER = '918129651993';
-const SHOW_SIZE_GUIDE = false;
+const SHOW_SIZE_GUIDE = true;
 var SITE_URL = 'https://thajviattire.com';
 var INSTAGRAM_HANDLE = '@thajvi_attire_';
 var DELIVERY_ITEMS = [];
