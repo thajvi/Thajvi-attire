@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Edit Your Website — THECHI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1e3333; line-height: 1.7; padding: 40px 20px 80px; }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 2rem; margin-bottom: 8px; color: #1A6B35; }
+    h1 small { display: block; font-size: 0.9rem; color: #888; font-weight: 400; margin-top: 4px; }
+    h2 { font-size: 1.4rem; color: #1A6B35; margin: 48px 0 16px; padding-top: 32px; border-top: 2px solid #e0e0d8; }
+    h2 span { background: #c9a84c; color: #fff; font-size: 0.75rem; padding: 3px 10px; border-radius: 4px; vertical-align: middle; margin-right: 8px; }
+    h3 { font-size: 1rem; margin: 24px 0 8px; color: #1A6B35; }
+    p { margin-bottom: 12px; }
+    .step { background: #fff; border: 1px solid #e0e0d8; border-radius: 8px; padding: 20px 24px; margin: 16px 0; }
+    .step-num { display: inline-block; background: #1A6B35; color: #fff; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.85rem; font-weight: 700; margin-right: 10px; }
+    .file-path { background: #1A6B35; color: #c9a84c; padding: 6px 14px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; display: inline-block; margin: 4px 0; }
+    .code-box { background: #0E4420; color: #E4F5E8; padding: 16px 20px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; overflow-x: auto; margin: 12px 0; line-height: 1.8; white-space: pre-wrap; }
+    .code-box .highlight { color: #c9a84c; font-weight: 700; }
+    .warning { background: #fff3e0; border-left: 4px solid #c9a84c; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 0.9rem; }
+    .tip { background: #E4F5E8; border-left: 4px solid #1A6B35; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 0.9rem; }
+    .example { border: 2px dashed #cde0e0; padding: 16px; border-radius: 8px; margin: 12px 0; }
+    .example-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th { background: #1A6B35; color: #fff; padding: 10px 14px; text-align: left; font-size: 0.85rem; }
+    td { padding: 10px 14px; border-bottom: 1px solid #e0e0d8; font-size: 0.9rem; }
+    tr:nth-child(even) { background: #F0FAF2; }
+    .emoji { font-size: 1.2rem; }
+    hr { border: none; border-top: 1px solid #e0e0d8; margin: 32px 0; }
+    .toc { background: #fff; border: 1px solid #e0e0d8; border-radius: 8px; padding: 20px 24px; margin: 24px 0; }
+    .toc a { display: block; color: #1A6B35; padding: 6px 0; text-decoration: none; border-bottom: 1px solid #f0f0f0; }
+    .toc a:hover { color: #c9a84c; }
+    .toc a:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>How to Edit Your Website <small>A simple guide for THECHI — no coding knowledge needed</small></h1>
+
+<div class="tip">
+  <strong>Before you start:</strong> Open VS Code. Open your project folder. That's it. You'll only ever need to change words in 2 files.
+</div>
+
+<div class="toc">
+  <strong>Jump to:</strong>
+  <a href="#whatsapp">1. Set Your WhatsApp Number</a>
+  <a href="#prices">2. Change Product Prices</a>
+  <a href="#products">3. Add or Remove Products</a>
+  <a href="#photos">4. Add Product Photos</a>
+  <a href="#brand-photo">5. Add Your Brand Photo</a>
+  <a href="#instagram">6. Add Instagram Screenshots</a>
+  <a href="#text">7. Change Any Text on the Website</a>
+  <a href="#reviews">8. Add Customer Reviews</a>
+  <a href="#announcement">9. Change the Announcement Bar</a>
+  <a href="#hours">10. Change Business Hours</a>
+  <a href="#social-share">11. Add Social Share Image</a>
+  <a href="#colors">12. Change Brand Colors</a>
+</div>
+
+<!-- ============================================ -->
+<h2 id="whatsapp"><span>IMPORTANT</span> 1. Set Your WhatsApp Number</h2>
+
+<p>This is the <strong>first thing you must do</strong>. Your WhatsApp number appears in many places.</p>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open this file in VS Code:</p>
+  <p class="file-path">assets/js/main.js</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">2</span> Find this line at the very top (line 6):</p>
+  <div class="code-box">const WHATSAPP_NUMBER = '<span class="highlight">91XXXXXXXXXX</span>';</div>
+</div>
+
+<div class="step">
+  <p><span class="step-num">3</span> Replace <code>91XXXXXXXXXX</code> with your real number:</p>
+  <div class="code-box">const WHATSAPP_NUMBER = '<span class="highlight">919876543210</span>';</div>
+  <div class="warning">
+    <strong>Format:</strong> Start with 91 (India code) + your 10-digit number. No spaces, no dashes, no plus sign.<br>
+    Example: If your number is 98765 43210, type: <strong>919876543210</strong>
+  </div>
+</div>
+
+<div class="step">
+  <p><span class="step-num">4</span> Now open this file:</p>
+  <p class="file-path">index.html</p>
+  <p>Press <strong>Cmd + Shift + H</strong> (this opens Find & Replace for all files)</p>
+  <p>In the top box, type: <strong>91XXXXXXXXXX</strong></p>
+  <p>In the bottom box, type: <strong>your real number</strong> (e.g. 919876543210)</p>
+  <p>Click the button that says <strong>"Replace All"</strong> (the icon with two arrows)</p>
+</div>
+
+<div class="tip">
+  <strong>Done!</strong> Every WhatsApp button on your website now goes to your real number.
+</div>
+
+<!-- ============================================ -->
+<h2 id="prices">2. Change Product Prices</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open this file:</p>
+  <p class="file-path">assets/js/products.js</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">2</span> Find the product you want to change. Look for its name. Then find the <code>price</code> line:</p>
+  <div class="code-box">price:       "<span class="highlight">&#8377;XXX</span>",</div>
+</div>
+
+<div class="step">
+  <p><span class="step-num">3</span> Change it to your real price:</p>
+  <div class="code-box">price:       "<span class="highlight">&#8377;799</span>",</div>
+  <p>You can also show a range:</p>
+  <div class="code-box">price:       "<span class="highlight">&#8377;599 – &#8377;899</span>",</div>
+</div>
+
+<div class="warning">
+  <strong>Don't delete the quotes " " or the comma ,</strong> — they need to stay exactly as they are. Only change the words inside the quotes.
+</div>
+
+<!-- ============================================ -->
+<h2 id="products">3. Add or Remove Products</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open this file:</p>
+  <p class="file-path">assets/js/products.js</p>
+</div>
+
+<h3>To add a new product:</h3>
+
+<div class="step">
+  <p><span class="step-num">2</span> Copy this entire block and paste it just before the last <code>];</code> at the bottom of the file:</p>
+  <div class="code-box">  {
+    name:        "<span class="highlight">Your Product Name</span>",
+    description: "<span class="highlight">A short description of the product</span>",
+    price:       "<span class="highlight">&#8377;799</span>",
+    sizes:       "<span class="highlight">M, L, XL, XXL</span>",
+    photo:       "",
+    badge:       "",
+    fabric:      "<span class="highlight">Pure Cotton</span>",
+    occasion:    "<span class="highlight">Daily Wear</span>",
+    stock:       "",
+    whatsapp:    "<span class="highlight">919876543210</span>"
+  },</div>
+</div>
+
+<div class="step">
+  <p><span class="step-num">3</span> Change the highlighted parts to your product details.</p>
+</div>
+
+<h3>To remove a product:</h3>
+<div class="step">
+  <p>Find the product block (from <code>{</code> to <code>},</code>) and delete the whole thing.</p>
+</div>
+
+<h3>Quick reference for special fields:</h3>
+<table>
+  <tr><th>Field</th><th>Options</th></tr>
+  <tr><td><strong>badge</strong></td><td><code>"Bestseller"</code> or <code>"New Arrival"</code> or <code>""</code> (empty = no badge)</td></tr>
+  <tr><td><strong>occasion</strong></td><td><code>"Daily Wear"</code>, <code>"Office Wear"</code>, <code>"Festive"</code>, <code>"Outings"</code></td></tr>
+  <tr><td><strong>stock</strong></td><td><code>"Selling Fast"</code>, <code>"Only 3 Left"</code>, <code>"Limited Stock"</code>, or <code>""</code> (empty = don't show)</td></tr>
+</table>
+
+<!-- ============================================ -->
+<h2 id="photos">4. Add Product Photos</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> <strong>Prepare your photo:</strong></p>
+  <ul style="margin-left: 20px; margin-top: 8px;">
+    <li>Use a vertical/portrait photo (taller than wide)</li>
+    <li>Recommended size: 800 x 1000 pixels</li>
+    <li>Save as .jpg</li>
+    <li>Name it in lowercase with dashes: <strong>cotton-kurtha-teal.jpg</strong></li>
+  </ul>
+</div>
+
+<div class="step">
+  <p><span class="step-num">2</span> <strong>Put the photo in this folder:</strong></p>
+  <p class="file-path">assets/images/products/</p>
+  <p>Just drag the photo into this folder in VS Code or Finder.</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">3</span> <strong>Tell the website about it:</strong></p>
+  <p>Open <span class="file-path">assets/js/products.js</span></p>
+  <p>Find your product and change the <code>photo</code> line from empty to:</p>
+  <div class="code-box">photo:       "<span class="highlight">assets/images/products/cotton-kurtha-teal.jpg</span>",</div>
+</div>
+
+<div class="tip">
+  <strong>Photo naming rules:</strong> All lowercase. No spaces. Use dashes between words.<br>
+  Good: <code>floral-kurta-pink.jpg</code><br>
+  Bad: <code>Floral Kurta Pink.jpg</code>
+</div>
+
+<!-- ============================================ -->
+<h2 id="brand-photo">5. Add Your Brand Photo (About Section)</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> Save your brand photo as <strong>about.jpg</strong></p>
+  <p><span class="step-num">2</span> Put it in: <span class="file-path">assets/images/brand/</span></p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">3</span> Open <span class="file-path">index.html</span></p>
+  <p>Press <strong>Cmd + F</strong> and search for: <strong>Your Brand Photo</strong></p>
+  <p>You'll find this line:</p>
+  <div class="code-box">&lt;div class="img-placeholder"&gt;&lt;span&gt;Your Brand Photo&lt;/span&gt;&lt;/div&gt;</div>
+</div>
+
+<div class="step">
+  <p><span class="step-num">4</span> Replace that entire line with:</p>
+  <div class="code-box">&lt;img src="<span class="highlight">assets/images/brand/about.jpg</span>" alt="YourBrand" /&gt;</div>
+</div>
+
+<!-- ============================================ -->
+<h2 id="instagram">6. Add Instagram Screenshots</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> Take 4 screenshots of your best Instagram posts</p>
+  <p><span class="step-num">2</span> Save them as: <strong>post1.jpg</strong>, <strong>post2.jpg</strong>, <strong>post3.jpg</strong>, <strong>post4.jpg</strong></p>
+  <p><span class="step-num">3</span> Put them in: <span class="file-path">assets/images/instagram/</span></p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">4</span> Open <span class="file-path">index.html</span></p>
+  <p>Press <strong>Cmd + F</strong> and search for: <strong>insta-post-placeholder</strong></p>
+  <p>You'll find 4 lines like this:</p>
+  <div class="code-box">&lt;div class="insta-post-placeholder"&gt;&lt;/div&gt;</div>
+</div>
+
+<div class="step">
+  <p><span class="step-num">5</span> Replace each one with (change the number for each):</p>
+  <div class="code-box">&lt;img src="<span class="highlight">assets/images/instagram/post1.jpg</span>" alt="Instagram post" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" /&gt;</div>
+</div>
+
+<!-- ============================================ -->
+<h2 id="text">7. Change Any Text on the Website</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open <span class="file-path">index.html</span></p>
+  <p><span class="step-num">2</span> Press <strong>Cmd + F</strong></p>
+  <p><span class="step-num">3</span> Type the text you want to change (e.g. "Elegance, Woven Into")</p>
+  <p><span class="step-num">4</span> Change the words. <strong>Don't touch anything inside &lt; &gt; brackets.</strong></p>
+</div>
+
+<div class="example">
+  <p class="example-label">Example</p>
+  <p>You see: <code>&lt;h1&gt;Elegance, Woven Into&lt;br /&gt;&lt;em&gt;Every Detail&lt;/em&gt;&lt;/h1&gt;</code></p>
+  <p>You can change: <strong>Elegance, Woven Into</strong> and <strong>Every Detail</strong></p>
+  <p>Don't touch: <code>&lt;h1&gt;</code>, <code>&lt;br /&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;/em&gt;</code>, <code>&lt;/h1&gt;</code></p>
+</div>
+
+<div class="warning">
+  <strong>Golden rule:</strong> Only change the words you can read as normal text. Never delete or change anything inside the &lt; &gt; angle brackets.
+</div>
+
+<!-- ============================================ -->
+<h2 id="reviews">8. Add Customer Reviews</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open <span class="file-path">index.html</span></p>
+  <p><span class="step-num">2</span> Press <strong>Cmd + F</strong> and search for: <strong>Sneha R.</strong> (an existing review)</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">3</span> To change an existing review, just change the name, city, and review text.</p>
+  <p>Look for these parts and change them:</p>
+  <div class="code-box">&lt;p class="testimonial-text"&gt;"<span class="highlight">Write the customer's review here</span>"&lt;/p&gt;
+
+&lt;div class="testimonial-avatar"&gt;<span class="highlight">S</span>&lt;/div&gt;   &lt;!-- first letter of name --&gt;
+
+&lt;p class="testimonial-name"&gt;<span class="highlight">Sneha R.</span>&lt;/p&gt;
+&lt;p class="testimonial-location"&gt;<span class="highlight">Mumbai</span>&lt;/p&gt;</div>
+</div>
+
+<!-- ============================================ -->
+<h2 id="announcement">9. Change the Announcement Bar</h2>
+
+<p>The gold bar at the very top of the website.</p>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open <span class="file-path">index.html</span></p>
+  <p><span class="step-num">2</span> Press <strong>Cmd + F</strong> and search for: <strong>Free Shipping</strong></p>
+  <p><span class="step-num">3</span> Change the text to your offer or message.</p>
+  <p>Use <code>&amp;nbsp;&middot;&amp;nbsp;</code> to add the dot separator between messages.</p>
+</div>
+
+<!-- ============================================ -->
+<h2 id="hours">10. Change Business Hours</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open <span class="file-path">index.html</span></p>
+  <p><span class="step-num">2</span> Press <strong>Cmd + F</strong> and search for: <strong>10:00 AM</strong></p>
+  <p><span class="step-num">3</span> Change the times to your actual hours.</p>
+</div>
+
+<!-- ============================================ -->
+<h2 id="social-share">11. Add Social Share Image</h2>
+
+<p>This is the image people see when your website link is shared on WhatsApp, Facebook, or Instagram.</p>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open <strong>Canva</strong> and create an image that is <strong>1200 x 630 pixels</strong></p>
+  <p><span class="step-num">2</span> Put your logo and tagline on it</p>
+  <p><span class="step-num">3</span> Download as <strong>og-cover.jpg</strong></p>
+  <p><span class="step-num">4</span> Put it in: <span class="file-path">assets/images/brand/</span></p>
+</div>
+
+<div class="tip">That's it! The website is already set up to use this image automatically.</div>
+
+<!-- ============================================ -->
+<h2 id="colors">12. Change Brand Colors (Advanced)</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> Open <span class="file-path">assets/css/style.css</span></p>
+  <p><span class="step-num">2</span> Right at the top, you'll see your colors:</p>
+  <div class="code-box">--teal:        <span class="highlight">#1A6B35</span>;    /* your main dark color */
+--gold:        <span class="highlight">#c9a84c</span>;    /* your accent/gold color */
+--ivory:       <span class="highlight">#faf8f3</span>;    /* page background */</div>
+  <p>Change the <code>#</code> codes to any color you like. You can pick colors from <a href="https://coolors.co" target="_blank">coolors.co</a></p>
+</div>
+
+<hr>
+
+<h2 style="border: none; padding: 0; margin-top: 32px;">Cheat Sheet</h2>
+
+<table>
+  <tr><th>I want to...</th><th>Open this file</th><th>Search for...</th></tr>
+  <tr><td>Change WhatsApp number</td><td>assets/js/main.js</td><td>91XXXXXXXXXX</td></tr>
+  <tr><td>Change prices</td><td>assets/js/products.js</td><td>The product name</td></tr>
+  <tr><td>Add products</td><td>assets/js/products.js</td><td>Copy a product block</td></tr>
+  <tr><td>Add product photos</td><td>assets/js/products.js</td><td>photo: ""</td></tr>
+  <tr><td>Change any text</td><td>index.html</td><td>The text you want to change</td></tr>
+  <tr><td>Change reviews</td><td>index.html</td><td>Sneha R.</td></tr>
+  <tr><td>Change announcement</td><td>index.html</td><td>Free Shipping</td></tr>
+  <tr><td>Change hours</td><td>index.html</td><td>10:00 AM</td></tr>
+  <tr><td>Add brand photo</td><td>index.html</td><td>Your Brand Photo</td></tr>
+  <tr><td>Change colors</td><td>assets/css/style.css</td><td>#1A6B35</td></tr>
+</table>
+
+<hr>
+
+<div class="tip">
+  <strong>Keyboard shortcuts you'll need:</strong><br><br>
+  <strong>Cmd + F</strong> = Find text in current file<br>
+  <strong>Cmd + Shift + H</strong> = Find & Replace across all files<br>
+  <strong>Cmd + S</strong> = Save the file<br>
+  <strong>Cmd + Z</strong> = Undo (if you make a mistake!)
+</div>
+
+<hr>
+
+<h2 style="border-top: 3px solid #c9a84c; padding-top: 32px;"><span>LIVE</span> How to Go Live</h2>
+
+<p>We use <strong>Netlify</strong> — it's free and the easiest option for your website.</p>
+
+<h3>First time (putting your site online):</h3>
+
+<div class="step">
+  <p><span class="step-num">1</span> Go to <strong>netlify.com</strong> in your browser</p>
+  <p><span class="step-num">2</span> Click <strong>Sign Up</strong> — use your Google account or email</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">3</span> After signing in, you'll see a big area that says <strong>"Drag and drop your site folder here"</strong></p>
+  <p><span class="step-num">4</span> Open <strong>Finder</strong> on your Mac</p>
+  <p><span class="step-num">5</span> Find your <strong>web designing</strong> folder</p>
+  <p><span class="step-num">6</span> <strong>Drag the entire folder</strong> onto that area in Netlify</p>
+  <p><span class="step-num">7</span> Wait 10-30 seconds</p>
+</div>
+
+<div class="tip">
+  <strong>Your site is now live!</strong> Netlify gives you a free link like:<br>
+  <code>happy-panda-12345.netlify.app</code><br>
+  You can share this link immediately.
+</div>
+
+<h3>Getting your own domain (like yourstore.com):</h3>
+
+<div class="step">
+  <p><span class="step-num">1</span> Buy a domain from <strong>GoDaddy</strong>, <strong>Namecheap</strong>, or <strong>Hostinger</strong> (~₹500-800/year)</p>
+  <p><span class="step-num">2</span> In Netlify, go to <strong>Site Settings → Domain Management → Add Custom Domain</strong></p>
+  <p><span class="step-num">3</span> Type your domain (e.g. yourstore.com)</p>
+  <p><span class="step-num">4</span> Netlify will show you DNS settings — contact your domain provider's <strong>support chat</strong> and ask them: <em>"Please point my domain to Netlify. Here are the nameservers."</em> Share the nameservers Netlify shows you.</p>
+</div>
+
+<div class="warning">
+  <strong>Note:</strong> Domain connection can take 1-24 hours to start working. This is normal.
+</div>
+
+<hr>
+
+<h2><span>UPDATE</span> How to Update Your Live Site</h2>
+
+<p>Every time you make changes and want them to show on your live website:</p>
+
+<div class="step" style="background: #E4F5E8; border-color: #1A6B35;">
+  <p><span class="step-num">1</span> Make your changes in VS Code (change text, add photos, update prices — anything)</p>
+  <p><span class="step-num">2</span> Save the files (<strong>Cmd + S</strong>)</p>
+  <p><span class="step-num">3</span> Go to <strong>netlify.com</strong> → click on your site</p>
+  <p><span class="step-num">4</span> Click <strong>Deploys</strong> tab at the top</p>
+  <p><span class="step-num">5</span> You'll see the same drag-and-drop area</p>
+  <p><span class="step-num">6</span> <strong>Drag your entire folder again</strong></p>
+  <p><span class="step-num">7</span> Wait 10-30 seconds — done! Your site is updated.</p>
+</div>
+
+<div class="tip">
+  <strong>That's it. The full process every time:</strong><br><br>
+  Edit in VS Code → Save → Drag folder to Netlify → Live in 30 seconds
+</div>
+
+<h3>Your complete workflow:</h3>
+
+<table>
+  <tr><th>Step</th><th>What you do</th><th>Where</th></tr>
+  <tr><td>1</td><td>Make your changes</td><td>VS Code</td></tr>
+  <tr><td>2</td><td>Check it looks good</td><td>Double-click index.html to preview in browser</td></tr>
+  <tr><td>3</td><td>Drag folder to Netlify</td><td>netlify.com → Deploys → drag & drop</td></tr>
+  <tr><td>4</td><td>Done! Changes are live</td><td>Check your website URL</td></tr>
+</table>
+
+<div class="warning">
+  <strong>Important:</strong> Always drag the <strong>entire folder</strong> (the whole "web designing" folder), not just a single file. Netlify replaces everything each time, so it needs all the files.
+</div>
+
+<hr>
+
+<h2>Common Questions</h2>
+
+<div class="step">
+  <p><strong>Q: Do I need to pay for Netlify?</strong></p>
+  <p>No. Netlify is free for personal/small business sites. You only pay for your domain name.</p>
+</div>
+
+<div class="step">
+  <p><strong>Q: Can I preview changes before going live?</strong></p>
+  <p>Yes! Just double-click your <code>index.html</code> file — it opens in your browser. Check everything looks good, then drag to Netlify.</p>
+</div>
+
+<div class="step">
+  <p><strong>Q: I made a mistake and my site looks broken. What do I do?</strong></p>
+  <p>In VS Code, press <strong>Cmd + Z</strong> multiple times to undo your changes. Save the file, then drag your folder to Netlify again.</p>
+</div>
+
+<div class="step">
+  <p><strong>Q: How long does it take for changes to show?</strong></p>
+  <p>About 30 seconds after you drag the folder to Netlify. Sometimes you need to clear your browser cache — press <strong>Cmd + Shift + R</strong> to hard refresh.</p>
+</div>
+
+<div class="step">
+  <p><strong>Q: Can I edit from my phone?</strong></p>
+  <p>No. Always edit from your Mac using VS Code.</p>
+</div>
+
+<p style="text-align: center; color: #888; margin-top: 48px; font-size: 0.85rem;">
+  This guide was made for THECHI. Double-click this file to open it anytime.
+</p>
+
+</div>
+</body>
+</html>

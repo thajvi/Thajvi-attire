@@ -1,0 +1,81 @@
+backend:
+  name: github
+  repo: OWNER/REPO-NAME
+  branch: main
+  base_url: https://YOURSITE.vercel.app
+  auth_endpoint: api/auth
+
+media_folder: "assets/images"
+public_folder: "assets/images"
+
+collections:
+  - name: "data"
+    label: "Site Data"
+    files:
+      - name: "products"
+        label: "Products"
+        file: "data/products.json"
+        format: "json"
+        fields:
+          - name: "items"
+            label: "Products"
+            widget: "list"
+            fields:
+              - { name: "name", label: "Product Name", widget: "string" }
+              - { name: "description", label: "Description", widget: "text" }
+              - { name: "price", label: "Price", widget: "string", hint: "Include symbol, e.g. ₹1499 or DM for Price" }
+              - { name: "sizes", label: "Length / Size", widget: "string", required: false, hint: "e.g. 2.8 meters, or leave empty for standard length" }
+              - { name: "photo", label: "Product Photo", widget: "image", required: false, hint: "Upload a product photo" }
+              - { name: "badge", label: "Badge", widget: "select", options: ["", "Bestseller", "New Arrival"], default: "", required: false, hint: "Optional badge shown on product card" }
+              - { name: "fabric", label: "Material", widget: "string", required: false, hint: "e.g. Handloom Cotton, Kasavu, Tissue, Silk" }
+              - { name: "occasion", label: "Occasion", widget: "select", options: ["", "Daily Wear", "Festive", "Vishu / Onam", "Wedding", "Temple", "Outings"], default: "", required: false }
+              - { name: "stock", label: "Stock Status", widget: "select", options: ["", "Selling Fast", "Only a Few Left", "Limited Stock", "Out of Stock", "Pre-Order"], default: "", required: false, hint: "Selling Fast / Limited Stock = urgency label. Out of Stock = disables order button, shows Notify Me. Pre-Order = changes button to Pre-Order." }
+              - { name: "featured", label: "⚡ Deal of the Day", widget: "boolean", default: false, hint: "Turn ON to show this as Deal of the Day. Only ONE product at a time." }
+              - { name: "whatsapp", label: "WhatsApp Number", widget: "string", default: "918129651993", hint: "Country code + number, no + symbol" }
+
+      - name: "site"
+        label: "Site Settings"
+        file: "data/site.json"
+        format: "json"
+        fields:
+          - { name: "countdown_enabled", label: "Enable Countdown Timer", widget: "boolean", default: false, hint: "Turn the countdown timer on or off" }
+          - { name: "countdown_label", label: "Timer Label", widget: "string", default: "Sale ends in", required: false, hint: "Text shown before the timer e.g. Sale ends in / New drop in" }
+          - { name: "countdown_date", label: "Countdown End Date & Time", widget: "datetime", required: false, hint: "Date and time the countdown counts down to" }
+          - { name: "brand_photo", label: "Brand Photo (About Section)", widget: "image", required: false, hint: "Photo shown in the About section" }
+          - name: "marquee_items"
+            label: "Scrolling Marquee Text"
+            widget: "list"
+            hint: "Text items that scroll across the page below the hero section"
+            fields:
+              - { name: "text", label: "Text", widget: "string", hint: "e.g. Kasavu Sarees, Settu Mundu" }
+          - name: "journal"
+            label: "Journal / Instagram Posts"
+            widget: "list"
+            max: 4
+            fields:
+              - { name: "image", label: "Instagram Post Screenshot", widget: "image" }
+          - name: "footer_collections"
+            label: "Footer Collection Links"
+            widget: "list"
+            hint: "Collection names shown in the footer"
+            fields:
+              - { name: "name", label: "Collection Name", widget: "string", hint: "e.g. Kasavu Sarees, Settu Mundu" }
+          - { name: "site_url", label: "Website URL", widget: "string", default: "https://yourstore.com", required: false, hint: "Your store link — included in all share messages" }
+          - { name: "instagram_handle", label: "Instagram Handle", widget: "string", default: "@yourstore", required: false, hint: "e.g. @thajvi_attire_ — shown in Instagram share captions" }
+          - { name: "catalogue_enabled", label: "Show Catalogue Section", widget: "boolean", default: false, hint: "Turn ON to show the catalogue section on the website" }
+          - { name: "catalogue_mode", label: "Catalogue Type", widget: "select", options: ["manual", "whatsapp_business"], default: "manual", required: false, hint: "Manual = visitor asks you to send catalogue via WhatsApp. WhatsApp Business = opens your WhatsApp Business in-app catalogue directly" }
+          - { name: "catalogue_heading", label: "Catalogue Heading", widget: "string", default: "Explore Our Full Collection", required: false, hint: "Main heading shown on the catalogue banner" }
+          - { name: "catalogue_subtext", label: "Catalogue Subtext", widget: "string", default: "Get our latest saree catalogue with all designs, weaves and prices sent directly to your WhatsApp.", required: false, hint: "Description shown under the heading" }
+          - { name: "catalogue_message", label: "WhatsApp Request Message", widget: "text", default: "Hi! I'd like to receive your full saree catalogue. Please send it to me. Thank you!", required: false, hint: "Only used in Manual mode — the message the visitor sends you when they tap the button" }
+          - name: "trust_badges"
+            label: "Trust Badges"
+            widget: "list"
+            max: 6
+            hint: "Up to 6 trust badges shown below the product grid. Leave empty to hide. Each badge has an icon and a short text label."
+            fields:
+              - { name: "text", label: "Badge Text", widget: "string", hint: "e.g. 100% Original, Hand Inspected, Safe Packaging, Easy Returns" }
+              - { name: "icon", label: "Icon", widget: "select", options: ["check", "shield", "star", "heart", "truck", "return", "lock", "gift", "hand", "india"], default: "check", hint: "check=tick, shield=guarantee, star=quality, heart=care, truck=delivery, return=returns, lock=secure, gift=free, hand=handmade, india=pan india" }
+          - { name: "video_enabled", label: "Show Brand Story Video", widget: "boolean", default: false, hint: "Turn ON to show the brand story video section on the website" }
+          - { name: "video_url", label: "Video URL", widget: "string", required: false, hint: "Paste a YouTube link (e.g. https://youtu.be/XXXX) or Instagram Reel link (e.g. https://www.instagram.com/reel/XXXX). YouTube embeds directly on page. Instagram shows a click-through card." }
+          - { name: "video_heading", label: "Video Section Heading", widget: "string", default: "Our Story", required: false, hint: "Heading shown above the video" }
+          - { name: "video_subtext", label: "Video Section Subtext", widget: "string", default: "Watch how we handpick every saree with love and care.", required: false, hint: "Description shown under the heading" }

@@ -1,0 +1,39 @@
+{
+  "hero_image": "",
+  "brand_photo": "",
+  "journal": [],
+  "marquee_items": [
+    { "text": "New Arrivals" },
+    { "text": "Cotton Kurtis" },
+    { "text": "Co-ord Sets" },
+    { "text": "Mal Chanderi" },
+    { "text": "Western Wear" },
+    { "text": "Affordable Fashion" }
+  ],
+  "countdown_enabled": false,
+  "countdown_label": "Sale ends in",
+  "countdown_date": "",
+  "footer_collections": [
+    { "name": "Cotton Kurtis" },
+    { "name": "Co-ord Sets" },
+    { "name": "Mal Chanderi" },
+    { "name": "Western Wear" }
+  ],
+  "site_url": "https://thajviattire.com",
+  "instagram_handle": "@thajvi_attire_",
+  "catalogue_enabled": false,
+  "catalogue_mode": "manual",
+  "catalogue_heading": "Explore Our Full Collection",
+  "catalogue_subtext": "Get our latest catalogue with all designs and prices sent directly to your WhatsApp.",
+  "catalogue_message": "Hi! I'd like to receive your full catalogue. Please send it to me. Thank you!",
+  "trust_badges": [
+    { "icon": "check", "text": "100% Original" },
+    { "icon": "shield", "text": "Safe Packaging" },
+    { "icon": "truck", "text": "Pan India Delivery" },
+    { "icon": "heart", "text": "Made with Care" }
+  ],
+  "video_enabled": false,
+  "video_url": "",
+  "video_heading": "Our Story",
+  "video_subtext": "Watch our brand story."
+}
