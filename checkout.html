@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout | Thajvi Attire</title>
+  <meta name="theme-color" content="#0A0A0A" />
+  <link rel="icon" href="assets/favicon/favicon.ico" sizes="32x32" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/cart.css" />
+  <link rel="stylesheet" href="assets/css/checkout.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-main">Thajvi</span>
+        <span class="logo-sub">elegance woven for everyday</span>
+      </a>
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#collections">Collections</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <a href="https://instagram.com/thajvi_attire_" target="_blank" rel="noopener" class="nav-insta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+        @thajvi_attire_
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- CHECKOUT -->
+  <section class="checkout-page">
+    <div class="container">
+      <h1 class="checkout-title">Checkout</h1>
+      <div class="checkout-error hidden" id="checkout-error"></div>
+
+      <div id="checkout-content">
+        <div class="checkout-grid">
+
+          <!-- LEFT: FORM -->
+          <div class="checkout-form-col">
+            <form id="checkout-form" novalidate>
+
+              <!-- Shipping Info -->
+              <div class="checkout-section">
+                <h3 class="section-title">Shipping Details</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="fullname">Full Name *</label>
+                    <input type="text" id="fullname" placeholder="Your full name" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" inputmode="tel" placeholder="+91 XXXXX XXXXX" required />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email (optional)</label>
+                  <input type="email" id="email" placeholder="your@email.com" />
+                </div>
+                <div class="form-group">
+                  <label for="address1">Address Line 1 *</label>
+                  <input type="text" id="address1" placeholder="House/Flat No., Street" required />
+                </div>
+                <div class="form-group">
+                  <label for="address2">Address Line 2</label>
+                  <input type="text" id="address2" placeholder="Landmark, Area (optional)" />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="city">City *</label>
+                    <input type="text" id="city" placeholder="City" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="state">State *</label>
+                    <select id="state" required>
+                      <option value="">Select State</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="pincode">Pincode *</label>
+                    <input type="text" id="pincode" inputmode="numeric" placeholder="6-digit pincode" maxlength="6" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="instructions">Delivery Instructions</label>
+                    <input type="text" id="instructions" placeholder="Any special notes (optional)" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment Method -->
+              <div class="checkout-section">
+                <h3 class="section-title">Payment Method</h3>
+
+                <!-- WhatsApp — always visible -->
+                <div class="payment-method-card active" id="whatsapp-payment" data-method="whatsapp">
+                  <div class="payment-method-radio"><div class="radio-dot active"></div></div>
+                  <div class="payment-method-info">
+                    <div class="payment-method-name">&nbsp;WhatsApp Order</div>
+                    <div class="payment-method-desc">Complete order via WhatsApp. Pay on confirmation.</div>
+                    <div class="payment-badges">
+                      <span class="badge">Safe</span>
+                      <span class="badge">Personal Service</span>
+                      <span class="badge">Instant Confirm</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- COD — hidden by default -->
+                <div class="payment-method-card cod-option hidden" id="cod-payment" data-method="cod">
+                  <div class="payment-method-radio"><div class="radio-dot"></div></div>
+                  <div class="payment-method-info">
+                    <div class="payment-method-name">&nbsp;Cash on Delivery <span class="cod-charge-badge">+₹30</span></div>
+                    <div class="payment-method-desc">Pay cash when your order arrives at your doorstep.</div>
+                    <div class="cod-state-notice hidden" id="cod-state-notice">
+                      <span class="notice-icon">&#9888;&#65039;</span>
+                      <span id="cod-notice-text">COD available for Kerala orders only</span>
+                    </div>
+                    <div class="cod-available-notice hidden" id="cod-available-notice">
+                      <span>COD available for your location</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" class="checkout-submit-btn" id="place-order-btn">Place Order via WhatsApp &rarr;</button>
+              <p class="checkout-secure-note">Your information is safe and secure</p>
+
+            </form>
+          </div>
+
+          <!-- RIGHT: ORDER SUMMARY -->
+          <div class="checkout-summary-col">
+            <div class="cart-order-summary">
+              <h3 class="cart-order-title">Order Summary</h3>
+              <div id="summary-items"></div>
+
+              <div class="summary-divider"></div>
+
+              <!-- Shipping progress -->
+              <div class="cart-shipping-progress">
+                <div class="cart-shipping-bar"><div class="cart-shipping-fill" id="checkout-shipping-fill" style="width:0%"></div></div>
+                <p class="cart-shipping-msg" id="checkout-shipping-msg"></p>
+              </div>
+
+              <!-- Price breakdown -->
+              <div class="price-row"><span>Subtotal</span><span id="summary-subtotal">₹0</span></div>
+              <div class="price-row"><span>Shipping</span><span id="summary-shipping">₹80</span></div>
+              <div class="price-row hidden" id="cod-charge-row">
+                <span>COD Charges <span class="info-tooltip" title="Cash on Delivery handling charge">&#9432;</span></span>
+                <span class="amount cod-charge">+₹30</span>
+              </div>
+              <div class="price-divider"></div>
+              <div class="price-row total-row"><span>Total</span><span id="order-total" class="total-amount">₹0</span></div>
+              <p class="cart-tax-note">Inclusive of all taxes</p>
+
+              <div class="cart-trust-row">
+                <span class="cart-trust-item">&#128274; Secure</span>
+                <span class="cart-trust-item">&#8617;&#65039; Returns</span>
+                <span class="cart-trust-item">&#128666; Delivery</span>
+                <span class="cart-trust-item">&#9989; Quality</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none;padding-top:0;">
+        <p>&copy; 2026 Thajvi Attire. All rights reserved.</p>
+        <p>Made with &#9829; for every Indian woman</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/cart.js"></script>
+  <script src="assets/js/checkout.js"></script>
+  <script>
+    // Mobile hamburger
+    var hamburger = document.getElementById('hamburger');
+    var navLinks = document.getElementById('nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function() {
+        navLinks.classList.toggle('open');
+        hamburger.classList.toggle('open');
+      });
+    }
+  </script>
+
+</body>
+</html>

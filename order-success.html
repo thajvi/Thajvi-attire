@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Placed | Thajvi Attire</title>
+  <meta name="theme-color" content="#0A0A0A" />
+  <link rel="icon" href="assets/favicon/favicon.ico" sizes="32x32" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/checkout.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-main">Thajvi</span>
+        <span class="logo-sub">elegance woven for everyday</span>
+      </a>
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#collections">Collections</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- SUCCESS -->
+  <section class="success-page">
+    <div class="container">
+      <div class="success-icon">&#10003;</div>
+      <h1 class="success-title">Order Placed Successfully!</h1>
+      <p class="success-sub">Thank you for shopping with Thajvi Attire. We'll confirm your order shortly.</p>
+
+      <div id="payment-badge-container"></div>
+      <p class="success-order-id" id="success-order-id"></p>
+
+      <div class="success-actions">
+        <a href="index.html" class="success-btn success-btn-primary">Continue Shopping</a>
+        <a href="https://wa.me/918129651993" target="_blank" rel="noopener" class="success-btn success-btn-secondary">Chat with Us</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none;padding-top:0;">
+        <p>&copy; 2026 Thajvi Attire. All rights reserved.</p>
+        <p>Made with &#9829; for every Indian woman</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    var raw = localStorage.getItem('thajvi_last_order');
+    if (!raw) return;
+
+    try {
+      var order = JSON.parse(raw);
+      var badgeContainer = document.getElementById('payment-badge-container');
+      var orderIdEl = document.getElementById('success-order-id');
+
+      if (orderIdEl && order.orderId) {
+        orderIdEl.innerHTML = 'Order ID: <strong>' + order.orderId + '</strong>';
+      }
+
+      if (badgeContainer) {
+        if (order.paymentMethod === 'cod') {
+          badgeContainer.innerHTML =
+            '<div class="payment-badge cod">' +
+              '<span class="badge-icon">&#128181;</span>' +
+              '<div>' +
+                '<div class="badge-title">Cash on Delivery</div>' +
+                '<div class="badge-desc">Pay \u20B9' + (order.total || 0).toLocaleString('en-IN') + ' when your order arrives</div>' +
+              '</div>' +
+            '</div>';
+        } else {
+          badgeContainer.innerHTML =
+            '<div class="payment-badge whatsapp">' +
+              '<span class="badge-icon">&#128172;</span>' +
+              '<div>' +
+                '<div class="badge-title">WhatsApp Order</div>' +
+                '<div class="badge-desc">We\'ll confirm your order on WhatsApp shortly</div>' +
+              '</div>' +
+            '</div>';
+        }
+      }
+    } catch(e) { /* silent */ }
+
+    // Mobile hamburger
+    var hamburger = document.getElementById('hamburger');
+    var navLinks = document.getElementById('nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function() {
+        navLinks.classList.toggle('open');
+        hamburger.classList.toggle('open');
+      });
+    }
+  })();
+  </script>
+
+</body>
+</html>

@@ -206,7 +206,7 @@
       '<div class="cart-summary-row"><span>Shipping</span><span>' + shippingText + '</span></div>' +
       '<div class="cart-summary-divider"></div>' +
       '<div class="cart-summary-row cart-summary-total"><span>Total</span><span>' + ThajviCart.formatPrice(total) + '</span></div>' +
-      '<a href="cart.html" class="cart-checkout-btn">Checkout &rarr;</a>' +
+      '<a href="checkout.html" class="cart-checkout-btn">Checkout &rarr;</a>' +
       '<button class="cart-continue-btn" onclick="document.getElementById(\'cart-overlay\').classList.remove(\'open\');document.getElementById(\'cart-drawer\').classList.remove(\'open\');document.body.style.overflow=\'\';">Continue Shopping</button>';
   }
 
@@ -230,7 +230,7 @@
       '</div>' +
       '<div class="cart-toast-actions">' +
         '<button class="cart-toast-view">View Cart</button>' +
-        '<a href="cart.html" class="cart-toast-checkout">Checkout &rarr;</a>' +
+        '<a href="checkout.html" class="cart-toast-checkout">Checkout &rarr;</a>' +
       '</div>' +
       '<div class="cart-toast-progress"><div class="cart-toast-progress-bar"></div></div>';
 
