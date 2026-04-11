@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart | Thajvi Attire</title>
+  <meta name="theme-color" content="#0A0A0A" />
+  <link rel="icon" href="assets/favicon/favicon.ico" sizes="32x32" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/cart.css" />
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <header class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-main">Thajvi</span>
+        <span class="logo-sub">elegance woven for everyday</span>
+      </a>
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#collections">Collections</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <a href="https://instagram.com/thajvi_attire_" target="_blank" rel="noopener" class="nav-insta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+        </svg>
+        @thajvi_attire_
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========== CART PAGE ========== -->
+  <section class="cart-page">
+    <div class="container">
+      <h1 class="cart-page-title">Shopping Cart</h1>
+      <div id="cart-page-content"></div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none;padding-top:0;">
+        <p>&copy; 2026 Thajvi Attire. All rights reserved.</p>
+        <p>Made with &#9829; for every Indian woman</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/cart.js"></script>
+  <script src="assets/js/cart-ui.js"></script>
+  <script>
+  // ===== Cart Page Renderer =====
+  (function() {
+    var content = document.getElementById('cart-page-content');
+    if (!content) return;
+
+    function render() {
+      var cart = ThajviCart.get();
+
+      if (cart.length === 0) {
+        content.innerHTML =
+          '<div class="cart-page-empty">' +
+            '<div class="cart-empty">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="80" height="80" style="opacity:0.3;color:var(--gold)">' +
+              '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>' +
+              '<line x1="3" y1="6" x2="21" y2="6"/>' +
+              '<path d="M16 10a4 4 0 01-8 0"/>' +
+              '</svg>' +
+              '<p class="cart-empty-title">Your cart is empty</p>' +
+              '<p class="cart-empty-sub">Looks like you haven\'t added anything yet</p>' +
+              '<a href="index.html#collections" class="cart-empty-btn">Shop Now &rarr;</a>' +
+            '</div>' +
+          '</div>';
+        return;
+      }
+
+      var subtotal = ThajviCart.subtotal();
+      var shipping = ThajviCart.shipping();
+      var total = ThajviCart.total();
+      var remaining = ThajviCart.freeShippingRemaining();
+      var progress = ThajviCart.freeShippingProgress();
+      var shippingText = shipping === 0 ? '<span style="color:#25d366;font-weight:600;">FREE</span>' : ThajviCart.formatPrice(shipping);
+
+      // Items table
+      var tableHtml =
+        '<table class="cart-table">' +
+        '<thead><tr><th>Product</th><th>Size</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead><tbody>';
+
+      for (var i = 0; i < cart.length; i++) {
+        var item = cart[i];
+        var lineTotal = item.price * item.quantity;
+        tableHtml +=
+          '<tr>' +
+            '<td><div class="cart-table-product">' +
+              '<div class="cart-table-img">' + (item.image ? '<img src="' + item.image + '" alt="' + item.name + '" />' : '') + '</div>' +
+              '<div><p class="cart-table-name">' + item.name + '</p></div>' +
+            '</div></td>' +
+            '<td><span class="cart-table-size">' + item.size + '</span></td>' +
+            '<td class="cart-table-price">' + ThajviCart.formatPrice(item.price) + '</td>' +
+            '<td><div class="cart-qty-control">' +
+              '<button class="cart-qty-btn" data-action="decrease" data-id="' + item.id + '" data-qty="' + item.quantity + '">\u2212</button>' +
+              '<span class="cart-qty-num">' + item.quantity + '</span>' +
+              '<button class="cart-qty-btn" data-action="increase" data-id="' + item.id + '" data-qty="' + item.quantity + '">+</button>' +
+            '</div></td>' +
+            '<td class="cart-table-total">' + ThajviCart.formatPrice(lineTotal) + '</td>' +
+            '<td><button class="cart-table-remove" data-id="' + item.id + '" aria-label="Remove">\uD83D\uDDD1</button></td>' +
+          '</tr>';
+      }
+      tableHtml += '</tbody></table>';
+      tableHtml += '<a href="index.html#collections" class="cart-back-link">&larr; Continue Shopping</a>';
+
+      // Sidebar
+      var sidebarHtml =
+        '<div class="cart-order-summary">' +
+          '<h3 class="cart-order-title">Order Summary</h3>' +
+          '<div class="cart-shipping-progress">' +
+            '<div class="cart-shipping-bar"><div class="cart-shipping-fill" style="width:' + progress + '%"></div></div>' +
+            (remaining > 0
+              ? '<p class="cart-shipping-msg">Add ' + ThajviCart.formatPrice(remaining) + ' more for free shipping</p>'
+              : '<p class="cart-shipping-msg free">You have free shipping!</p>') +
+          '</div>' +
+          '<div class="cart-summary-row"><span>Subtotal</span><span>' + ThajviCart.formatPrice(subtotal) + '</span></div>' +
+          '<div class="cart-summary-row"><span>Shipping</span><span>' + shippingText + '</span></div>' +
+          '<div class="cart-summary-divider"></div>' +
+          '<div class="cart-summary-row cart-summary-total"><span>Total</span><span>' + ThajviCart.formatPrice(total) + '</span></div>' +
+          '<p class="cart-tax-note">Inclusive of all taxes</p>' +
+          '<div class="cart-coupon"><input type="text" placeholder="Coupon code" /><button id="coupon-apply-btn">Apply</button></div>' +
+          '<a href="https://wa.me/918129651993?text=' + encodeURIComponent(generateOrderMessage(cart, total, shipping)) + '" target="_blank" rel="noopener" class="cart-checkout-btn">Checkout via WhatsApp &rarr;</a>' +
+          '<div class="cart-trust-row">' +
+            '<span class="cart-trust-item">\uD83D\uDD12 Secure</span>' +
+            '<span class="cart-trust-item">\u21A9\uFE0F Returns</span>' +
+            '<span class="cart-trust-item">\uD83D\uDE9A Delivery</span>' +
+            '<span class="cart-trust-item">\u2705 Quality</span>' +
+          '</div>' +
+        '</div>';
+
+      content.innerHTML =
+        '<div class="cart-page-grid">' +
+          '<div>' + tableHtml + '</div>' +
+          '<div>' + sidebarHtml + '</div>' +
+        '</div>';
+
+      // Bind events
+      content.querySelectorAll('.cart-table-remove').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          ThajviCart.remove(this.getAttribute('data-id'));
+          render();
+        });
+      });
+      content.querySelectorAll('.cart-qty-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = this.getAttribute('data-id');
+          var qty = parseInt(this.getAttribute('data-qty'));
+          var action = this.getAttribute('data-action');
+          ThajviCart.updateQty(id, action === 'increase' ? qty + 1 : qty - 1);
+          render();
+        });
+      });
+      // Coupon placeholder
+      var couponBtn = document.getElementById('coupon-apply-btn');
+      if (couponBtn) {
+        couponBtn.addEventListener('click', function() {
+          this.textContent = 'Coming soon!';
+          setTimeout(function() { couponBtn.textContent = 'Apply'; }, 2000);
+        });
+      }
+    }
+
+    function generateOrderMessage(cart, total, shipping) {
+      var msg = 'Hi! \uD83D\uDC4B\n\nI\'d like to place an order:\n\n';
+      for (var i = 0; i < cart.length; i++) {
+        msg += '\u2022 *' + cart[i].name + '* (Size: ' + cart[i].size + ') x' + cart[i].quantity + ' \u2014 ' + ThajviCart.formatPrice(cart[i].price * cart[i].quantity) + '\n';
+      }
+      msg += '\n\uD83D\uDCE6 Shipping: ' + (shipping === 0 ? 'FREE' : ThajviCart.formatPrice(shipping));
+      msg += '\n\uD83D\uDCB0 Total: ' + ThajviCart.formatPrice(total);
+      msg += '\n\nPlease confirm availability and payment details. Thank you!';
+      return msg;
+    }
+
+    render();
+    ThajviCart.onChange(render);
+
+    // Mobile hamburger
+    var hamburger = document.getElementById('hamburger');
+    var navLinks = document.getElementById('nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function() {
+        navLinks.classList.toggle('open');
+        hamburger.classList.toggle('open');
+      });
+    }
+  })();
+  </script>
+
+</body>
+</html>

@@ -520,6 +520,28 @@ fetch('data/products.json')
     info.appendChild(waBtn);
   }
 
+  // ===== ADD TO CART BUTTON =====
+  if (!isOOS && /\d/.test(item.price)) {
+    var addToCartBtn = document.createElement('button');
+    addToCartBtn.type = 'button';
+    addToCartBtn.className = 'card-add-to-cart';
+    addToCartBtn.textContent = 'Add to Cart';
+    addToCartBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var productData = {
+        name: item.name,
+        price: item.price,
+        size: selectedSize,
+        image: item.photo || '',
+        productId: item.name.toLowerCase().replace(/\s+/g, '-')
+      };
+      if (typeof handleAddToCart === 'function') {
+        handleAddToCart(productData, addToCartBtn);
+      }
+    });
+    info.appendChild(addToCartBtn);
+  }
+
   // Share buttons row
   var shareRow = document.createElement('div');
   shareRow.className = 'card-share-row';
