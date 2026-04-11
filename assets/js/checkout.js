@@ -52,9 +52,9 @@ var STORE_CONFIG = {
   codCharge: 30,
   codAvailableStates: [
     'Kerala'
-    // Add more states if needed
-    // 'Tamil Nadu',
-    // 'Karnataka',
+    // Add more states if needed:
+    // , 'Tamil Nadu'
+    // , 'Karnataka'
   ],
   codMinOrder: 0,
   codMaxOrder: 5000
@@ -86,6 +86,10 @@ function generateOrderId() {
 
 // ===== INIT =====
 function initCheckout() {
+  if (typeof ThajviCart === 'undefined') {
+    console.error('cart.js must be loaded before checkout.js');
+    return;
+  }
   var cart = ThajviCart.get();
   if (cart.length === 0) {
     document.getElementById('checkout-content').innerHTML =
@@ -415,22 +419,26 @@ function handlePlaceOrder() {
 
 function collectOrderData() {
   var cart = ThajviCart.get();
+  var val = function(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  };
   return {
     orderId: generateOrderId(),
     timestamp: new Date().toISOString(),
     items: cart,
     customer: {
-      name: document.getElementById('fullname').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      email: (document.getElementById('email') && document.getElementById('email').value.trim()) || '',
+      name: val('fullname'),
+      phone: val('phone'),
+      email: val('email'),
       address: {
-        line1: document.getElementById('address1').value.trim(),
-        line2: (document.getElementById('address2') && document.getElementById('address2').value.trim()) || '',
-        city: document.getElementById('city').value.trim(),
-        state: document.getElementById('state').value,
-        pincode: document.getElementById('pincode').value.trim()
+        line1: val('address1'),
+        line2: val('address2'),
+        city: val('city'),
+        state: val('state'),
+        pincode: val('pincode')
       },
-      instructions: (document.getElementById('instructions') && document.getElementById('instructions').value.trim()) || ''
+      instructions: val('instructions')
     },
     pricing: {
       subtotal: ThajviCart.subtotal(),

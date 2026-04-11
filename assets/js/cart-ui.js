@@ -333,6 +333,10 @@
   // ===== INIT =====
 
   function init() {
+    if (typeof ThajviCart === 'undefined') {
+      console.error('cart.js must be loaded before cart-ui.js');
+      return;
+    }
     createCartIcon();
     createDrawer();
     updateCartBadge();
