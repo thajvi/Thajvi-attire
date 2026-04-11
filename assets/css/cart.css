@@ -757,6 +757,9 @@
 }
 
 @media (max-width: 600px) {
+  /* Always show cart icon on mobile */
+  .nav-cart-btn { display: flex !important; }
+
   .cart-drawer {
     width: 100%;
     border-left: none;

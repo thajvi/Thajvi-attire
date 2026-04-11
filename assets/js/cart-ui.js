@@ -27,15 +27,14 @@
 
     cartLink.addEventListener('click', function() { openDrawer(); });
 
-    if (instaLink) {
+    // Always place cart icon before hamburger so it's visible on mobile
+    var hamburger = navContainer.querySelector('.hamburger');
+    if (hamburger) {
+      navContainer.insertBefore(cartLink, hamburger);
+    } else if (instaLink) {
       navContainer.insertBefore(cartLink, instaLink.nextSibling);
     } else {
-      var hamburger = navContainer.querySelector('.hamburger');
-      if (hamburger) {
-        navContainer.insertBefore(cartLink, hamburger);
-      } else {
-        navContainer.appendChild(cartLink);
-      }
+      navContainer.appendChild(cartLink);
     }
   }
 

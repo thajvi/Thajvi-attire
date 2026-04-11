@@ -528,10 +528,12 @@ fetch('data/products.json')
     addToCartBtn.textContent = 'Add to Cart';
     addToCartBtn.addEventListener('click', function(e) {
       e.stopPropagation();
+      // If product has no sizes, use "Free Size"
+      var cartSize = selectedSize || (item.sizes ? '' : 'Free Size');
       var productData = {
         name: item.name,
         price: item.price,
-        size: selectedSize,
+        size: cartSize,
         image: item.photo || '',
         productId: item.name.toLowerCase().replace(/\s+/g, '-')
       };
