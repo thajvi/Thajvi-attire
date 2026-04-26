@@ -108,5 +108,78 @@
   })();
   </script>
 
+  <!-- Gold Confetti Animation -->
+  <canvas id="confetti-canvas" style="position:fixed;inset:0;z-index:9999;pointer-events:none;"></canvas>
+  <script>
+  (function() {
+    var canvas = document.getElementById('confetti-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W, H;
+    var colors = ['#C9A84C', '#E8D5A0', '#A8882E', '#D4B55A', '#F5D67B'];
+    var particles = [];
+    var startTime = Date.now();
+    var duration = 3000;
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Create particles
+    for (var i = 0; i < 80; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * -H,
+        w: 4 + Math.random() * 6,
+        h: 6 + Math.random() * 8,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vx: (Math.random() - 0.5) * 2,
+        vy: 2 + Math.random() * 3,
+        rot: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 8,
+        opacity: 0.7 + Math.random() * 0.3
+      });
+    }
+
+    function draw() {
+      var elapsed = Date.now() - startTime;
+      if (elapsed > duration + 1500) {
+        canvas.remove();
+        return;
+      }
+
+      ctx.clearRect(0, 0, W, H);
+      var fade = elapsed > duration ? 1 - ((elapsed - duration) / 1500) : 1;
+
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.rotSpeed;
+
+        if (p.y > H + 20) {
+          p.y = -20;
+          p.x = Math.random() * W;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.globalAlpha = p.opacity * fade;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  })();
+  </script>
+
 </body>
 </html>
