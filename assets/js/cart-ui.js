@@ -294,9 +294,9 @@
     btnElement.classList.add('loading');
 
     setTimeout(function() {
-      var success = ThajviCart.add(product);
+      var result = ThajviCart.add(product);
 
-      if (success) {
+      if (result === true) {
         // Success state
         btnElement.textContent = 'Added \u2713';
         btnElement.classList.remove('loading');
@@ -316,6 +316,16 @@
         setTimeout(function() {
           btnElement.textContent = 'Add to Cart';
           btnElement.classList.remove('success');
+          btnElement.disabled = false;
+        }, 1500);
+
+      } else if (result === 'oos') {
+        btnElement.textContent = 'Out of Stock';
+        btnElement.classList.remove('loading');
+        btnElement.classList.add('no-size');
+        setTimeout(function() {
+          btnElement.textContent = 'Add to Cart';
+          btnElement.classList.remove('no-size');
           btnElement.disabled = false;
         }, 1500);
 

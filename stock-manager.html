@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Manager | Thajvi Attire</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="assets/favicon/favicon.ico" sizes="32x32" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/inventory.css" />
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div class="sm-login" id="sm-login">
+    <h1 class="sm-title">Stock Manager</h1>
+    <p style="color:#888;font-size:0.85rem;">Enter admin password</p>
+    <input type="password" id="sm-password" placeholder="Password" />
+    <button class="sm-login-btn" id="sm-login-btn">Login</button>
+    <p class="sm-login-error" id="sm-login-error" style="display:none;"></p>
+  </div>
+
+  <!-- Stock Manager UI (hidden until login) -->
+  <div class="sm-page" id="sm-page" style="display:none;">
+    <div class="container">
+      <h1 class="sm-title">Stock Manager</h1>
+      <p class="sm-subtitle">Update product stock for Thajvi Attire</p>
+
+      <!-- Overview Cards -->
+      <div class="sm-overview" id="sm-overview"></div>
+
+      <!-- Actions -->
+      <div class="sm-actions">
+        <button class="sm-btn sm-btn-primary" id="sm-save-all">Save All Changes</button>
+        <button class="sm-btn sm-btn-secondary" id="sm-export">Export CSV</button>
+        <button class="sm-btn sm-btn-danger" id="sm-reset">Reset to Defaults</button>
+        <span class="sm-success" id="sm-save-msg" style="display:none;"></span>
+      </div>
+
+      <!-- Product Cards -->
+      <div id="sm-products"></div>
+    </div>
+  </div>
+
+  <script src="assets/js/cart.js"></script>
+  <script src="assets/js/inventory.js"></script>
+  <script>
+  (function() {
+    // ⚠️ Change this password!
+    var ADMIN_PASSWORD = 'thajvi2024';
+    var productsData = [];
+
+    // Login
+    var loginBtn = document.getElementById('sm-login-btn');
+    var passInput = document.getElementById('sm-password');
+    var loginError = document.getElementById('sm-login-error');
+
+    function tryLogin() {
+      if (passInput.value === ADMIN_PASSWORD) {
+        document.getElementById('sm-login').style.display = 'none';
+        document.getElementById('sm-page').style.display = 'block';
+        loadProducts();
+      } else {
+        loginError.textContent = 'Incorrect password';
+        loginError.style.display = 'block';
+        passInput.value = '';
+        passInput.focus();
+      }
+    }
+    loginBtn.addEventListener('click', tryLogin);
+    passInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryLogin(); });
+
+    // Load products and init
+    function loadProducts() {
+      fetch('data/products.json')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          productsData = data.items;
+          ThajviInventory.init(productsData);
+          renderAll();
+        });
+    }
+
+    function renderAll() {
+      renderOverview();
+      renderProducts();
+    }
+
+    // Overview cards
+    function renderOverview() {
+      var inv = ThajviInventory.getAll();
+      var totalUnits = 0, lowCount = 0, oosCount = 0;
+
+      for (var pid in inv) {
+        if (!inv.hasOwnProperty(pid)) continue;
+        for (var sz in inv[pid].sizes) {
+          if (!inv[pid].sizes.hasOwnProperty(sz)) continue;
+          var s = inv[pid].sizes[sz].stock;
+          totalUnits += s;
+          if (s === 0) oosCount++;
+          else if (s <= 3) lowCount++;
+        }
+      }
+
+      document.getElementById('sm-overview').innerHTML =
+        '<div class="sm-stat"><div class="sm-stat-num">' + lowCount + '</div><div class="sm-stat-label">Low Stock</div></div>' +
+        '<div class="sm-stat"><div class="sm-stat-num">' + oosCount + '</div><div class="sm-stat-label">Out of Stock</div></div>' +
+        '<div class="sm-stat"><div class="sm-stat-num">' + totalUnits + '</div><div class="sm-stat-label">Total Units</div></div>';
+    }
+
+    // Render product cards
+    function renderProducts() {
+      var inv = ThajviInventory.getAll();
+      var container = document.getElementById('sm-products');
+      var html = '';
+
+      for (var pid in inv) {
+        if (!inv.hasOwnProperty(pid)) continue;
+        var p = inv[pid];
+        var total = 0;
+        var sizesHtml = '';
+
+        for (var sz in p.sizes) {
+          if (!p.sizes.hasOwnProperty(sz)) continue;
+          var stock = p.sizes[sz].stock;
+          total += stock;
+          var dotClass = stock === 0 ? 'sm-dot-out' : stock <= 3 ? 'sm-dot-low' : stock <= 7 ? 'sm-dot-good' : 'sm-dot-healthy';
+          var oosLabel = stock === 0 ? '<span class="sm-oos-label">OOS</span>' : '';
+
+          sizesHtml +=
+            '<div class="sm-size-row">' +
+              '<span class="sm-dot ' + dotClass + '"></span>' +
+              '<span class="sm-size-label">' + sz + '</span>' +
+              '<button class="sm-qty-btn" data-pid="' + pid + '" data-sz="' + sz + '" data-action="decrease">\u2212</button>' +
+              '<input class="sm-stock-input" type="number" min="0" value="' + stock + '" data-pid="' + pid + '" data-sz="' + sz + '" />' +
+              '<button class="sm-qty-btn" data-pid="' + pid + '" data-sz="' + sz + '" data-action="increase">+</button>' +
+              oosLabel +
+            '</div>';
+        }
+
+        html +=
+          '<div class="sm-product">' +
+            '<div class="sm-product-name">' + p.name + '</div>' +
+            sizesHtml +
+            '<div class="sm-total">Total: ' + total + ' units</div>' +
+          '</div>';
+      }
+
+      container.innerHTML = html;
+
+      // Bind +/- buttons
+      container.querySelectorAll('.sm-qty-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var pid2 = this.dataset.pid;
+          var sz2 = this.dataset.sz;
+          var input = container.querySelector('input[data-pid="' + pid2 + '"][data-sz="' + sz2 + '"]');
+          var val = parseInt(input.value) || 0;
+          if (this.dataset.action === 'increase') {
+            input.value = val + 1;
+          } else {
+            input.value = Math.max(0, val - 1);
+          }
+        });
+      });
+    }
+
+    // Save All
+    document.getElementById('sm-save-all').addEventListener('click', function() {
+      var inputs = document.querySelectorAll('.sm-stock-input');
+      inputs.forEach(function(inp) {
+        var val = Math.max(0, parseInt(inp.value) || 0);
+        ThajviInventory.updateStock(inp.dataset.pid, inp.dataset.sz, val);
+      });
+      renderAll();
+      showMsg('All stocks updated!');
+    });
+
+    // Export CSV
+    document.getElementById('sm-export').addEventListener('click', function() {
+      var inv = ThajviInventory.getAll();
+      var csv = 'Product,Size,Stock\n';
+      for (var pid in inv) {
+        if (!inv.hasOwnProperty(pid)) continue;
+        for (var sz in inv[pid].sizes) {
+          if (!inv[pid].sizes.hasOwnProperty(sz)) continue;
+          csv += '"' + inv[pid].name + '",' + sz + ',' + inv[pid].sizes[sz].stock + '\n';
+        }
+      }
+      var blob = new Blob([csv], { type: 'text/csv' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'thajvi-stock-' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.click();
+    });
+
+    // Reset
+    document.getElementById('sm-reset').addEventListener('click', function() {
+      if (!confirm('Reset ALL stock to defaults from products.json? This cannot be undone.')) return;
+      localStorage.removeItem('thajvi_inventory');
+      ThajviInventory.init(productsData);
+      renderAll();
+      showMsg('Stock reset to defaults!');
+    });
+
+    function showMsg(text) {
+      var el = document.getElementById('sm-save-msg');
+      el.textContent = '\u2713 ' + text;
+      el.style.display = 'inline';
+      setTimeout(function() { el.style.display = 'none'; }, 2000);
+    }
+  })();
+  </script>
+
+</body>
+</html>

@@ -456,6 +456,10 @@ function handleWhatsAppOrder(order) {
   var msg = buildWhatsAppMessage(order);
   var url = 'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(msg);
   window.open(url, '_blank');
+  // Confirm inventory reduction before clearing cart
+  if (typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady()) {
+    ThajviInventory.confirm(order.items);
+  }
   ThajviCart.clear();
   setTimeout(function() { window.location.href = 'order-success.html'; }, 500);
 }
@@ -494,6 +498,9 @@ function handleCodOrder(order) {
   var msg = buildCodWhatsApp(order);
   var url = 'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(msg);
   window.open(url, '_blank');
+  if (typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady()) {
+    ThajviInventory.confirm(order.items);
+  }
   ThajviCart.clear();
   setTimeout(function() { window.location.href = 'order-success.html'; }, 500);
 }

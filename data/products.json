@@ -4,40 +4,55 @@
       "name": "Brown Printed Co-ord Set",
       "description": "Elegant brown printed co-ord set with diamond motifs. Comfortable and stylish for everyday wear.",
       "price": "₹700",
-      "sizes": "M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL",
       "photo": "assets/images/products/brown co dem set.jpg",
       "badge": "Bestseller",
       "fabric": "Cotton",
       "occasion": "Casual",
       "stock": "",
       "featured": false,
-      "whatsapp": "918129651993"
+      "whatsapp": "918129651993",
+      "inventory": {
+        "sizes": {"S": 5, "M": 3, "L": 0, "XL": 8, "XXL": 2},
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      }
     },
     {
       "name": "Floral White Anarkali",
       "description": "Beautiful white floral print Anarkali with vibrant pink blooms. Perfect for festive occasions.",
       "price": "₹700",
-      "sizes": "M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL",
       "photo": "assets/images/products/floral white.jpg",
       "badge": "New Arrival",
       "fabric": "Cotton",
       "occasion": "Festive",
       "stock": "",
       "featured": false,
-      "whatsapp": "918129651993"
+      "whatsapp": "918129651993",
+      "inventory": {
+        "sizes": {"S": 4, "M": 6, "L": 2, "XL": 0, "XXL": 3},
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      }
     },
     {
       "name": "White Tulip Print Kurti",
       "description": "Chic white sleeveless kurti with blue tulip print and side slit. Modern and elegant.",
       "price": "₹700",
-      "sizes": "M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL",
       "photo": "assets/images/products/white co-dem set.jpg",
       "badge": "",
       "fabric": "Cotton Blend",
       "occasion": "Casual",
       "stock": "",
       "featured": false,
-      "whatsapp": "918129651993"
+      "whatsapp": "918129651993",
+      "inventory": {
+        "sizes": {"S": 8, "M": 5, "L": 4, "XL": 6, "XXL": 0},
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      }
     }
   ]
 }

@@ -37,6 +37,15 @@ var ThajviCart = (function() {
   function addToCart(product) {
     if (!product || !product.name || !product.size) return false;
 
+    var pid = product.productId || product.name.toLowerCase().replace(/\s+/g, '-');
+    var hasInv = typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady();
+
+    // Check stock if inventory available
+    if (hasInv) {
+      var available = ThajviInventory.getStock(pid, product.size);
+      if (available <= 0) return 'oos';
+    }
+
     var cart = getCart();
     var itemId = generateId(product.name, product.size);
     var existing = null;
@@ -51,12 +60,17 @@ var ThajviCart = (function() {
     }
 
     if (existing) {
+      // Check stock before increasing
+      if (hasInv) {
+        var avail2 = ThajviInventory.getStock(pid, product.size);
+        if (avail2 <= 0) return 'max';
+      }
       if (existing.quantity >= MAX_STOCK) return false;
       cart[existingIndex].quantity += 1;
     } else {
       cart.push({
         id: itemId,
-        productId: product.productId || product.name.toLowerCase().replace(/\s+/g, '-'),
+        productId: pid,
         name: product.name,
         price: parsePrice(product.price),
         size: product.size,
@@ -66,12 +80,29 @@ var ThajviCart = (function() {
       });
     }
 
+    // Reserve stock
+    if (hasInv) {
+      ThajviInventory.reserve(pid, product.size, 1);
+    }
+
     saveCart(cart);
     return true;
   }
 
   function removeFromCart(itemId) {
     var cart = getCart();
+    var hasInv = typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady();
+
+    // Release reservation before removing
+    if (hasInv) {
+      for (var i = 0; i < cart.length; i++) {
+        if (cart[i].id === itemId) {
+          ThajviInventory.release(cart[i].productId, cart[i].size, cart[i].quantity);
+          break;
+        }
+      }
+    }
+
     cart = cart.filter(function(item) { return item.id !== itemId; });
     saveCart(cart);
   }
@@ -82,9 +113,24 @@ var ThajviCart = (function() {
       return;
     }
     var cart = getCart();
+    var hasInv = typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady();
+
     for (var i = 0; i < cart.length; i++) {
       if (cart[i].id === itemId) {
-        cart[i].quantity = Math.min(qty, cart[i].maxStock || MAX_STOCK);
+        var oldQty = cart[i].quantity;
+        var newQty = Math.min(qty, cart[i].maxStock || MAX_STOCK);
+
+        if (hasInv && newQty > oldQty) {
+          var avail = ThajviInventory.getStock(cart[i].productId, cart[i].size);
+          if (avail < (newQty - oldQty)) {
+            newQty = oldQty + avail;
+          }
+          if (newQty > oldQty) ThajviInventory.reserve(cart[i].productId, cart[i].size, newQty - oldQty);
+        } else if (hasInv && newQty < oldQty) {
+          ThajviInventory.release(cart[i].productId, cart[i].size, oldQty - newQty);
+        }
+
+        cart[i].quantity = newQty;
         break;
       }
     }
@@ -92,6 +138,13 @@ var ThajviCart = (function() {
   }
 
   function clearCart() {
+    var hasInv = typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady();
+    if (hasInv) {
+      var cart = getCart();
+      for (var i = 0; i < cart.length; i++) {
+        ThajviInventory.release(cart[i].productId, cart[i].size, cart[i].quantity);
+      }
+    }
     saveCart([]);
   }
 

@@ -167,6 +167,11 @@ fetch('data/products.json')
   .then(function(data) {
     var products = data.items;
 
+    // Initialize inventory system if available
+    if (typeof ThajviInventory !== 'undefined') {
+      ThajviInventory.init(products);
+    }
+
     // --- Deal of the Day ---
     var featured = products.find(function(p) { return p.featured === true; });
     if (featured) {
@@ -379,6 +384,9 @@ fetch('data/products.json')
   desc.textContent = item.description;
   info.appendChild(desc);
 
+  var productId = item.name.toLowerCase().replace(/\s+/g, '-');
+  var hasInventory = typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady();
+
   if (item.sizes) {
     var sizesWrap = document.createElement('div');
     sizesWrap.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;';
@@ -387,27 +395,105 @@ fetch('data/products.json')
     sizeLabel.style.cssText = 'font-size:0.85rem;color:#888;width:100%;margin-bottom:2px;';
     sizesWrap.appendChild(sizeLabel);
 
+    // Stock warning element
+    var stockWarning = document.createElement('div');
+    stockWarning.className = 'stock-warning';
+    stockWarning.style.cssText = 'width:100%;display:none;';
+
     var sizeArr = item.sizes.split(',');
     var sizeBtns = [];
     sizeArr.forEach(function(s) {
       var sz = s.trim();
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = sz;
-      btn.style.cssText = 'padding:6px 14px;border:1.5px solid #C9A84C;border-radius:20px;background:transparent;color:#C9A84C;font-size:0.8rem;cursor:pointer;transition:all 0.2s;font-weight:500;';
-      btn.addEventListener('click', function() {
-        selectedSize = sz;
-        sizeBtns.forEach(function(b) {
-          b.style.background = 'transparent';
-          b.style.color = '#C9A84C';
+      btn.style.cssText = 'padding:6px 14px;border:1.5px solid #C9A84C;border-radius:20px;background:transparent;color:#C9A84C;font-size:0.8rem;cursor:pointer;transition:all 0.2s;font-weight:500;position:relative;min-width:40px;min-height:38px;';
+
+      // Check stock for this size
+      var sizeInfo = null;
+      if (hasInventory) {
+        sizeInfo = ThajviInventory.getStockInfo(productId, sz);
+        if (sizeInfo.status === 'out-of-stock') {
+          btn.innerHTML = sz + '<span class="oos-strike"></span>';
+          btn.classList.add('size-btn-oos');
+          btn.disabled = true;
+          btn.style.cssText += 'opacity:0.35;cursor:not-allowed;color:#555;border-color:#222;';
+          btn.title = 'Out of Stock';
+        } else {
+          btn.textContent = sz;
+          if (sizeInfo.urgency === 'high') {
+            btn.classList.add('size-btn-verylow');
+            btn.style.borderColor = '#FF6B35';
+            var dot = document.createElement('span');
+            dot.className = 'size-urgency-dot urgent';
+            btn.appendChild(dot);
+          } else if (sizeInfo.urgency === 'medium') {
+            btn.classList.add('size-btn-low');
+            btn.style.borderColor = '#FFB347';
+            var dot2 = document.createElement('span');
+            dot2.className = 'size-urgency-dot';
+            btn.appendChild(dot2);
+          }
+        }
+      } else {
+        btn.textContent = sz;
+      }
+
+      if (!btn.disabled) {
+        btn.addEventListener('click', function() {
+          selectedSize = sz;
+          sizeBtns.forEach(function(b) {
+            if (!b.disabled) {
+              b.style.background = 'transparent';
+              b.style.color = '#C9A84C';
+            }
+          });
+          btn.style.background = '#C9A84C';
+          btn.style.color = '#fff';
+
+          // Show stock warning if inventory available
+          if (hasInventory) {
+            var info2 = ThajviInventory.getStockInfo(productId, sz);
+            if (info2.urgency === 'high') {
+              stockWarning.style.display = 'flex';
+              stockWarning.className = 'stock-warning warn-verylow';
+              stockWarning.textContent = info2.message;
+            } else if (info2.urgency === 'medium') {
+              stockWarning.style.display = 'flex';
+              stockWarning.className = 'stock-warning warn-low';
+              stockWarning.textContent = info2.message;
+            } else {
+              stockWarning.style.display = 'none';
+            }
+          }
         });
-        btn.style.background = '#C9A84C';
-        btn.style.color = '#fff';
-      });
+      }
       sizeBtns.push(btn);
       sizesWrap.appendChild(btn);
     });
+    sizesWrap.appendChild(stockWarning);
     info.appendChild(sizesWrap);
+
+    // Add stock badge on image if total stock is low
+    if (hasInventory) {
+      var totalStock = ThajviInventory.getTotalStock(productId);
+      if (totalStock === 0) {
+        card.classList.add('card-all-oos');
+        var oosOverlay = document.createElement('div');
+        oosOverlay.className = 'inv-oos-overlay';
+        oosOverlay.innerHTML = '<span>Out of Stock</span>';
+        imgWrap.appendChild(oosOverlay);
+      } else if (totalStock <= 3) {
+        var urgentBadge = document.createElement('div');
+        urgentBadge.className = 'inv-stock-badge badge-urgent';
+        urgentBadge.textContent = 'Only ' + totalStock + ' left!';
+        imgWrap.appendChild(urgentBadge);
+      } else if (totalStock <= 5) {
+        var lowBadge = document.createElement('div');
+        lowBadge.className = 'inv-stock-badge badge-low';
+        lowBadge.textContent = totalStock + ' left';
+        imgWrap.appendChild(lowBadge);
+      }
+    }
 
     // Size Guide link
     if (SHOW_SIZE_GUIDE) {

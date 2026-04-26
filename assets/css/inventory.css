@@ -1,0 +1,310 @@
+/* ============================================
+   THAJVI ATTIRE — Inventory Styles
+   Stock badges, warnings, OOS states
+   ============================================ */
+
+/* ===== SIZE BUTTON STOCK STATES ===== */
+.size-btn-oos {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+  position: relative;
+  color: #555 !important;
+  border-color: #222 !important;
+  background: transparent !important;
+}
+.size-btn-oos .oos-strike {
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  right: -2px;
+  height: 1px;
+  background: #666;
+  transform: rotate(-45deg);
+  pointer-events: none;
+}
+.size-btn-low {
+  border-color: #FFB347 !important;
+}
+.size-btn-verylow {
+  border-color: #FF6B35 !important;
+}
+
+/* Urgency dot on size button */
+.size-urgency-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #FFB347;
+  pointer-events: none;
+}
+.size-urgency-dot.urgent {
+  background: #FF6B35;
+  animation: inventoryPulse 1.5s infinite;
+}
+@keyframes inventoryPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ===== STOCK WARNING MESSAGE ===== */
+.stock-warning {
+  font-size: 0.72rem;
+  font-family: 'Jost', sans-serif;
+  margin: 6px 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s;
+}
+.stock-warning.warn-low {
+  color: #FFB347;
+  background: rgba(255,179,71,0.08);
+  border: 1px solid rgba(255,179,71,0.15);
+}
+.stock-warning.warn-verylow {
+  color: #FF6B35;
+  background: rgba(255,107,53,0.08);
+  border: 1px solid rgba(255,107,53,0.15);
+}
+.stock-warning.warn-oos {
+  color: #FF4444;
+  background: rgba(255,68,68,0.08);
+  border: 1px solid rgba(255,68,68,0.15);
+}
+
+/* ===== STOCK BADGE ON CARD IMAGE ===== */
+.inv-stock-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  z-index: 2;
+  pointer-events: none;
+}
+.inv-stock-badge.badge-low {
+  background: rgba(255,179,71,0.9);
+  color: #0A0A0A;
+}
+.inv-stock-badge.badge-urgent {
+  background: rgba(255,107,53,0.9);
+  color: #fff;
+  animation: inventoryPulse 1.5s infinite;
+}
+
+/* ===== OUT OF STOCK OVERLAY ===== */
+.inv-oos-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+.inv-oos-overlay span {
+  background: #0A0A0A;
+  color: #FF4444;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #FF4444;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Card with all sizes OOS */
+.card-all-oos { opacity: 0.7; }
+.card-all-oos .card-add-to-cart {
+  background: #333 !important;
+  color: #555 !important;
+  cursor: not-allowed !important;
+}
+
+/* Add to Cart low stock state */
+.card-add-to-cart.atc-lowstock {
+  font-size: 0.75rem;
+}
+
+/* ===== STOCK MANAGER PAGE ===== */
+.sm-page {
+  background: #0A0A0A;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Jost', sans-serif;
+  color: #E8D5A0;
+}
+.sm-page .container { max-width: 800px; margin: 0 auto; }
+.sm-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  color: var(--gold-light, #E8D5A0);
+  margin-bottom: 8px;
+}
+.sm-subtitle { font-size: 0.85rem; color: #888; margin-bottom: 32px; }
+
+/* Password screen */
+.sm-login {
+  max-width: 360px;
+  margin: 120px auto;
+  text-align: center;
+}
+.sm-login input {
+  width: 100%;
+  padding: 14px;
+  background: #1A1A1A;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #E8D5A0;
+  font-size: 1rem;
+  font-family: 'Jost', sans-serif;
+  margin: 16px 0;
+  text-align: center;
+}
+.sm-login input:focus { outline: none; border-color: #C9A84C; }
+.sm-login-btn {
+  width: 100%;
+  padding: 14px;
+  background: #C9A84C;
+  color: #0A0A0A;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sm-login-btn:hover { background: #E8D5A0; }
+.sm-login-error { color: #FF4444; font-size: 0.82rem; margin-top: 8px; }
+
+/* Overview cards */
+.sm-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.sm-stat {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+.sm-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #C9A84C;
+}
+.sm-stat-label { font-size: 0.75rem; color: #888; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Product card */
+.sm-product {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.sm-product-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #E8D5A0;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #222;
+}
+.sm-size-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #1A1A1A;
+}
+.sm-size-row:last-child { border-bottom: none; }
+.sm-size-label {
+  font-weight: 600;
+  width: 40px;
+  font-size: 0.9rem;
+}
+.sm-stock-input {
+  width: 60px;
+  background: #0A0A0A;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px;
+  color: #E8D5A0;
+  font-family: 'Jost', sans-serif;
+  text-align: center;
+  font-size: 0.95rem;
+}
+.sm-stock-input:focus { outline: none; border-color: #C9A84C; }
+.sm-qty-btn {
+  width: 32px;
+  height: 32px;
+  background: #1A1A1A;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #C9A84C;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.sm-qty-btn:hover { background: #222; }
+.sm-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.sm-dot-healthy { background: #44BB77; }
+.sm-dot-good { background: #88CC44; }
+.sm-dot-low { background: #FFB347; }
+.sm-dot-out { background: #FF4444; }
+.sm-oos-label { font-size: 0.7rem; color: #FF4444; font-weight: 600; }
+.sm-total { font-size: 0.82rem; color: #888; margin-top: 10px; text-align: right; }
+
+/* Buttons */
+.sm-actions {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+.sm-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  border: none;
+}
+.sm-btn:active { transform: scale(0.97); }
+.sm-btn-primary { background: #C9A84C; color: #0A0A0A; }
+.sm-btn-primary:hover { background: #E8D5A0; }
+.sm-btn-secondary { background: transparent; color: #C9A84C; border: 1px solid #333; }
+.sm-btn-secondary:hover { background: #1A1A1A; }
+.sm-btn-danger { background: transparent; color: #FF4444; border: 1px solid #333; }
+.sm-btn-danger:hover { background: rgba(255,68,68,0.1); }
+.sm-success { color: #44BB77; font-size: 0.82rem; margin-left: 8px; }
+
+@media (max-width: 600px) {
+  .sm-overview { grid-template-columns: 1fr; }
+  .sm-size-row { flex-wrap: wrap; }
+}
