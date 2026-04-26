@@ -32,6 +32,23 @@ collections:
               - { name: "stock", label: "Stock Status", widget: "select", options: ["", "Selling Fast", "Only a Few Left", "Limited Stock", "Out of Stock", "Pre-Order"], default: "", required: false, hint: "Selling Fast / Limited Stock = urgency label. Out of Stock = disables order button, shows Notify Me. Pre-Order = changes button to Pre-Order." }
               - { name: "featured", label: "⚡ Deal of the Day", widget: "boolean", default: false, hint: "Turn ON to show this as Deal of the Day. Only ONE product at a time." }
               - { name: "whatsapp", label: "WhatsApp Number", widget: "string", default: "918129651993", hint: "Country code + number, no + symbol" }
+              - name: "inventory"
+                label: "📦 Stock Management"
+                widget: "object"
+                collapsed: true
+                hint: "Set stock quantity for each size. 0 = Out of Stock."
+                fields:
+                  - name: "sizes"
+                    label: "Stock per Size"
+                    widget: "object"
+                    fields:
+                      - { name: "S", label: "S — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of S size units available" }
+                      - { name: "M", label: "M — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of M size units available" }
+                      - { name: "L", label: "L — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of L size units available" }
+                      - { name: "XL", label: "XL — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of XL size units available" }
+                      - { name: "XXL", label: "XXL — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of XXL size units available" }
+                  - { name: "lowStockThreshold", label: "Low Stock Warning At", widget: "number", default: 5, value_type: "int", min: 1, required: false, hint: "Show 'Only X left!' when stock is at or below this number" }
+                  - { name: "veryLowThreshold", label: "Urgent Warning At", widget: "number", default: 3, value_type: "int", min: 1, required: false, hint: "Show urgent warning when stock is at or below this number" }
 
       - name: "site"
         label: "Site Settings"
