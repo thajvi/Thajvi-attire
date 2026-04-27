@@ -345,7 +345,7 @@ fetch('data/products.json')
   // Instagram Reel icon (only if valid reel URL exists)
   if (item.instagramReel && item.instagramReel.trim() !== '' &&
       item.instagramReel.indexOf('instagram.com') !== -1 &&
-      (item.instagramReel.indexOf('/reel/') !== -1 || item.instagramReel.indexOf('/p/') !== -1)) {
+      (item.instagramReel.indexOf('/reel/') !== -1 || item.instagramReel.indexOf('/reels/') !== -1 || item.instagramReel.indexOf('/p/') !== -1)) {
     var reelLink = document.createElement('a');
     reelLink.href = item.instagramReel.trim();
     reelLink.target = '_blank';
