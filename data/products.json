@@ -11,6 +11,7 @@
       "occasion": "Casual",
       "stock": "",
       "featured": false,
+      "instagramReel": "",
       "whatsapp": "918129651993",
       "inventory": {
         "sizes": {"S": 5, "M": 3, "L": 0, "XL": 8, "XXL": 2},
@@ -29,6 +30,7 @@
       "occasion": "Festive",
       "stock": "",
       "featured": false,
+      "instagramReel": "",
       "whatsapp": "918129651993",
       "inventory": {
         "sizes": {"S": 4, "M": 6, "L": 2, "XL": 0, "XXL": 3},
@@ -47,6 +49,7 @@
       "occasion": "Casual",
       "stock": "",
       "featured": false,
+      "instagramReel": "",
       "whatsapp": "918129651993",
       "inventory": {
         "sizes": {"S": 8, "M": 5, "L": 4, "XL": 6, "XXL": 0},

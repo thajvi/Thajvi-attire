@@ -304,7 +304,84 @@
 .sm-btn-danger:hover { background: rgba(255,68,68,0.1); }
 .sm-success { color: #44BB77; font-size: 0.82rem; margin-left: 8px; }
 
+/* ===== INSTAGRAM REEL ICON ===== */
+.reel-icon-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.reel-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: reelPulse 3s infinite;
+  box-shadow: 0 2px 8px rgba(188,24,136,0.4);
+}
+.reel-icon-btn:hover .reel-icon-circle {
+  transform: scale(1.1);
+  box-shadow: 0 4px 20px rgba(188,24,136,0.6);
+  animation: none;
+}
+@keyframes reelPulse {
+  0%, 100% { box-shadow: 0 2px 8px rgba(188,24,136,0.4); }
+  50% { box-shadow: 0 2px 8px rgba(188,24,136,0.4), 0 0 0 6px rgba(188,24,136,0.1); }
+}
+.reel-play-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  color: #bc1888;
+  font-weight: bold;
+  border: 1.5px solid #fff;
+  line-height: 1;
+  padding-left: 1px;
+}
+.reel-tooltip {
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  font-size: 0.6rem;
+  font-family: 'Jost', sans-serif;
+  padding: 3px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+.reel-icon-btn:hover .reel-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Ensure reel icon stays above overlay */
+.card-hover-overlay { z-index: 5; }
+.reel-icon-btn { z-index: 10; }
+
 @media (max-width: 600px) {
   .sm-overview { grid-template-columns: 1fr; }
   .sm-size-row { flex-wrap: wrap; }
+  .reel-icon-circle { width: 36px; height: 36px; }
+  .reel-icon-circle svg { width: 16px; height: 16px; }
+  .reel-play-badge { width: 15px; height: 15px; font-size: 6px; }
+  .reel-tooltip { display: none; }
 }

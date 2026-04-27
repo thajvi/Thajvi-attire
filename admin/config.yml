@@ -29,6 +29,7 @@ collections:
               - { name: "badge", label: "Badge", widget: "select", options: ["", "Bestseller", "New Arrival"], default: "", required: false, hint: "Optional badge shown on product card" }
               - { name: "fabric", label: "Material", widget: "string", required: false, hint: "e.g. Handloom Cotton, Kasavu, Tissue, Silk" }
               - { name: "occasion", label: "Occasion", widget: "select", options: ["", "Daily Wear", "Festive", "Vishu / Onam", "Wedding", "Temple", "Outings"], default: "", required: false }
+              - { name: "instagramReel", label: "Instagram Reel Link", widget: "string", required: false, hint: "Paste Instagram Reel URL. Example: https://www.instagram.com/reel/ABC123xyz/ — Leave empty if no reel for this product. Icon will appear on product photo." }
               - { name: "stock", label: "Stock Status", widget: "select", options: ["", "Selling Fast", "Only a Few Left", "Limited Stock", "Out of Stock", "Pre-Order"], default: "", required: false, hint: "Selling Fast / Limited Stock = urgency label. Out of Stock = disables order button, shows Notify Me. Pre-Order = changes button to Pre-Order." }
               - { name: "featured", label: "⚡ Deal of the Day", widget: "boolean", default: false, hint: "Turn ON to show this as Deal of the Day. Only ONE product at a time." }
               - { name: "whatsapp", label: "WhatsApp Number", widget: "string", default: "918129651993", hint: "Country code + number, no + symbol" }
