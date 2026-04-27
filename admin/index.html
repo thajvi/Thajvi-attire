@@ -7,5 +7,15 @@
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.3.0/dist/decap-cms.js"></script>
+  <script>
+  // Dashboard navigation button
+  setTimeout(function() {
+    var btn = document.createElement('a');
+    btn.href = '/admin/dashboard/';
+    btn.textContent = 'Dashboard';
+    btn.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#C9A84C;color:#0A0A0A;padding:12px 20px;border-radius:8px;font-family:sans-serif;font-weight:600;font-size:14px;text-decoration:none;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+    document.body.appendChild(btn);
+  }, 2000);
+  </script>
 </body>
 </html>

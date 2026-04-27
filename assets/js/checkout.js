@@ -405,6 +405,14 @@ function handlePlaceOrder() {
 
   saveOrderLocally(order);
 
+  // Save to Supabase (Tier 2+ feature)
+  if (typeof saveOrderToSupabase === 'function' && window.THAJVI_TIER && window.THAJVI_TIER.features.supabaseDatabase) {
+    saveOrderToSupabase(order).then(function(result) {
+      if (result.success) console.log('Order saved to Supabase');
+      else if (result.reason !== 'disabled') console.log('Supabase save failed - local backup saved');
+    }).catch(function(err) { console.log('Supabase error:', err); });
+  }
+
   switch (selectedPaymentMethod) {
     case 'whatsapp':
       handleWhatsAppOrder(order);
