@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: narayakkel/Thajvi-attire
+  repo: thajvi/Thajvi-attire
   branch: main
   base_url: https://thajvi-attire.vercel.app
   auth_endpoint: api/auth
