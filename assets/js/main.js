@@ -1106,12 +1106,12 @@ fetch('data/site.json')
         el.style.display = 'none';
       });
       document.querySelectorAll('.card-add-to-cart').forEach(function(el) {
-        el.style.background = 'var(--gold)';
-        el.style.color = '#0A0A0A';
-        el.style.fontWeight = '700';
-        el.style.fontSize = '0.9rem';
-        el.style.padding = '12px';
-        el.style.letterSpacing = '0.5px';
+        el.classList.add('atc-primary');
+        el.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">' +
+            '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>' +
+            '<path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>' +
+          '</svg> Add to Cart';
       });
     }
   })

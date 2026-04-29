@@ -535,6 +535,12 @@
   color: #fff;
   animation: btnShake 0.5s ease;
 }
+.card-add-to-cart.atc-primary {
+  padding: 14px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(201,168,76,0.25);
+}
 
 @keyframes btnShake {
   0%, 100% { transform: translateX(0); }
