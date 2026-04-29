@@ -160,10 +160,22 @@ function getHoursStatus(hours) {
   return { open: false, text: 'Currently closed' };
 }
 
+// ===== 0. PRE-LOAD SITE CONFIG (sets UPI_ENABLED before cards build) =====
+var _siteConfigReady = fetch('data/site.json')
+  .then(function(res) { return res.json(); })
+  .then(function(site) {
+    if (site.payment && site.payment.upiEnabled) { UPI_ENABLED = true; }
+    return site;
+  })
+  .catch(function() { return {}; });
+
 // ===== 1. BUILD PRODUCT CARDS (XSS-safe) =====
 const grid = document.getElementById('saree-grid');
 
-fetch('data/products.json')
+// Wait for site config before building cards so UPI_ENABLED is set
+_siteConfigReady.then(function() {
+  return fetch('data/products.json');
+})
   .then(function(res) { return res.json(); })
   .then(function(data) {
     var products = data.items;
@@ -379,7 +391,7 @@ fetch('data/products.json')
   overlay.className = 'card-hover-overlay';
   const overlayText = document.createElement('span');
   overlayText.className = 'overlay-btn';
-  overlayText.textContent = 'Order on WhatsApp';
+  overlayText.textContent = UPI_ENABLED ? 'Add to Cart' : 'Order on WhatsApp';
   overlay.appendChild(overlayText);
   imgWrap.appendChild(overlay);
 
@@ -629,8 +641,10 @@ fetch('data/products.json')
     });
     info.appendChild(waBtn);
 
+  } else if (UPI_ENABLED) {
+    // UPI mode — skip WhatsApp order button entirely
   } else {
-    // NORMAL state — in stock
+    // NORMAL state — in stock (WhatsApp mode)
     waBtn.className = 'card-wa-cta';
     waBtn.appendChild(createSVG(WA_ICON_PATH, '16'));
     waBtn.appendChild(document.createTextNode(' Order on WhatsApp'));
@@ -642,8 +656,16 @@ fetch('data/products.json')
   if (!isOOS && /\d/.test(item.price)) {
     var addToCartBtn = document.createElement('button');
     addToCartBtn.type = 'button';
-    addToCartBtn.className = 'card-add-to-cart';
-    addToCartBtn.textContent = 'Add to Cart';
+    addToCartBtn.className = 'card-add-to-cart' + (UPI_ENABLED ? ' atc-primary' : '');
+    if (UPI_ENABLED) {
+      addToCartBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">' +
+          '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>' +
+          '<path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>' +
+        '</svg> Add to Cart';
+    } else {
+      addToCartBtn.textContent = 'Add to Cart';
+    }
     addToCartBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       // If product has no sizes, use "Free Size"
@@ -764,9 +786,7 @@ fetch('data/products.json')
 
 
 // ===== 1B. LOAD BRAND PHOTO & JOURNAL =====
-fetch('data/site.json')
-  .then(function(res) { return res.json(); })
-  .then(function(site) {
+_siteConfigReady.then(function(site) {
     // Countdown timer
     if (site.countdown_enabled && site.countdown_date) {
       var target = new Date(site.countdown_date).getTime();
@@ -1098,21 +1118,7 @@ fetch('data/site.json')
       }
       if (mobileBarText) mobileBarText.textContent = 'Shop Now';
 
-      // Product cards — swap "Order on WhatsApp" overlay & buttons to "Add to Cart"
-      document.querySelectorAll('.overlay-btn').forEach(function(el) {
-        el.textContent = 'Add to Cart';
-      });
-      document.querySelectorAll('.card-wa-cta:not(.disabled):not(.preorder)').forEach(function(el) {
-        el.style.display = 'none';
-      });
-      document.querySelectorAll('.card-add-to-cart').forEach(function(el) {
-        el.classList.add('atc-primary');
-        el.innerHTML =
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">' +
-            '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>' +
-            '<path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>' +
-          '</svg> Add to Cart';
-      });
+      // Product cards are already built with UPI_ENABLED flag — no post-hoc swap needed
     }
   })
   .catch(function(err) {
