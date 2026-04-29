@@ -119,6 +119,21 @@
                   </div>
                 </div>
 
+                <!-- UPI Direct — hidden by default, enabled via site.json -->
+                <div class="payment-method-card hidden" id="upi-payment" data-method="upi">
+                  <div class="payment-method-radio"><div class="radio-dot"></div></div>
+                  <div class="payment-method-info">
+                    <div class="payment-method-name">&nbsp;Pay via UPI</div>
+                    <div class="payment-method-desc">Pay directly using GPay, PhonePe, Paytm or any UPI app</div>
+                    <div class="payment-badges">
+                      <span class="badge">GPay</span>
+                      <span class="badge">PhonePe</span>
+                      <span class="badge">Paytm</span>
+                      <span class="badge">BHIM</span>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- COD — hidden by default -->
                 <div class="payment-method-card cod-option hidden" id="cod-payment" data-method="cod">
                   <div class="payment-method-radio"><div class="radio-dot"></div></div>
@@ -194,6 +209,7 @@
   <script src="assets/js/cart.js"></script>
   <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/supabase-orders.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script src="assets/js/checkout.js"></script>
   <script>
     // Mobile hamburger
@@ -206,6 +222,54 @@
       });
     }
   </script>
+
+  <!-- UPI Payment Modal -->
+  <div class="upi-modal hidden" id="upi-modal" role="dialog" aria-labelledby="upi-modal-title">
+    <div class="upi-modal-content">
+      <button class="upi-modal-close" id="upi-modal-close" aria-label="Close">&times;</button>
+      <h2 id="upi-modal-title" class="upi-modal-title">Complete Your Payment</h2>
+      <p class="upi-modal-subtitle">Order ID: <strong id="upi-order-id"></strong></p>
+
+      <div class="upi-amount-box">
+        <span class="upi-amount-label">Amount to Pay</span>
+        <span class="upi-amount" id="upi-amount">&#8377;0</span>
+      </div>
+
+      <div class="upi-qr-container">
+        <canvas id="upi-qr-canvas"></canvas>
+        <p class="upi-qr-hint">Scan with any UPI app</p>
+      </div>
+
+      <div class="upi-divider"><span>OR</span></div>
+
+      <div class="upi-id-box">
+        <span class="upi-id-label">UPI ID</span>
+        <div class="upi-id-row">
+          <span class="upi-id-value" id="upi-id-display"></span>
+          <button class="upi-copy-btn" id="upi-copy-btn">Copy</button>
+        </div>
+      </div>
+
+      <a href="#" class="upi-app-btn" id="upi-app-btn">Open UPI App</a>
+
+      <div class="upi-instructions">
+        <h4>After Payment:</h4>
+        <ol>
+          <li>Take a screenshot of your payment confirmation</li>
+          <li>Click the button below to send it on WhatsApp</li>
+          <li>We'll confirm your order within <span id="upi-verify-time">30 minutes</span></li>
+        </ol>
+      </div>
+
+      <a href="#" class="upi-whatsapp-btn" id="upi-whatsapp-btn" target="_blank" rel="noopener">
+        Send Screenshot on WhatsApp &rarr;
+      </a>
+
+      <p class="upi-skip-note">
+        <a href="#" id="upi-skip-link">Already paid? Continue to confirmation &rarr;</a>
+      </p>
+    </div>
+  </div>
 
 </body>
 </html>

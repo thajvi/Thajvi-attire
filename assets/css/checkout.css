@@ -452,3 +452,95 @@
   .success-actions { flex-direction: column; align-items: center; }
   .success-btn { width: 100%; max-width: 280px; text-align: center; }
 }
+
+/* ============================================
+   UPI Payment Modal
+   ============================================ */
+.upi-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+.upi-modal.hidden {
+  display: none !important;
+}
+.upi-modal-content {
+  background: #ffffff;
+  color: #1a1a1a;
+  max-width: 480px;
+  width: 100%;
+  border-radius: 16px;
+  padding: 32px 28px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.upi-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+}
+.upi-modal-close:hover { color: #333; }
+.upi-modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+.upi-modal-subtitle { font-size: 0.82rem; color: #666; margin-bottom: 24px; }
+.upi-modal-subtitle strong { color: #1a1a1a; }
+.upi-amount-box {
+  text-align: center;
+  background: #f8f4ec;
+  border: 1px solid #e8d5a0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.upi-amount-label { display: block; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.upi-amount { display: block; font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: #1a1a1a; }
+.upi-qr-container { text-align: center; margin-bottom: 20px; }
+.upi-qr-container canvas {
+  background-color: #ffffff !important;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  display: inline-block;
+}
+.upi-qr-hint { font-size: 0.75rem; color: #888; margin-top: 8px; }
+.upi-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: #ccc; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+.upi-divider::before, .upi-divider::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
+.upi-id-box { margin-bottom: 16px; }
+.upi-id-label { display: block; font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.upi-id-row { display: flex; align-items: center; gap: 10px; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 14px; }
+.upi-id-value { flex: 1; font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; font-weight: 600; color: #1a1a1a; word-break: break-all; }
+.upi-copy-btn { padding: 6px 14px; background: #1a1a1a; color: #ffffff; border: none; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: background 0.2s; flex-shrink: 0; font-family: 'Jost', sans-serif; }
+.upi-copy-btn:hover { background: #333; }
+.upi-app-btn { display: block; width: 100%; text-align: center; padding: 14px; background: #5f259f; color: #ffffff; font-weight: 700; font-size: 0.9rem; border-radius: 8px; margin-bottom: 20px; text-decoration: none; transition: background 0.2s; }
+.upi-app-btn:hover { background: #4a1d7a; }
+.upi-instructions { background: #fafafa; border: 1px solid #eee; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+.upi-instructions h4 { font-size: 0.85rem; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+.upi-instructions ol { padding-left: 18px; font-size: 0.82rem; color: #555; line-height: 1.7; }
+.upi-whatsapp-btn { display: block; width: 100%; text-align: center; padding: 14px; background: #25d366; color: #ffffff; font-weight: 700; font-size: 0.9rem; border-radius: 8px; margin-bottom: 12px; text-decoration: none; transition: background 0.2s; }
+.upi-whatsapp-btn:hover { background: #1ebe5b; }
+.upi-skip-note { text-align: center; font-size: 0.78rem; }
+.upi-skip-note a { color: #888; text-decoration: underline; }
+.upi-skip-note a:hover { color: #555; }
+@media (max-width: 600px) {
+  .upi-modal { align-items: flex-end; padding: 0; }
+  .upi-modal-content { border-radius: 16px 16px 0 0; max-height: 95vh; padding: 24px 20px; }
+}

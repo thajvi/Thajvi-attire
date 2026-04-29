@@ -74,7 +74,16 @@
       }
 
       if (badgeContainer) {
-        if (order.paymentMethod === 'cod') {
+        if (order.paymentMethod === 'upi') {
+          badgeContainer.innerHTML =
+            '<div class="payment-badge" style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.4);">' +
+              '<span class="badge-icon">&#9203;</span>' +
+              '<div>' +
+                '<div class="badge-title">UPI Payment Pending Verification</div>' +
+                '<div class="badge-desc">If you have already paid, please send the screenshot on WhatsApp. Order confirms within 30 mins of payment verification.</div>' +
+              '</div>' +
+            '</div>';
+        } else if (order.paymentMethod === 'cod') {
           badgeContainer.innerHTML =
             '<div class="payment-badge cod">' +
               '<span class="badge-icon">&#128181;</span>' +

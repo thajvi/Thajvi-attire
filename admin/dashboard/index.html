@@ -69,6 +69,7 @@
     .badge-shipped { background: rgba(156,39,176,0.15); color: #9C27B0; }
     .badge-delivered { background: rgba(76,175,80,0.15); color: #4CAF50; }
     .badge-cancelled { background: rgba(244,67,54,0.15); color: #F44336; }
+    .badge-pending_verification { background: rgba(255,152,0,0.15); color: #FF9800; }
 
     /* Action buttons */
     .dash-action { display: flex; gap: 6px; }
@@ -150,6 +151,7 @@
       <button class="dash-filter-btn" data-filter="packed">Packed</button>
       <button class="dash-filter-btn" data-filter="shipped">Shipped</button>
       <button class="dash-filter-btn" data-filter="delivered">Delivered</button>
+      <button class="dash-filter-btn" data-filter="pending_upi">Pending UPI</button>
       <input type="text" class="dash-search" id="dash-search" placeholder="Search name, phone, order ID..." />
     </div>
 
@@ -238,7 +240,10 @@
       var filters = {};
       if (currentFilter === 'today') filters.today = true;
       if (currentFilter === 'week') filters.week = true;
-      if (['pending', 'packed', 'shipped', 'delivered', 'cancelled'].indexOf(currentFilter) !== -1) {
+      if (currentFilter === 'pending_upi') {
+        filters.payment_status = 'pending_verification';
+        filters.payment_method = 'upi';
+      } else if (['pending', 'packed', 'shipped', 'delivered', 'cancelled'].indexOf(currentFilter) !== -1) {
         filters.shipping_status = currentFilter;
       }
       var search = document.getElementById('dash-search').value.trim();
@@ -285,6 +290,7 @@
             '<td><span class="badge ' + shipBadge + '">' + (o.shipping_status || 'pending') + '</span></td>' +
             '<td><div class="dash-action">' +
               '<button class="dash-btn-sm" onclick="openEditModal(\'' + o.order_id + '\')">Edit</button>' +
+              (o.payment_method === 'upi' && o.payment_status === 'pending_verification' ? '<button class="dash-btn-sm" style="background:rgba(76,175,80,0.1);color:#4CAF50;border-color:rgba(76,175,80,0.2);" onclick="markUpiPaid(\'' + o.order_id + '\',this)">Mark as Paid</button>' : '') +
               '<a class="dash-btn-sm dash-btn-wa" href="https://wa.me/' + (o.customer_phone || '').replace(/\D/g, '') + '?text=' + encodeURIComponent('Hi ' + (o.customer_name || '') + '! Regarding your Thajvi Attire order ' + (o.order_id || '')) + '" target="_blank">WhatsApp</a>' +
             '</div></td>' +
           '</tr>';
@@ -357,6 +363,24 @@
         }
       });
     });
+
+    // Mark UPI as Paid
+    window.markUpiPaid = function(orderId, btn) {
+      if (!confirm('Mark order ' + orderId + ' as paid? This cannot be undone.')) return;
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+      updateOrderInSupabase(orderId, { payment_status: 'paid' }).then(function(res) {
+        if (res.success) {
+          showToast('Marked as Paid: ' + orderId);
+          loadOrders();
+          loadStats();
+        } else {
+          showToast('Update failed');
+          btn.textContent = 'Mark as Paid';
+          btn.disabled = false;
+        }
+      });
+    };
 
     // Toast
     function showToast(msg) {

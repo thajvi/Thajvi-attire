@@ -1030,6 +1030,64 @@ fetch('data/site.json')
       DELIVERY_ITEMS = site.delivery_items;
     }
     if (site.hours_enabled) { BUSINESS_HOURS = site; }
+
+    // When UPI is enabled: swap WhatsApp-ordering language to shop-and-pay language
+    if (site.payment && site.payment.upiEnabled) {
+      // Hero buttons
+      var primaryBtn = document.getElementById('hero-primary-btn');
+      var secondaryBtn = document.getElementById('hero-secondary-btn');
+      if (primaryBtn) {
+        primaryBtn.href = '#collections';
+        primaryBtn.removeAttribute('target');
+        primaryBtn.removeAttribute('rel');
+        primaryBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">' +
+            '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>' +
+            '<line x1="3" y1="6" x2="21" y2="6"/>' +
+            '<path d="M16 10a4 4 0 01-8 0"/>' +
+          '</svg> Shop Now';
+      }
+      if (secondaryBtn) {
+        secondaryBtn.href = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent('Hi! I visited your website and have a question.');
+        secondaryBtn.target = '_blank';
+        secondaryBtn.rel = 'noopener';
+        secondaryBtn.textContent = 'Chat with Us';
+      }
+
+      // "How Ordering Works" step 2
+      var step2Title = document.getElementById('step2-title');
+      var step2Desc = document.getElementById('step2-desc');
+      if (step2Title) step2Title.textContent = 'Add to Cart & Pay';
+      if (step2Desc) step2Desc.textContent = 'Add items to your cart, fill in your details, and pay securely via UPI.';
+
+      // Features strip — "Personal Ordering"
+      var featureTitle = document.getElementById('feature-ordering-title');
+      var featureDesc = document.getElementById('feature-ordering-desc');
+      if (featureTitle) featureTitle.textContent = 'Easy Online Ordering';
+      if (featureDesc) featureDesc.textContent = 'Add to cart, checkout, and pay via UPI — simple, secure, and instant.';
+
+      // About section trust item
+      var aboutTrust = document.getElementById('about-trust-ordering');
+      if (aboutTrust) aboutTrust.textContent = 'Secure UPI Payments';
+
+      // Trust signal strip
+      var trustLabel = document.getElementById('trust-ordering-label');
+      if (trustLabel) trustLabel.textContent = 'Secure Online Payments';
+
+      // Floating WhatsApp — change from "Chat & Order" to just "Chat with Us"
+      var floatLabel = document.getElementById('wa-float-label');
+      if (floatLabel) floatLabel.textContent = 'Chat with Us';
+
+      // Mobile sticky bar — change to "Shop Now" linking to collections
+      var mobileBarLink = document.getElementById('mobile-wa-bar-link');
+      var mobileBarText = document.getElementById('mobile-wa-bar-text');
+      if (mobileBarLink) {
+        mobileBarLink.href = '#collections';
+        mobileBarLink.removeAttribute('target');
+        mobileBarLink.removeAttribute('rel');
+      }
+      if (mobileBarText) mobileBarText.textContent = 'Shop Now';
+    }
   })
   .catch(function(err) {
     console.error('Failed to load site settings:', err);

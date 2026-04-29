@@ -39,7 +39,7 @@
       cod_charge: order.codCharge || 0,
       total: order.total,
       payment_method: order.paymentMethod,
-      payment_status: 'pending',
+      payment_status: order.paymentStatus || 'pending',
       shipping_status: 'pending',
       source: 'website'
     }).select()
@@ -116,6 +116,7 @@
 
     if (filters) {
       if (filters.payment_status) query = query.eq('payment_status', filters.payment_status);
+      if (filters.payment_method) query = query.eq('payment_method', filters.payment_method);
       if (filters.shipping_status) query = query.eq('shipping_status', filters.shipping_status);
       if (filters.today) {
         var today = new Date();

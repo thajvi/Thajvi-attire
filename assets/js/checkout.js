@@ -57,7 +57,18 @@ var STORE_CONFIG = {
     // , 'Karnataka'
   ],
   codMinOrder: 0,
-  codMaxOrder: 5000
+  codMaxOrder: 5000,
+
+  // ─────────────────────────
+  // UPI SETTINGS
+  // Loaded from site.json at runtime.
+  // No manual changes needed here.
+  // ─────────────────────────
+  upiEnabled: false,
+  upiId: '',
+  upiName: '',
+  upiNote: '',
+  upiVerificationTime: '30 minutes'
 };
 
 // Default selected payment method
@@ -103,9 +114,26 @@ function initCheckout() {
 
   populateStates();
   renderOrderSummary();
-  initPaymentMethods();
-  updateSubmitButton();
-  setupFormValidation();
+
+  // Load UPI config from site.json, then init payment methods
+  fetch('data/site.json')
+    .then(function(res) { return res.json(); })
+    .then(function(site) {
+      if (site.payment) {
+        STORE_CONFIG.upiEnabled = site.payment.upiEnabled || false;
+        STORE_CONFIG.upiId = site.payment.upiId || '';
+        STORE_CONFIG.upiName = site.payment.upiName || '';
+        STORE_CONFIG.upiNote = site.payment.upiNote || '';
+        STORE_CONFIG.upiVerificationTime = site.payment.upiVerificationTime || '30 minutes';
+      }
+    })
+    .catch(function() { /* UPI stays disabled */ })
+    .then(function() {
+      initPaymentMethods();
+      updateSubmitButton();
+      setupFormValidation();
+      initUpiModal();
+    });
 }
 
 // ===== POPULATE STATE DROPDOWN =====
@@ -149,10 +177,21 @@ function renderOrderSummary() {
 // ===== PAYMENT METHODS =====
 function initPaymentMethods() {
   var codOption = document.getElementById('cod-payment');
+  var upiOption = document.getElementById('upi-payment');
+  var hasMultipleMethods = false;
 
+  // Show UPI if enabled
+  if (STORE_CONFIG.upiEnabled && upiOption && STORE_CONFIG.upiId && STORE_CONFIG.upiId.indexOf('@') !== -1) {
+    upiOption.classList.remove('hidden');
+    hasMultipleMethods = true;
+  } else if (upiOption) {
+    upiOption.classList.add('hidden');
+  }
+
+  // Show COD if enabled
   if (STORE_CONFIG.codEnabled && codOption) {
     codOption.classList.remove('hidden');
-    setupPaymentMethodSelection();
+    hasMultipleMethods = true;
 
     var stateField = document.getElementById('state');
     if (stateField) {
@@ -160,6 +199,10 @@ function initPaymentMethods() {
     }
   } else if (codOption) {
     codOption.classList.add('hidden');
+  }
+
+  if (hasMultipleMethods) {
+    setupPaymentMethodSelection();
   }
 }
 
@@ -295,6 +338,9 @@ function updateSubmitButton() {
     case 'whatsapp':
       btn.textContent = 'Place Order via WhatsApp \u2192';
       break;
+    case 'upi':
+      btn.textContent = 'Place Order & Pay via UPI \u2192';
+      break;
     case 'cod':
       btn.textContent = 'Place COD Order \u2192 Pay ' + ThajviCart.formatPrice(total) + ' on Delivery';
       break;
@@ -403,6 +449,11 @@ function handlePlaceOrder() {
   order.codCharge = getCodCharge();
   order.total = getGrandTotal();
 
+  // Set payment status based on method
+  if (selectedPaymentMethod === 'upi') {
+    order.paymentStatus = 'pending_verification';
+  }
+
   saveOrderLocally(order);
 
   // Save to Supabase (Tier 2+ feature)
@@ -416,6 +467,9 @@ function handlePlaceOrder() {
   switch (selectedPaymentMethod) {
     case 'whatsapp':
       handleWhatsAppOrder(order);
+      break;
+    case 'upi':
+      handleUpiOrder(order);
       break;
     case 'cod':
       handleCodOrder(order);
@@ -542,6 +596,128 @@ function buildCodWhatsApp(order) {
     (order.customer.instructions ? '\n\uD83D\uDCDD *Instructions:* ' + order.customer.instructions + '\n' : '') +
     '\n\u26A0\uFE0F *Please confirm this COD order with customer before shipping!*\n' +
     '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
+}
+
+// ===== UPI ORDER =====
+function handleUpiOrder(order) {
+  // Confirm inventory + clear cart
+  if (typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady()) {
+    ThajviInventory.confirm(order.items);
+  }
+  ThajviCart.clear();
+
+  // Show UPI modal
+  showUpiModal(order);
+  setButtonLoading(false);
+}
+
+function showUpiModal(order) {
+  var modal = document.getElementById('upi-modal');
+  if (!modal) return;
+
+  // Populate fields
+  document.getElementById('upi-order-id').textContent = order.orderId;
+  document.getElementById('upi-amount').textContent = ThajviCart.formatPrice(order.total);
+  document.getElementById('upi-id-display').textContent = STORE_CONFIG.upiId;
+  document.getElementById('upi-verify-time').textContent = STORE_CONFIG.upiVerificationTime;
+
+  // Build UPI link
+  var upiLink = 'upi://pay?pa=' + encodeURIComponent(STORE_CONFIG.upiId) +
+    '&pn=' + encodeURIComponent(STORE_CONFIG.upiName) +
+    '&am=' + Math.round(order.total) +
+    '&cu=INR' +
+    '&tn=' + encodeURIComponent(order.orderId);
+
+  // Set "Open UPI App" button
+  document.getElementById('upi-app-btn').href = upiLink;
+
+  // Generate QR code
+  var canvas = document.getElementById('upi-qr-canvas');
+  if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
+    QRCode.toCanvas(canvas, upiLink, { width: 220, margin: 1 }, function(err) {
+      if (err) console.log('QR generation error:', err);
+    });
+  }
+
+  // Build WhatsApp message
+  var items = '';
+  for (var i = 0; i < order.items.length; i++) {
+    var it = order.items[i];
+    items += '- ' + it.name + ' (Size: ' + it.size + ') x' + it.quantity + '\n';
+  }
+  var waMsg = 'Hi! \uD83D\uDE4F\n\n' +
+    'I have placed an order and am paying via UPI.\n\n' +
+    'Order ID: ' + order.orderId + '\n' +
+    'Amount: ' + ThajviCart.formatPrice(order.total) + '\n' +
+    'Name: ' + order.customer.name + '\n' +
+    'Phone: ' + order.customer.phone + '\n\n' +
+    'Items:\n' + items + '\n' +
+    'I will share the payment screenshot here. Please confirm my order. \uD83D\uDE4F';
+  document.getElementById('upi-whatsapp-btn').href =
+    'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(waMsg);
+
+  // Show modal + lock body scroll
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function initUpiModal() {
+  // Close button
+  var closeBtn = document.getElementById('upi-modal-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function() {
+      if (confirm('Cancel UPI payment? Your order is saved as pending.')) {
+        window.location.href = 'order-success.html';
+      }
+    });
+  }
+
+  // Copy button
+  var copyBtn = document.getElementById('upi-copy-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function() {
+      var upiId = STORE_CONFIG.upiId;
+      navigator.clipboard.writeText(upiId).then(function() {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+      }).catch(function() {
+        // Fallback: temporary input + execCommand
+        var tempInput = document.createElement('input');
+        tempInput.value = upiId;
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand('copy');
+          copyBtn.textContent = 'Copied!';
+          setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+        } catch(e) {
+          copyBtn.textContent = 'Select & Copy';
+        }
+        document.body.removeChild(tempInput);
+      });
+    });
+  }
+
+  // Skip link
+  var skipLink = document.getElementById('upi-skip-link');
+  if (skipLink) {
+    skipLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'order-success.html';
+    });
+  }
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e) {
+    var modal = document.getElementById('upi-modal');
+    if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+      if (confirm('Cancel UPI payment? Your order is saved as pending.')) {
+        window.location.href = 'order-success.html';
+      }
+    }
+  });
 }
 
 // ===== INIT ON LOAD =====

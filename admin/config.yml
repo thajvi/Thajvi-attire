@@ -97,3 +97,14 @@ collections:
           - { name: "video_url", label: "Video URL", widget: "string", required: false, hint: "Paste a YouTube link (e.g. https://youtu.be/XXXX) or Instagram Reel link (e.g. https://www.instagram.com/reel/XXXX). YouTube embeds directly on page. Instagram shows a click-through card." }
           - { name: "video_heading", label: "Video Section Heading", widget: "string", default: "Our Story", required: false, hint: "Heading shown above the video" }
           - { name: "video_subtext", label: "Video Section Subtext", widget: "string", default: "Watch how we handpick every saree with love and care.", required: false, hint: "Description shown under the heading" }
+          - name: "payment"
+            label: "Payment Settings"
+            widget: "object"
+            required: false
+            hint: "Configure UPI direct payment option on the checkout page"
+            fields:
+              - { name: "upiEnabled", label: "Enable UPI Direct Payment", widget: "boolean", default: true, hint: "Show 'Pay via UPI' option on checkout. Customer pays directly to your UPI ID." }
+              - { name: "upiId", label: "UPI ID", widget: "string", default: "yourname@okaxis", hint: "Your UPI ID (must contain @). e.g. shopname@okaxis, 9876543210@ybl" }
+              - { name: "upiName", label: "UPI Display Name", widget: "string", default: "Thajvi Attire", hint: "Business name shown in customer's UPI app when they scan/pay" }
+              - { name: "upiNote", label: "UPI Note", widget: "string", default: "Pay using any UPI app like GPay, PhonePe, Paytm", required: false, hint: "Helpful text shown below the UPI payment option" }
+              - { name: "upiVerificationTime", label: "UPI Verification Time", widget: "string", default: "30 minutes", required: false, hint: "How long you take to verify payment. e.g. 30 minutes, 1 hour" }
