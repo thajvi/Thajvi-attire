@@ -47,6 +47,30 @@
         "veryLowThreshold": 3
       },
       "description": "PINK BLOSSOM CO ORD SET \nMUL COTTON MATERIAL\n3/4 SLEEVES \nV NECK WITH BOX PLEATED \nA LINE PATTERN WITH LINING \nSTRAIGHT BOTTOM WITH FRONT DORRIS AND BACK ELASTIC\n\n"
+    },
+    {
+      "badge": "",
+      "fabric": "RAYON COTTON MIX",
+      "occasion": "Daily Wear",
+      "price": "849+SHIPPING ",
+      "name": "BLUE SHIRT MODEL  MAXI DRESS",
+      "featured": false,
+      "sizes": "46-47",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/shirt-maxi-dress.jpeg",
+      "stock": "Limited Stock",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 0,
+          "XL": 0,
+          "XXL": 1
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "POWDER BLUE SHADE SHIRT MODEL DRESS \nCOLLAR  NECK \n3/4 BALOON  SLEEVES \nA LINE WITH 2 FRONT POCKET\nWITHOUT LINING\n"
     }
   ]
 }
