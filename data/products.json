@@ -2,78 +2,27 @@
   "items": [
     {
       "badge": "Bestseller",
-      "fabric": "Cotton",
-      "occasion": "Casual",
-      "price": "₹700",
-      "name": "Brown Printed Co-ord Set",
-      "instagramReel": "",
+      "fabric": "COTTON",
+      "occasion": "Daily Wear",
+      "price": "599+SHIPPING",
+      "name": "MUD BROWN CO ORD SET",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "46",
       "whatsapp": "918129651993",
-      "photo": "assets/images/products/brown co dem set.jpg",
-      "stock": "",
+      "photo": "assets/images/mud-brown.jpeg",
+      "stock": null,
       "inventory": {
         "sizes": {
-          "S": 5,
-          "M": 3,
+          "S": 0,
+          "M": 0,
           "L": 0,
-          "XL": 8,
-          "XXL": 2
-        },
-        "lowStockThreshold": 5,
-        "veryLowThreshold": 3
-      },
-      "description": "Elegant brown printed co-ord set with diamond motifs. Comfortable and stylish for everyday wear."
-    },
-    {
-      "badge": "New Arrival",
-      "fabric": "Cotton",
-      "occasion": "Festive",
-      "price": "₹700",
-      "name": "Floral White Anarkali",
-      "instagramReel": "",
-      "featured": false,
-      "sizes": "S, M, L, XL, XXL",
-      "whatsapp": "918129651993",
-      "photo": "assets/images/products/floral white.jpg",
-      "stock": "",
-      "inventory": {
-        "sizes": {
-          "S": 4,
-          "M": 6,
-          "L": 2,
           "XL": 0,
-          "XXL": 3
-        },
-        "lowStockThreshold": 5,
-        "veryLowThreshold": 3
-      },
-      "description": "Beautiful white floral print Anarkali with vibrant pink blooms. Perfect for festive occasions."
-    },
-    {
-      "badge": "",
-      "fabric": "Cotton Blend",
-      "occasion": "Casual",
-      "price": "₹700",
-      "name": "White Tulip Print Kurti",
-      "instagramReel": "",
-      "featured": false,
-      "sizes": "S, M, L, XL, XXL",
-      "whatsapp": "918129651993",
-      "photo": "assets/images/products/white co-dem set.jpg",
-      "stock": "",
-      "inventory": {
-        "sizes": {
-          "S": 8,
-          "M": 5,
-          "L": 4,
-          "XL": 6,
           "XXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
       },
-      "description": "Chic white sleeveless kurti with blue tulip print and side slit. Modern and elegant."
+      "description": "COTTON MUD BROWN CO ORD SET\n3/4 SLEEVES \nV NECK WITH BOX PLEATE\nSIDE SLITTED WITHOUT LINING \nSTRAIGHT BOTTOM WITH ELASTIC\n"
     }
   ]
 }
