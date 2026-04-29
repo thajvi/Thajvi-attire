@@ -71,6 +71,30 @@
         "veryLowThreshold": 3
       },
       "description": "POWDER BLUE SHADE SHIRT MODEL DRESS \nCOLLAR  NECK \n3/4 BALOON  SLEEVES \nA LINE WITH 2 FRONT POCKET\nWITHOUT LINING\n"
+    },
+    {
+      "badge": "New Arrival",
+      "fabric": "MUL COTTON",
+      "occasion": "Vishu / Onam",
+      "price": "999 FREE SHIPPING",
+      "name": "MUL COTTON MAXI DRESS",
+      "featured": false,
+      "sizes": "47-48",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/vishu-frock.jpeg",
+      "stock": "Only a Few Left",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 1,
+          "XL": 1,
+          "XXL": 1
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "TRENDING MUL COTTON MAXI DRESS\n 3/4 ,BALLOON SLEEVES\n47-48 LENGTH \nV NECK \nFLOWRAL EMBROIDERY WORK ON YOKE AND DAMEN AREA \n"
     }
   ]
 }
