@@ -95,6 +95,30 @@
         "veryLowThreshold": 3
       },
       "description": "TRENDING MUL COTTON MAXI DRESS\n 3/4 ,BALLOON SLEEVES\n47-48 LENGTH \nV NECK \nFLOWRAL EMBROIDERY WORK ON YOKE AND DAMEN AREA \n"
+    },
+    {
+      "badge": "New Arrival",
+      "fabric": "COTTON",
+      "occasion": "Daily Wear",
+      "price": "699+ SHIPPING",
+      "name": "COMFY COTTON SHORT KURTHI CO ORDS",
+      "featured": false,
+      "sizes": "44-45",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/yellow-short-kurtgha-cords.jpeg",
+      "stock": "Only a Few Left",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 1,
+          "L": 0,
+          "XL": 1,
+          "XXL": 0
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "COTTON SHORT KURTHI CO ORDS    \nBELL SLEEVES \nU-V NECK PATTERN \nLACE DETAILING ON DAMEN ,SLEEVE ENDS,BOTTOM ENDS \nSLITTED TOP WITHOUT LINING \nLOOS PALAZO BOTTOM \n"
     }
   ]
 }
