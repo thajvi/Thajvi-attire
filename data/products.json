@@ -23,6 +23,30 @@
         "veryLowThreshold": 3
       },
       "description": "COTTON MUD BROWN CO ORD SET\n3/4 SLEEVES \nV NECK WITH BOX PLEATE\nSIDE SLITTED WITHOUT LINING \nSTRAIGHT BOTTOM WITH ELASTIC\n"
+    },
+    {
+      "badge": "Bestseller",
+      "fabric": "MUL COTTON",
+      "occasion": "Daily Wear",
+      "price": "950+shipping",
+      "name": "PINK BLOSSOM",
+      "featured": false,
+      "sizes": "46-47",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/pink-blossom.jpeg",
+      "stock": "Out of Stock",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 1,
+          "L": 0,
+          "XL": 0,
+          "XXL": 0
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "PINK BLOSSOM CO ORD SET \nMUL COTTON MATERIAL\n3/4 SLEEVES \nV NECK WITH BOX PLEATED \nA LINE PATTERN WITH LINING \nSTRAIGHT BOTTOM WITH FRONT DORRIS AND BACK ELASTIC\n\n"
     }
   ]
 }
