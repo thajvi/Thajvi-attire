@@ -119,6 +119,30 @@
         "veryLowThreshold": 3
       },
       "description": "COTTON SHORT KURTHI CO ORDS    \nBELL SLEEVES \nU-V NECK PATTERN \nLACE DETAILING ON DAMEN ,SLEEVE ENDS,BOTTOM ENDS \nSLITTED TOP WITHOUT LINING \nLOOS PALAZO BOTTOM \n"
+    },
+    {
+      "badge": "Bestseller",
+      "fabric": "COTTON",
+      "occasion": "Daily Wear",
+      "price": "699+SHIPPING",
+      "name": "BLUE TULIP",
+      "featured": false,
+      "sizes": "46",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/tulip.jpeg",
+      "stock": "Only a Few Left",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 0,
+          "XL": 1,
+          "XXL": 0
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "KHADI COTTON TOP\nSLEEVELESS ,SLEEVE ATTACHED INSIDE THE TOP\nHIGH NECK PATTERN \nSLITTED "
     }
   ]
 }
