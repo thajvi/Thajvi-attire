@@ -9,6 +9,7 @@ var SITE_URL = 'https://thajviattire.com';
 var INSTAGRAM_HANDLE = '@thajvi_attire_';
 var DELIVERY_ITEMS = [];
 var BUSINESS_HOURS = null;
+var UPI_ENABLED = false;
 
 // ===== HELPERS =====
 function escapeHTML(str) {
@@ -310,11 +311,19 @@ fetch('data/products.json')
   const imgWrap = document.createElement('a');
   imgWrap.href = '#';
   imgWrap.className = 'card-img-wrap';
-  imgWrap.setAttribute('aria-label', 'Order ' + item.name + ' on WhatsApp');
+  imgWrap.setAttribute('aria-label', 'Order ' + item.name);
   imgWrap.addEventListener('click', function(e) {
     e.preventDefault();
     if (item.stock === 'Out of Stock') return;
-    handleOrder(e);
+    if (UPI_ENABLED && /\d/.test(item.price)) {
+      // UPI mode: trigger Add to Cart instead of WhatsApp
+      var cartSize = selectedSize || (item.sizes ? '' : 'Free Size');
+      if (!cartSize && item.sizes) { alert('Please select a size first!'); return; }
+      var productData = { name: item.name, price: item.price, size: cartSize, image: item.photo || '', productId: item.name.toLowerCase().replace(/\s+/g, '-') };
+      if (typeof handleAddToCart === 'function') { handleAddToCart(productData, null); }
+    } else {
+      handleOrder(e);
+    }
   });
 
   if (item.photo) {
@@ -1033,6 +1042,7 @@ fetch('data/site.json')
 
     // When UPI is enabled: swap WhatsApp-ordering language to shop-and-pay language
     if (site.payment && site.payment.upiEnabled) {
+      UPI_ENABLED = true;
       // Hero buttons
       var primaryBtn = document.getElementById('hero-primary-btn');
       var secondaryBtn = document.getElementById('hero-secondary-btn');
@@ -1087,6 +1097,22 @@ fetch('data/site.json')
         mobileBarLink.removeAttribute('rel');
       }
       if (mobileBarText) mobileBarText.textContent = 'Shop Now';
+
+      // Product cards — swap "Order on WhatsApp" overlay & buttons to "Add to Cart"
+      document.querySelectorAll('.overlay-btn').forEach(function(el) {
+        el.textContent = 'Add to Cart';
+      });
+      document.querySelectorAll('.card-wa-cta:not(.disabled):not(.preorder)').forEach(function(el) {
+        el.style.display = 'none';
+      });
+      document.querySelectorAll('.card-add-to-cart').forEach(function(el) {
+        el.style.background = 'var(--gold)';
+        el.style.color = '#0A0A0A';
+        el.style.fontWeight = '700';
+        el.style.fontSize = '0.9rem';
+        el.style.padding = '12px';
+        el.style.letterSpacing = '0.5px';
+      });
     }
   })
   .catch(function(err) {
