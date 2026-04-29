@@ -15,6 +15,11 @@
     btn.textContent = 'Dashboard';
     btn.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#C9A84C;color:#0A0A0A;padding:12px 20px;border-radius:8px;font-family:sans-serif;font-weight:600;font-size:14px;text-decoration:none;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
     document.body.appendChild(btn);
+    var mobBtn = document.createElement('a');
+    mobBtn.href = '/admin/mobile/';
+    mobBtn.textContent = 'Mobile Admin';
+    mobBtn.style.cssText = 'position:fixed;bottom:24px;right:160px;background:#1A1A1A;color:#C9A84C;padding:12px 20px;border-radius:8px;font-family:sans-serif;font-weight:600;font-size:14px;text-decoration:none;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:1px solid #C9A84C;';
+    document.body.appendChild(mobBtn);
   }, 2000);
   </script>
 </body>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mobile Admin | Thajvi Attire</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="../../assets/favicon/favicon.ico" sizes="32x32" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Jost', sans-serif; background: #0A0A0A; color: #E8D5A0; min-height: 100vh; min-height: 100dvh; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Login */
+    .mob-login { max-width: 320px; margin: 120px auto; text-align: center; padding: 0 20px; }
+    .mob-login h1 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; margin-bottom: 6px; }
+    .mob-login p { font-size: 0.78rem; color: #888; margin-bottom: 20px; }
+    .mob-login input { width: 100%; padding: 14px; background: #1A1A1A; border: 1px solid #333; border-radius: 8px; color: #E8D5A0; font-size: 1rem; font-family: 'Jost', sans-serif; text-align: center; }
+    .mob-login input:focus { outline: none; border-color: #C9A84C; }
+    .mob-login button { width: 100%; padding: 14px; background: #C9A84C; color: #0A0A0A; border: none; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer; margin-top: 12px; font-family: 'Jost', sans-serif; }
+    .mob-login-err { color: #FF4444; font-size: 0.8rem; margin-top: 8px; display: none; }
+
+    /* App */
+    .mob-app { display: none; padding: 16px 16px 90px; max-width: 500px; margin: 0 auto; }
+
+    /* Header */
+    .mob-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .mob-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; }
+    .mob-refresh { background: none; border: 1px solid #333; color: #C9A84C; padding: 6px 12px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; font-family: 'Jost', sans-serif; }
+
+    /* Tab content */
+    .mob-tab { display: none; }
+    .mob-tab.active { display: block; }
+
+    /* Bottom tabs */
+    .mob-tabs { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 1px solid #222; display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0); }
+    .mob-tab-btn { flex: 1; padding: 10px 4px 8px; text-align: center; font-size: 0.62rem; color: #666; cursor: pointer; border: none; background: none; font-family: 'Jost', sans-serif; font-weight: 500; letter-spacing: 0.5px; transition: color 0.2s; }
+    .mob-tab-btn.active { color: #C9A84C; }
+    .mob-tab-btn svg { display: block; margin: 0 auto 3px; }
+
+    /* Stats grid */
+    .mob-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .mob-stat { background: #111; border: 1px solid #222; border-radius: 10px; padding: 16px; text-align: center; }
+    .mob-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: #C9A84C; }
+    .mob-stat-label { font-size: 0.65rem; color: #888; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.8px; }
+    .mob-stat.warn .mob-stat-num { color: #FFB347; }
+
+    /* Cards */
+    .mob-card { background: #111; border: 1px solid #222; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+    .mob-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+    .mob-card-name { font-weight: 600; font-size: 0.85rem; color: #E8D5A0; flex: 1; }
+    .mob-card-price { font-family: 'Cormorant Garamond', serif; font-weight: 700; color: #C9A84C; font-size: 0.95rem; flex-shrink: 0; }
+    .mob-card-meta { font-size: 0.7rem; color: #888; margin-bottom: 8px; }
+    .mob-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* Buttons */
+    .mob-btn { padding: 8px 14px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; border: 1px solid #333; background: #1A1A1A; color: #C9A84C; font-family: 'Jost', sans-serif; transition: all 0.2s; min-height: 36px; }
+    .mob-btn:hover { border-color: #C9A84C; }
+    .mob-btn:disabled { opacity: 0.5; cursor: wait; }
+    .mob-btn-green { background: rgba(76,175,80,0.1); color: #4CAF50; border-color: rgba(76,175,80,0.2); }
+    .mob-btn-gold { background: #C9A84C; color: #0A0A0A; border-color: #C9A84C; }
+
+    /* Badges */
+    .mob-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.3px; }
+    .mob-badge-stock { background: rgba(76,175,80,0.15); color: #4CAF50; }
+    .mob-badge-oos { background: rgba(244,67,54,0.15); color: #F44336; }
+    .mob-badge-preorder { background: rgba(255,152,0,0.15); color: #FF9800; }
+    .mob-badge-urgency { background: rgba(255,193,7,0.15); color: #FFC107; }
+    .mob-badge-pending { background: rgba(255,193,7,0.15); color: #FFC107; }
+    .mob-badge-paid { background: rgba(76,175,80,0.15); color: #4CAF50; }
+    .mob-badge-pending_verification { background: rgba(255,152,0,0.15); color: #FF9800; }
+
+    /* Order card extras */
+    .mob-order-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: #888; margin-bottom: 4px; }
+    .mob-order-badges { display: flex; gap: 6px; margin: 6px 0; }
+
+    /* Bottom sheet */
+    .mob-sheet-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; }
+    .mob-sheet-bg.open { display: flex; align-items: flex-end; }
+    .mob-sheet { background: #111; border-top: 1px solid #C9A84C; border-radius: 16px 16px 0 0; width: 100%; max-height: 80vh; overflow-y: auto; padding: 20px 16px; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0)); animation: sheetUp 0.25s ease; }
+    @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .mob-sheet h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: #E8D5A0; margin-bottom: 16px; }
+    .mob-sheet label { display: block; font-size: 0.7rem; font-weight: 600; color: #C9A84C; margin: 10px 0 4px; letter-spacing: 0.5px; }
+    .mob-sheet select, .mob-sheet input { width: 100%; padding: 12px; background: #0A0A0A; border: 1px solid #333; border-radius: 6px; color: #E8D5A0; font-family: 'Jost', sans-serif; font-size: 0.9rem; -webkit-appearance: none; }
+    .mob-sheet select:focus, .mob-sheet input:focus { outline: none; border-color: #C9A84C; }
+    .mob-sheet-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .mob-sheet-actions button { flex: 1; padding: 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: 'Jost', sans-serif; }
+    .mob-sheet-cancel { background: transparent; color: #888; border: 1px solid #333; }
+    .mob-sheet-save { background: #C9A84C; color: #0A0A0A; border: none; }
+
+    /* Stock options */
+    .mob-stock-options { display: flex; flex-direction: column; gap: 6px; }
+    .mob-stock-opt { display: flex; align-items: center; gap: 10px; padding: 12px; background: #0A0A0A; border: 1px solid #333; border-radius: 8px; cursor: pointer; transition: border-color 0.2s; }
+    .mob-stock-opt.selected { border-color: #C9A84C; background: rgba(201,168,76,0.06); }
+    .mob-stock-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #444; flex-shrink: 0; }
+    .mob-stock-opt.selected .mob-stock-dot { border-color: #C9A84C; background: #C9A84C; }
+    .mob-stock-label { font-size: 0.82rem; color: #E8D5A0; }
+
+    /* Toggle */
+    .mob-toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #111; border: 1px solid #222; border-radius: 10px; margin-bottom: 12px; }
+    .mob-toggle-label { font-size: 0.85rem; font-weight: 500; }
+    .mob-toggle-sub { font-size: 0.7rem; color: #888; margin-top: 2px; }
+    .mob-toggle { width: 48px; height: 28px; border-radius: 14px; background: #333; border: none; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+    .mob-toggle.on { background: #C9A84C; }
+    .mob-toggle::after { content: ''; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #fff; top: 3px; left: 3px; transition: transform 0.2s; }
+    .mob-toggle.on::after { transform: translateX(20px); }
+
+    /* Settings info */
+    .mob-info { background: #111; border: 1px solid #222; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+    .mob-info-label { font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .mob-info-value { font-size: 0.85rem; color: #E8D5A0; font-weight: 500; word-break: break-all; }
+
+    /* Toast */
+    .mob-toast { position: fixed; top: 16px; left: 16px; right: 16px; background: #C9A84C; color: #0A0A0A; padding: 12px 16px; border-radius: 10px; font-weight: 600; font-size: 0.82rem; z-index: 300; text-align: center; transform: translateY(-120%); transition: transform 0.3s ease; }
+    .mob-toast.show { transform: translateY(0); }
+    .mob-toast.error { background: #F44336; color: #fff; }
+
+    /* Empty */
+    .mob-empty { text-align: center; padding: 40px 20px; color: #555; font-size: 0.85rem; }
+
+    /* Loading */
+    .mob-loading { text-align: center; padding: 40px; color: #666; font-size: 0.82rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Login -->
+  <div class="mob-login" id="mob-login">
+    <h1>Mobile Admin</h1>
+    <p>Thajvi Attire</p>
+    <input type="password" id="mob-pass" placeholder="Enter password" />
+    <button id="mob-login-btn">Login</button>
+    <p class="mob-login-err" id="mob-login-err">Incorrect password</p>
+  </div>
+
+  <!-- App -->
+  <div class="mob-app" id="mob-app">
+    <div class="mob-header">
+      <h1 class="mob-title" id="mob-page-title">Dashboard</h1>
+      <button class="mob-refresh" id="mob-refresh">Refresh</button>
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div class="mob-tab active" id="tab-dashboard">
+      <div class="mob-stats">
+        <div class="mob-stat"><div class="mob-stat-num" id="m-stat-orders">-</div><div class="mob-stat-label">Today's Orders</div></div>
+        <div class="mob-stat"><div class="mob-stat-num" id="m-stat-revenue">-</div><div class="mob-stat-label">Revenue</div></div>
+        <div class="mob-stat warn"><div class="mob-stat-num" id="m-stat-pending">-</div><div class="mob-stat-label">Pending</div></div>
+        <div class="mob-stat warn"><div class="mob-stat-num" id="m-stat-ship">-</div><div class="mob-stat-label">To Ship</div></div>
+      </div>
+      <p style="font-size:0.7rem;color:#555;text-align:center;">Pull down or tap Refresh to update</p>
+    </div>
+
+    <!-- Products Tab -->
+    <div class="mob-tab" id="tab-products">
+      <div id="mob-products-list"><div class="mob-loading">Loading products...</div></div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div class="mob-tab" id="tab-orders">
+      <div id="mob-orders-list"><div class="mob-loading">Loading orders...</div></div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div class="mob-tab" id="tab-settings">
+      <div id="mob-settings-content"><div class="mob-loading">Loading settings...</div></div>
+    </div>
+  </div>
+
+  <!-- Bottom Tabs -->
+  <div class="mob-tabs" id="mob-tabs" style="display:none;">
+    <button class="mob-tab-btn active" data-tab="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      HOME
+    </button>
+    <button class="mob-tab-btn" data-tab="products">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      PRODUCTS
+    </button>
+    <button class="mob-tab-btn" data-tab="orders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      ORDERS
+    </button>
+    <button class="mob-tab-btn" data-tab="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      SETTINGS
+    </button>
+  </div>
+
+  <!-- Bottom Sheet -->
+  <div class="mob-sheet-bg" id="mob-sheet-bg">
+    <div class="mob-sheet" id="mob-sheet"></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="mob-toast" id="mob-toast"></div>
+
+  <script src="../../assets/js/supabase-client.js"></script>
+  <script src="../../assets/js/supabase-orders.js"></script>
+  <script>
+  (function() {
+    var ADMIN_PASS = 'thajvi2024';
+    var adminPass = '';
+    var productsData = null;
+    var siteData = null;
+    var activeTab = 'dashboard';
+    var REPO_RAW = 'https://raw.githubusercontent.com/thajvi/Thajvi-attire/main/';
+
+    // ===== LOGIN =====
+    var loginBtn = document.getElementById('mob-login-btn');
+    var passInput = document.getElementById('mob-pass');
+    function tryLogin() {
+      if (passInput.value === ADMIN_PASS) {
+        adminPass = passInput.value;
+        document.getElementById('mob-login').style.display = 'none';
+        document.getElementById('mob-app').style.display = 'block';
+        document.getElementById('mob-tabs').style.display = 'flex';
+        loadAll();
+      } else {
+        document.getElementById('mob-login-err').style.display = 'block';
+        passInput.value = '';
+      }
+    }
+    loginBtn.addEventListener('click', tryLogin);
+    passInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryLogin(); });
+
+    // ===== TABS =====
+    var tabBtns = document.querySelectorAll('.mob-tab-btn');
+    var titles = { dashboard: 'Dashboard', products: 'Products', orders: 'Orders', settings: 'Settings' };
+
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        switchTab(this.dataset.tab);
+      });
+    });
+
+    function switchTab(tab) {
+      activeTab = tab;
+      tabBtns.forEach(function(b) { b.classList.toggle('active', b.dataset.tab === tab); });
+      document.querySelectorAll('.mob-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.getElementById('tab-' + tab).classList.add('active');
+      document.getElementById('mob-page-title').textContent = titles[tab] || 'Admin';
+    }
+
+    // ===== REFRESH =====
+    document.getElementById('mob-refresh').addEventListener('click', loadAll);
+
+    function loadAll() {
+      loadDashboard();
+      loadProducts();
+      loadOrders();
+      loadSettings();
+    }
+
+    // ===== DASHBOARD =====
+    function loadDashboard() {
+      if (typeof getRevenueSummary !== 'function') return;
+      getRevenueSummary().then(function(data) {
+        if (!data) return;
+        document.getElementById('m-stat-orders').textContent = data.today_orders || 0;
+        document.getElementById('m-stat-revenue').textContent = '\u20B9' + ((data.today_revenue || 0).toLocaleString('en-IN'));
+        document.getElementById('m-stat-pending').textContent = data.pending_orders || 0;
+        document.getElementById('m-stat-ship').textContent = data.to_ship || 0;
+      });
+    }
+
+    // ===== PRODUCTS =====
+    function loadProducts() {
+      fetch(REPO_RAW + 'data/products.json?t=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          productsData = data;
+          renderProducts();
+        })
+        .catch(function() {
+          // Fallback to local
+          fetch('../../data/products.json?t=' + Date.now())
+            .then(function(r) { return r.json(); })
+            .then(function(data) { productsData = data; renderProducts(); });
+        });
+    }
+
+    function renderProducts() {
+      var el = document.getElementById('mob-products-list');
+      if (!productsData || !productsData.items || !productsData.items.length) {
+        el.innerHTML = '<div class="mob-empty">No products found</div>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < productsData.items.length; i++) {
+        var p = productsData.items[i];
+        var stockBadge = getStockBadge(p.stock);
+        html +=
+          '<div class="mob-card">' +
+            '<div class="mob-card-header">' +
+              '<div class="mob-card-name">' + esc(p.name) + '</div>' +
+              '<div class="mob-card-price">' + esc(p.price) + '</div>' +
+            '</div>' +
+            '<div class="mob-card-meta">' + stockBadge + '</div>' +
+            '<div class="mob-card-actions">' +
+              '<button class="mob-btn" onclick="openStockSheet(' + i + ')">Stock Status</button>' +
+              '<button class="mob-btn" onclick="openPriceSheet(' + i + ')">Edit Price</button>' +
+            '</div>' +
+          '</div>';
+      }
+      el.innerHTML = html;
+    }
+
+    function getStockBadge(stock) {
+      if (!stock) return '<span class="mob-badge mob-badge-stock">In Stock</span>';
+      if (stock === 'Out of Stock') return '<span class="mob-badge mob-badge-oos">Out of Stock</span>';
+      if (stock === 'Pre-Order') return '<span class="mob-badge mob-badge-preorder">Pre-Order</span>';
+      return '<span class="mob-badge mob-badge-urgency">' + esc(stock) + '</span>';
+    }
+
+    // ===== ORDERS =====
+    function loadOrders() {
+      if (typeof getAllOrdersFromSupabase !== 'function') {
+        document.getElementById('mob-orders-list').innerHTML = '<div class="mob-empty">Supabase not configured</div>';
+        return;
+      }
+      getAllOrdersFromSupabase({}).then(function(orders) {
+        renderOrders(orders.slice(0, 20));
+      });
+    }
+
+    function renderOrders(orders) {
+      var el = document.getElementById('mob-orders-list');
+      if (!orders.length) {
+        el.innerHTML = '<div class="mob-empty">No orders yet</div>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < orders.length; i++) {
+        var o = orders[i];
+        var date = new Date(o.created_at);
+        var dateStr = date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+        var items = '';
+        if (o.order_items && o.order_items.length) {
+          items = o.order_items.map(function(it) { return it.product_name; }).join(', ');
+          if (items.length > 50) items = items.substring(0, 50) + '...';
+        }
+        var payClass = 'mob-badge-' + (o.payment_status || 'pending');
+        var isUpiPending = o.payment_method === 'upi' && o.payment_status === 'pending_verification';
+
+        html +=
+          '<div class="mob-card">' +
+            '<div class="mob-card-header">' +
+              '<div class="mob-card-name" style="color:#C9A84C;font-size:0.78rem;">' + (o.order_id || '-') + '</div>' +
+              '<div class="mob-card-price">\u20B9' + ((o.total || 0).toLocaleString('en-IN')) + '</div>' +
+            '</div>' +
+            '<div class="mob-order-row"><span>' + (o.customer_name || '-') + '</span><span>' + dateStr + '</span></div>' +
+            (items ? '<div class="mob-order-row" style="color:#666;">' + esc(items) + '</div>' : '') +
+            '<div class="mob-order-badges">' +
+              '<span class="mob-badge ' + payClass + '">' + (o.payment_status || 'pending') + '</span>' +
+              '<span class="mob-badge mob-badge-' + (o.shipping_status || 'pending') + '">' + (o.shipping_status || 'pending') + '</span>' +
+            '</div>' +
+            '<div class="mob-card-actions">' +
+              (isUpiPending ? '<button class="mob-btn mob-btn-green" onclick="markPaid(\'' + o.order_id + '\',this)">Mark Paid</button>' : '') +
+              '<button class="mob-btn" onclick="openShipSheet(\'' + o.order_id + '\',\'' + (o.shipping_status || 'pending') + '\')">Shipping</button>' +
+            '</div>' +
+          '</div>';
+      }
+      el.innerHTML = html;
+    }
+
+    // ===== SETTINGS =====
+    function loadSettings() {
+      fetch(REPO_RAW + 'data/site.json?t=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          siteData = data;
+          renderSettings();
+        })
+        .catch(function() {
+          fetch('../../data/site.json?t=' + Date.now())
+            .then(function(r) { return r.json(); })
+            .then(function(data) { siteData = data; renderSettings(); });
+        });
+    }
+
+    function renderSettings() {
+      var el = document.getElementById('mob-settings-content');
+      if (!siteData) { el.innerHTML = '<div class="mob-empty">Could not load settings</div>'; return; }
+
+      var upiOn = siteData.payment && siteData.payment.upiEnabled;
+      var upiId = (siteData.payment && siteData.payment.upiId) || 'Not set';
+
+      el.innerHTML =
+        '<div class="mob-toggle-row">' +
+          '<div>' +
+            '<div class="mob-toggle-label">UPI Payments</div>' +
+            '<div class="mob-toggle-sub">Customers can pay via UPI at checkout</div>' +
+          '</div>' +
+          '<button class="mob-toggle' + (upiOn ? ' on' : '') + '" id="upi-toggle"></button>' +
+        '</div>' +
+        '<div class="mob-info">' +
+          '<div class="mob-info-label">UPI ID</div>' +
+          '<div class="mob-info-value">' + esc(upiId) + '</div>' +
+        '</div>' +
+        '<div class="mob-info">' +
+          '<div class="mob-info-label">Verification Time</div>' +
+          '<div class="mob-info-value">' + esc((siteData.payment && siteData.payment.upiVerificationTime) || '30 minutes') + '</div>' +
+        '</div>' +
+        '<p style="font-size:0.68rem;color:#555;text-align:center;margin-top:16px;">For full site settings, use Decap CMS on desktop</p>';
+
+      document.getElementById('upi-toggle').addEventListener('click', function() {
+        var newState = !this.classList.contains('on');
+        this.classList.toggle('on', newState);
+        toggleUpi(newState);
+      });
+    }
+
+    function toggleUpi(enabled) {
+      if (!siteData) return;
+      if (!siteData.payment) siteData.payment = {};
+      siteData.payment.upiEnabled = enabled;
+      githubUpdate('data/site.json', JSON.stringify(siteData, null, 2), (enabled ? 'Enable' : 'Disable') + ' UPI payments via Mobile Admin');
+    }
+
+    // ===== ACTIONS =====
+    window.markPaid = function(orderId, btn) {
+      if (!confirm('Mark ' + orderId + ' as paid?')) return;
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+      updateOrderInSupabase(orderId, { payment_status: 'paid' }).then(function(res) {
+        if (res.success) { showToast('Marked as Paid'); loadOrders(); loadDashboard(); }
+        else { showToast('Failed to update', true); btn.textContent = 'Mark Paid'; btn.disabled = false; }
+      });
+    };
+
+    window.openStockSheet = function(idx) {
+      var p = productsData.items[idx];
+      var options = [
+        { value: '', label: 'In Stock' },
+        { value: 'Selling Fast', label: 'Selling Fast' },
+        { value: 'Only a Few Left', label: 'Only a Few Left' },
+        { value: 'Limited Stock', label: 'Limited Stock' },
+        { value: 'Out of Stock', label: 'Out of Stock' },
+        { value: 'Pre-Order', label: 'Pre-Order' }
+      ];
+      var current = p.stock || '';
+      var html = '<h3>' + esc(p.name) + '</h3><label>Stock Status</label><div class="mob-stock-options">';
+      for (var i = 0; i < options.length; i++) {
+        var sel = options[i].value === current ? ' selected' : '';
+        html += '<div class="mob-stock-opt' + sel + '" data-val="' + options[i].value + '">' +
+          '<div class="mob-stock-dot"></div><div class="mob-stock-label">' + options[i].label + '</div></div>';
+      }
+      html += '</div><div class="mob-sheet-actions"><button class="mob-sheet-cancel" onclick="closeSheet()">Cancel</button>' +
+        '<button class="mob-sheet-save" id="stock-save-btn">Save</button></div>';
+
+      openSheet(html);
+      // Option click handlers
+      document.querySelectorAll('.mob-stock-opt').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          document.querySelectorAll('.mob-stock-opt').forEach(function(o) { o.classList.remove('selected'); });
+          this.classList.add('selected');
+        });
+      });
+      document.getElementById('stock-save-btn').addEventListener('click', function() {
+        var selected = document.querySelector('.mob-stock-opt.selected');
+        var val = selected ? selected.dataset.val : '';
+        productsData.items[idx].stock = val || null;
+        this.textContent = 'Saving...';
+        this.disabled = true;
+        githubUpdate('data/products.json', JSON.stringify(productsData, null, 2), 'Update stock: ' + p.name + ' → ' + (val || 'In Stock'))
+          .then(function() { closeSheet(); renderProducts(); })
+          .catch(function() { closeSheet(); });
+      });
+    };
+
+    window.openPriceSheet = function(idx) {
+      var p = productsData.items[idx];
+      var html = '<h3>' + esc(p.name) + '</h3><label>Price</label>' +
+        '<input type="text" id="price-input" value="' + esc(p.price) + '" />' +
+        '<div class="mob-sheet-actions"><button class="mob-sheet-cancel" onclick="closeSheet()">Cancel</button>' +
+        '<button class="mob-sheet-save" id="price-save-btn">Save</button></div>';
+      openSheet(html);
+      document.getElementById('price-input').focus();
+      document.getElementById('price-save-btn').addEventListener('click', function() {
+        var val = document.getElementById('price-input').value.trim();
+        if (!val) return;
+        productsData.items[idx].price = val;
+        this.textContent = 'Saving...';
+        this.disabled = true;
+        githubUpdate('data/products.json', JSON.stringify(productsData, null, 2), 'Update price: ' + p.name + ' → ' + val)
+          .then(function() { closeSheet(); renderProducts(); })
+          .catch(function() { closeSheet(); });
+      });
+    };
+
+    window.openShipSheet = function(orderId, currentStatus) {
+      var html = '<h3>Update Shipping</h3><p style="font-size:0.75rem;color:#888;margin-bottom:12px;">' + orderId + '</p>' +
+        '<label>Shipping Status</label><select id="ship-select">' +
+        '<option value="pending"' + (currentStatus === 'pending' ? ' selected' : '') + '>Pending</option>' +
+        '<option value="packed"' + (currentStatus === 'packed' ? ' selected' : '') + '>Packed</option>' +
+        '<option value="shipped"' + (currentStatus === 'shipped' ? ' selected' : '') + '>Shipped</option>' +
+        '<option value="delivered"' + (currentStatus === 'delivered' ? ' selected' : '') + '>Delivered</option>' +
+        '<option value="cancelled"' + (currentStatus === 'cancelled' ? ' selected' : '') + '>Cancelled</option>' +
+        '</select>' +
+        '<label>Tracking Number</label><input type="text" id="ship-tracking" placeholder="Optional" />' +
+        '<div class="mob-sheet-actions"><button class="mob-sheet-cancel" onclick="closeSheet()">Cancel</button>' +
+        '<button class="mob-sheet-save" id="ship-save-btn">Save</button></div>';
+      openSheet(html);
+      document.getElementById('ship-save-btn').addEventListener('click', function() {
+        var status = document.getElementById('ship-select').value;
+        var tracking = document.getElementById('ship-tracking').value.trim();
+        var updates = { shipping_status: status };
+        if (tracking) updates.tracking_number = tracking;
+        this.textContent = 'Saving...';
+        this.disabled = true;
+        updateOrderInSupabase(orderId, updates).then(function(res) {
+          closeSheet();
+          if (res.success) { showToast('Shipping updated'); loadOrders(); loadDashboard(); }
+          else { showToast('Failed to update', true); }
+        });
+      });
+    };
+
+    // ===== BOTTOM SHEET =====
+    function openSheet(html) {
+      document.getElementById('mob-sheet').innerHTML = html;
+      document.getElementById('mob-sheet-bg').classList.add('open');
+    }
+    window.closeSheet = function() {
+      document.getElementById('mob-sheet-bg').classList.remove('open');
+    };
+    document.getElementById('mob-sheet-bg').addEventListener('click', function(e) {
+      if (e.target === this) closeSheet();
+    });
+
+    // ===== GITHUB UPDATE =====
+    function githubUpdate(file, content, message) {
+      return fetch('/api/github-update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass },
+        body: JSON.stringify({ file: file, content: content, message: message })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          showToast('Saved! Live in ~1 min');
+        } else {
+          showToast(data.error || 'Save failed', true);
+          throw new Error(data.error);
+        }
+      })
+      .catch(function(err) {
+        showToast('Save failed: ' + (err.message || 'Unknown error'), true);
+        throw err;
+      });
+    }
+
+    // ===== TOAST =====
+    function showToast(msg, isError) {
+      var toast = document.getElementById('mob-toast');
+      toast.textContent = msg;
+      toast.className = 'mob-toast' + (isError ? ' error' : '');
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 3000);
+    }
+
+    // ===== HELPERS =====
+    function esc(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+  })();
+  </script>
+
+</body>
+</html>
