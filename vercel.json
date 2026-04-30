@@ -1,3 +1,8 @@
 {
-  "outputDirectory": "."
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/admin/mobile/(.*)", "dest": "/admin/mobile/$1" },
+    { "src": "/admin/dashboard/(.*)", "dest": "/admin/dashboard/$1" },
+    { "src": "/api/(.*)", "dest": "/api/$1" }
+  ]
 }
