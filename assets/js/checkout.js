@@ -726,14 +726,11 @@ function initUpiModal() {
         updateOrderInSupabase(orderId, { utr_number: utrValue });
       }
 
-      // Save UTR locally + reduce stock (payment is done at this point)
+      // Save UTR locally
       try {
         var localOrder = JSON.parse(localStorage.getItem('thajvi_last_order') || '{}');
         localOrder.utrNumber = utrValue;
         localStorage.setItem('thajvi_last_order', JSON.stringify(localOrder));
-        if (localOrder.items && typeof ThajviInventory !== 'undefined' && ThajviInventory.isReady()) {
-          ThajviInventory.confirm(localOrder.items);
-        }
       } catch(e) {}
 
       // Send UTR info via WhatsApp
