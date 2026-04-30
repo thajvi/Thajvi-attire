@@ -1902,9 +1902,9 @@ h2 em { font-style: italic; color: var(--gold); }
 
   /* Announcement bar text */
   .announcement-bar { font-size: 0.65rem; letter-spacing: 1px; padding: 8px 36px 8px 12px; }
-  .has-announcement { --nav-offset: 104px; }
-  .has-announcement .navbar { top: 32px; }
-  .has-announcement .hero { padding-top: 32px; }
+  .has-announcement { --nav-offset: 130px; }
+  .has-announcement .navbar { top: 60px; }
+  .has-announcement .hero { padding-top: 60px; }
 }
 
 /* ===== RESPONSIVE — SMALL PHONES ===== */
