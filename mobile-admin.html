@@ -114,6 +114,22 @@
     .mob-info-label { font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
     .mob-info-value { font-size: 0.85rem; color: #E8D5A0; font-weight: 500; word-break: break-all; }
 
+    /* Size stock display */
+    .mob-card-sizes { display: flex; gap: 10px; font-size: 0.7rem; font-weight: 600; font-family: 'Courier New', monospace; margin-bottom: 8px; flex-wrap: wrap; }
+
+    /* Size stock editor */
+    .mob-size-grid { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+    .mob-size-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #0A0A0A; border: 1px solid #333; border-radius: 8px; }
+    .mob-size-label { width: 36px; font-size: 0.85rem; font-weight: 600; color: #E8D5A0; }
+    .mob-size-controls { display: flex; align-items: center; gap: 0; margin-left: auto; }
+    .mob-size-btn { width: 36px; height: 36px; border: 1px solid #444; background: #1A1A1A; color: #C9A84C; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'Jost', sans-serif; }
+    .mob-size-btn:first-child { border-radius: 6px 0 0 6px; }
+    .mob-size-btn:last-child { border-radius: 0 6px 6px 0; }
+    .mob-size-btn:active { background: #333; }
+    .mob-size-input { width: 48px; height: 36px; text-align: center; border: 1px solid #444; border-left: none; border-right: none; background: #111; color: #E8D5A0; font-size: 0.95rem; font-weight: 600; font-family: 'Jost', sans-serif; -webkit-appearance: none; }
+    .mob-size-input:focus { outline: none; border-color: #C9A84C; }
+    .mob-size-total { font-size: 0.7rem; color: #888; text-align: right; margin-top: 6px; }
+
     /* Toast */
     .mob-toast { position: fixed; top: 16px; left: 16px; right: 16px; background: #C9A84C; color: #0A0A0A; padding: 12px 16px; border-radius: 10px; font-weight: 600; font-size: 0.82rem; z-index: 300; text-align: center; transform: translateY(-120%); transition: transform 0.3s ease; }
     .mob-toast.show { transform: translateY(0); }
@@ -294,6 +310,18 @@
       for (var i = 0; i < productsData.items.length; i++) {
         var p = productsData.items[i];
         var stockBadge = getStockBadge(p.stock);
+        var sizeInfo = '';
+        if (p.inventory && p.inventory.sizes) {
+          var sz = p.inventory.sizes;
+          var parts = [];
+          ['S','M','L','XL','XXL'].forEach(function(s) {
+            if (sz[s] !== undefined) {
+              var cls = sz[s] === 0 ? 'color:#F44336' : (sz[s] <= 3 ? 'color:#FFB347' : 'color:#4CAF50');
+              parts.push('<span style="' + cls + '">' + s + ':' + sz[s] + '</span>');
+            }
+          });
+          if (parts.length) sizeInfo = '<div class="mob-card-sizes">' + parts.join(' ') + '</div>';
+        }
         html +=
           '<div class="mob-card">' +
             '<div class="mob-card-header">' +
@@ -301,9 +329,11 @@
               '<div class="mob-card-price">' + esc(p.price) + '</div>' +
             '</div>' +
             '<div class="mob-card-meta">' + stockBadge + '</div>' +
+            sizeInfo +
             '<div class="mob-card-actions">' +
-              '<button class="mob-btn" onclick="openStockSheet(' + i + ')">Stock Status</button>' +
-              '<button class="mob-btn" onclick="openPriceSheet(' + i + ')">Edit Price</button>' +
+              '<button class="mob-btn" onclick="openStockSheet(' + i + ')">Status</button>' +
+              '<button class="mob-btn" onclick="openSizeStockSheet(' + i + ')">Sizes</button>' +
+              '<button class="mob-btn" onclick="openPriceSheet(' + i + ')">Price</button>' +
             '</div>' +
           '</div>';
       }
@@ -468,6 +498,86 @@
         this.textContent = 'Saving...';
         this.disabled = true;
         githubUpdate('data/products.json', JSON.stringify(productsData, null, 2), 'Update stock: ' + p.name + ' → ' + (val || 'In Stock'))
+          .then(function() { closeSheet(); renderProducts(); })
+          .catch(function() { closeSheet(); });
+      });
+    };
+
+    window.openSizeStockSheet = function(idx) {
+      var p = productsData.items[idx];
+      if (!p.inventory) p.inventory = { sizes: { S: 0, M: 0, L: 0, XL: 0, XXL: 0 }, lowStockThreshold: 5, veryLowThreshold: 3 };
+      if (!p.inventory.sizes) p.inventory.sizes = { S: 0, M: 0, L: 0, XL: 0, XXL: 0 };
+
+      var sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+      var html = '<h3>' + esc(p.name) + '</h3><label>Stock per Size</label><div class="mob-size-grid">';
+
+      for (var i = 0; i < sizes.length; i++) {
+        var sz = sizes[i];
+        var val = p.inventory.sizes[sz] || 0;
+        html +=
+          '<div class="mob-size-row">' +
+            '<div class="mob-size-label">' + sz + '</div>' +
+            '<div class="mob-size-controls">' +
+              '<button class="mob-size-btn" data-size="' + sz + '" data-dir="-1">&minus;</button>' +
+              '<input class="mob-size-input" type="number" inputmode="numeric" data-size="' + sz + '" value="' + val + '" min="0" />' +
+              '<button class="mob-size-btn" data-size="' + sz + '" data-dir="1">+</button>' +
+            '</div>' +
+          '</div>';
+      }
+
+      var total = 0;
+      for (var j = 0; j < sizes.length; j++) { total += (p.inventory.sizes[sizes[j]] || 0); }
+      html += '</div><div class="mob-size-total">Total: ' + total + ' units</div>';
+      html += '<div class="mob-sheet-actions"><button class="mob-sheet-cancel" onclick="closeSheet()">Cancel</button>' +
+        '<button class="mob-sheet-save" id="size-save-btn">Save</button></div>';
+
+      openSheet(html);
+
+      // +/- button handlers
+      document.querySelectorAll('.mob-size-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var size = this.dataset.size;
+          var dir = parseInt(this.dataset.dir);
+          var input = document.querySelector('.mob-size-input[data-size="' + size + '"]');
+          var val = Math.max(0, parseInt(input.value || 0) + dir);
+          input.value = val;
+          updateSizeTotal();
+        });
+      });
+
+      // Input change handler
+      document.querySelectorAll('.mob-size-input').forEach(function(input) {
+        input.addEventListener('input', updateSizeTotal);
+      });
+
+      function updateSizeTotal() {
+        var t = 0;
+        document.querySelectorAll('.mob-size-input').forEach(function(inp) {
+          t += Math.max(0, parseInt(inp.value || 0));
+        });
+        var totalEl = document.querySelector('.mob-size-total');
+        if (totalEl) totalEl.textContent = 'Total: ' + t + ' units';
+      }
+
+      // Save handler
+      document.getElementById('size-save-btn').addEventListener('click', function() {
+        var newSizes = {};
+        document.querySelectorAll('.mob-size-input').forEach(function(inp) {
+          newSizes[inp.dataset.size] = Math.max(0, parseInt(inp.value || 0));
+        });
+        productsData.items[idx].inventory.sizes = newSizes;
+        if (!productsData.items[idx].inventory.lowStockThreshold) productsData.items[idx].inventory.lowStockThreshold = 5;
+        if (!productsData.items[idx].inventory.veryLowThreshold) productsData.items[idx].inventory.veryLowThreshold = 3;
+
+        this.textContent = 'Saving...';
+        this.disabled = true;
+
+        // Build size summary for commit message
+        var summary = [];
+        for (var k in newSizes) { if (newSizes.hasOwnProperty(k)) summary.push(k + '=' + newSizes[k]); }
+
+        githubUpdate('data/products.json', JSON.stringify(productsData, null, 2),
+          'Update sizes: ' + p.name + ' (' + summary.join(', ') + ')')
           .then(function() { closeSheet(); renderProducts(); })
           .catch(function() { closeSheet(); });
       });
