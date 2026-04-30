@@ -10,13 +10,13 @@
       "sizes": "46",
       "whatsapp": "918129651993",
       "photo": "assets/images/mud-brown.jpeg",
-      "stock": null,
+      "stock": "Selling Fast",
       "inventory": {
         "sizes": {
-          "S": 0,
+          "S": 1,
           "M": 0,
-          "L": 0,
-          "XL": 0,
+          "L": 3,
+          "XL": 1,
           "XXL": 0
         },
         "lowStockThreshold": 5,
