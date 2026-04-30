@@ -73,6 +73,7 @@ collections:
             max: 4
             fields:
               - { name: "image", label: "Instagram Post Screenshot", widget: "image" }
+              - { name: "reelUrl", label: "Instagram Reel Link", widget: "string", required: false, hint: "Paste Instagram Reel URL (e.g. https://www.instagram.com/reel/ABC123/). A play icon will appear on the image." }
           - name: "footer_collections"
             label: "Footer Collection Links"
             widget: "list"
