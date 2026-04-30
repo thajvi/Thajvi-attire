@@ -674,12 +674,14 @@ function showUpiModal(order) {
 }
 
 function initUpiModal() {
-  // Close button
+  // Close button — just close modal, stay on checkout
   var closeBtn = document.getElementById('upi-modal-close');
   if (closeBtn) {
     closeBtn.addEventListener('click', function() {
-      if (confirm('Cancel UPI payment? Your order is saved as pending.')) {
-        window.location.href = 'order-success.html';
+      if (confirm('Cancel UPI payment? You can choose another payment method.')) {
+        var modal = document.getElementById('upi-modal');
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
       }
     });
   }
@@ -756,8 +758,10 @@ function initUpiModal() {
   document.addEventListener('keydown', function(e) {
     var modal = document.getElementById('upi-modal');
     if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-      if (confirm('Cancel UPI payment? Your order is saved as pending.')) {
-        window.location.href = 'order-success.html';
+      if (confirm('Cancel UPI payment? You can choose another payment method.')) {
+        var m = document.getElementById('upi-modal');
+        m.classList.add('hidden');
+        document.body.style.overflow = '';
       }
     }
   });
