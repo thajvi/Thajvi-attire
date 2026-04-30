@@ -2,7 +2,7 @@ backend:
   name: github
   repo: thajvi/Thajvi-attire
   branch: main
-  base_url: https://thajvi-attire.vercel.app
+  base_url: https://thajvi-attire-olive.vercel.app
   auth_endpoint: api/auth
 
 media_folder: "assets/images"
