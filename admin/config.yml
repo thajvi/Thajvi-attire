@@ -56,6 +56,7 @@ collections:
         file: "data/site.json"
         format: "json"
         fields:
+          - { name: "hero_image", label: "Hero Background Image", widget: "image", required: false, hint: "Full-width background image for the hero section. Upload a high-quality photo (1920x1080 or larger recommended)." }
           - { name: "countdown_enabled", label: "Enable Countdown Timer", widget: "boolean", default: false, hint: "Turn the countdown timer on or off" }
           - { name: "countdown_label", label: "Timer Label", widget: "string", default: "Sale ends in", required: false, hint: "Text shown before the timer e.g. Sale ends in / New drop in" }
           - { name: "countdown_date", label: "Countdown End Date & Time", widget: "datetime", required: false, hint: "Date and time the countdown counts down to" }
