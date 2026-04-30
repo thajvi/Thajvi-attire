@@ -1,4 +1,7 @@
 {
   "cleanUrls": true,
-  "trailingSlash": true
+  "rewrites": [
+    { "source": "/admin/mobile", "destination": "/admin/mobile/index.html" },
+    { "source": "/admin/dashboard", "destination": "/admin/dashboard/index.html" }
+  ]
 }
