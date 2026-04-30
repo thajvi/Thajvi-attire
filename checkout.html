@@ -209,7 +209,7 @@
   <script src="assets/js/cart.js"></script>
   <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/supabase-orders.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script src="assets/js/checkout.js"></script>
   <script>
     // Mobile hamburger
@@ -265,9 +265,18 @@
         Send Screenshot on WhatsApp &rarr;
       </a>
 
-      <p class="upi-skip-note">
-        <a href="#" id="upi-skip-link">Already paid? Continue to confirmation &rarr;</a>
+      <p class="upi-phone-hint" id="upi-phone-hint">
+        Paid from your phone after scanning QR? Send payment screenshot directly on WhatsApp to <strong id="upi-wa-number"></strong> from your phone.
       </p>
+
+      <div class="upi-skip-section">
+        <p class="upi-skip-label">Already paid? Enter your UPI transaction ID:</p>
+        <div class="upi-utr-row">
+          <input type="text" id="upi-utr-input" placeholder="e.g. 412345678901" class="upi-utr-input">
+          <button id="upi-utr-submit" class="upi-utr-btn">Submit</button>
+        </div>
+        <p class="upi-utr-error hidden" id="upi-utr-error">Please enter a valid transaction ID (min 6 characters)</p>
+      </div>
     </div>
   </div>
 

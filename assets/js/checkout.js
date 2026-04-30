@@ -631,12 +631,17 @@ function showUpiModal(order) {
   // Set "Open UPI App" button
   document.getElementById('upi-app-btn').href = upiLink;
 
-  // Generate QR code
-  var canvas = document.getElementById('upi-qr-canvas');
-  if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
+  // Generate QR code (only if a real UPI ID is configured)
+  var qrContainer = document.getElementById('upi-qr-canvas').parentElement;
+  var isRealUpi = STORE_CONFIG.upiId && STORE_CONFIG.upiId !== 'yourname@okaxis' && STORE_CONFIG.upiId.indexOf('@') !== -1;
+  if (isRealUpi && typeof QRCode !== 'undefined' && QRCode.toCanvas) {
+    qrContainer.style.display = '';
+    var canvas = document.getElementById('upi-qr-canvas');
     QRCode.toCanvas(canvas, upiLink, { width: 220, margin: 1 }, function(err) {
       if (err) console.log('QR generation error:', err);
     });
+  } else {
+    qrContainer.style.display = 'none';
   }
 
   // Build WhatsApp message
@@ -655,6 +660,13 @@ function showUpiModal(order) {
     'I will share the payment screenshot here. Please confirm my order. \uD83D\uDE4F';
   document.getElementById('upi-whatsapp-btn').href =
     'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(waMsg);
+
+  // Show WhatsApp number for desktop users who scanned QR on phone
+  var waNumEl = document.getElementById('upi-wa-number');
+  if (waNumEl && STORE_CONFIG.whatsappNumber) {
+    var num = STORE_CONFIG.whatsappNumber.replace(/^91/, '+91 ');
+    waNumEl.textContent = num;
+  }
 
   // Show modal + lock body scroll
   modal.classList.remove('hidden');
@@ -700,11 +712,42 @@ function initUpiModal() {
     });
   }
 
-  // Skip link
-  var skipLink = document.getElementById('upi-skip-link');
-  if (skipLink) {
-    skipLink.addEventListener('click', function(e) {
-      e.preventDefault();
+  // UTR submit (replaces old skip link)
+  var utrSubmit = document.getElementById('upi-utr-submit');
+  if (utrSubmit) {
+    utrSubmit.addEventListener('click', function() {
+      var utrInput = document.getElementById('upi-utr-input');
+      var utrError = document.getElementById('upi-utr-error');
+      var utrValue = (utrInput.value || '').trim();
+
+      if (utrValue.length < 6) {
+        utrError.classList.remove('hidden');
+        utrInput.focus();
+        return;
+      }
+      utrError.classList.add('hidden');
+
+      // Get current order ID from the modal
+      var orderId = document.getElementById('upi-order-id').textContent;
+
+      // Save UTR to Supabase
+      if (typeof updateOrderInSupabase === 'function') {
+        updateOrderInSupabase(orderId, { utr_number: utrValue });
+      }
+
+      // Also save UTR locally
+      try {
+        var localOrder = JSON.parse(localStorage.getItem('thajvi_last_order') || '{}');
+        localOrder.utrNumber = utrValue;
+        localStorage.setItem('thajvi_last_order', JSON.stringify(localOrder));
+      } catch(e) {}
+
+      // Send UTR info via WhatsApp
+      var waMsg = 'Hi! I have paid for order ' + orderId + '.\n' +
+        'UPI Transaction ID: ' + utrValue + '\n' +
+        'Please verify and confirm my order.';
+      window.open('https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(waMsg), '_blank');
+
       window.location.href = 'order-success.html';
     });
   }
