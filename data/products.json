@@ -14,10 +14,10 @@
       "inventory": {
         "sizes": {
           "S": 1,
-          "M": 0,
-          "L": 3,
-          "XL": 1,
-          "XXL": 0
+          "M": 1,
+          "L": 6,
+          "XL": 2,
+          "XXL": 1
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
