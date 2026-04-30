@@ -65,21 +65,7 @@
     })
     .then(function(res) {
       if (res.error) throw res.error;
-
-      // Step 3: Reduce stock for each item
-      var stockPromises = [];
-      for (var j = 0; j < order.items.length; j++) {
-        var item = order.items[j];
-        stockPromises.push(
-          sb.rpc('reduce_stock_after_order', {
-            p_sku: item.productId,
-            p_size: item.size,
-            p_quantity: item.quantity
-          }).catch(function(e) { console.log('Stock reduce warning:', e); })
-        );
-      }
-
-      return Promise.all(stockPromises);
+      return res;
     })
     .then(function() {
       console.log('Order saved to Supabase:', order.orderId);
