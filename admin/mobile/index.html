@@ -148,9 +148,10 @@
   <div class="mob-login" id="mob-login">
     <h1>Mobile Admin</h1>
     <p>Thajvi Attire</p>
-    <input type="password" id="mob-pass" placeholder="Enter password" />
+    <input type="email" id="mob-email" placeholder="Email" style="margin-bottom:10px;" />
+    <input type="password" id="mob-pass" placeholder="Password" />
     <button id="mob-login-btn">Login</button>
-    <p class="mob-login-err" id="mob-login-err">Incorrect password</p>
+    <p class="mob-login-err" id="mob-login-err"></p>
   </div>
 
   <!-- App -->
@@ -219,27 +220,57 @@
   <script src="../../assets/js/supabase-orders.js"></script>
   <script>
   (function() {
-    var ADMIN_PASS = 'thajvi2024';
-    var adminPass = '';
     var productsData = null;
     var siteData = null;
     var activeTab = 'dashboard';
     var REPO_RAW = 'https://raw.githubusercontent.com/thajvi/Thajvi-attire/main/';
 
-    // ===== LOGIN =====
+    // ===== SUPABASE AUTH LOGIN =====
     var loginBtn = document.getElementById('mob-login-btn');
+    var emailInput = document.getElementById('mob-email');
     var passInput = document.getElementById('mob-pass');
+    var loginErr = document.getElementById('mob-login-err');
+    var sb = window.THAJVI_SUPABASE;
+
+    function showApp() {
+      document.getElementById('mob-login').style.display = 'none';
+      document.getElementById('mob-app').style.display = 'block';
+      document.getElementById('mob-tabs').style.display = 'flex';
+      loadAll();
+    }
+
+    // Check if already logged in
+    if (sb) {
+      sb.auth.getSession().then(function(res) {
+        if (res.data.session) showApp();
+      });
+    }
+
     function tryLogin() {
-      if (passInput.value === ADMIN_PASS) {
-        adminPass = passInput.value;
-        document.getElementById('mob-login').style.display = 'none';
-        document.getElementById('mob-app').style.display = 'block';
-        document.getElementById('mob-tabs').style.display = 'flex';
-        loadAll();
-      } else {
-        document.getElementById('mob-login-err').style.display = 'block';
-        passInput.value = '';
+      if (!sb) {
+        loginErr.textContent = 'Database not configured';
+        loginErr.style.display = 'block';
+        return;
       }
+      var email = emailInput.value.trim();
+      var pass = passInput.value;
+      if (!email || !pass) {
+        loginErr.textContent = 'Enter email and password';
+        loginErr.style.display = 'block';
+        return;
+      }
+      loginBtn.textContent = 'Logging in...';
+      loginBtn.disabled = true;
+      sb.auth.signInWithPassword({ email: email, password: pass }).then(function(res) {
+        if (res.error) {
+          loginErr.textContent = res.error.message;
+          loginErr.style.display = 'block';
+          loginBtn.textContent = 'Login';
+          loginBtn.disabled = false;
+        } else {
+          showApp();
+        }
+      });
     }
     loginBtn.addEventListener('click', tryLogin);
     passInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryLogin(); });
