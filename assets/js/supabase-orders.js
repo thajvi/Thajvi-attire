@@ -43,7 +43,7 @@
       payment_status: order.paymentStatus || 'pending',
       shipping_status: 'pending',
       source: 'website'
-    }).select()
+    })
     .then(function(res) {
       if (res.error) throw res.error;
 
