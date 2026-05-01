@@ -334,6 +334,30 @@
         "veryLowThreshold": 3
       },
       "description": "SOFT MATERIAL \nEMBROIDERY AND LACE  WORK ON NECK ,SLEEVENDS,DAMEN AREA \nUV NECK \nVERY COMFORT TO WEAR \nSTRAIGHT BOTTOM WITH LACE DETAILING ON BOTTOM ENDS \nPRINTED DUPPATTA \n"
+    },
+    {
+      "badge": "Bestseller",
+      "fabric": "SOFT SILK",
+      "occasion": "Festive",
+      "price": "2400+SHIPPING",
+      "name": "GOLDEN GLITTER",
+      "featured": false,
+      "sizes": "46",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/gold-chembarathi.jpeg",
+      "stock": "Selling Fast",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 1,
+          "XL": 1,
+          "XXL": 1
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "3 PIECE SALWAR SET \nSILK MATERIAL\n3/4 SLEEVES \nU NECK \nHEAVY EMBROIDERY WORK ON YOKE ,SLEEVEND,DAMAN AREA\nSTRAIGHT BOTTOM WITH EMBROIDERY DETAILING ON BOTTOM ENDS \nSOFT DIGITAL PRINT DUPPATTA\n"
     }
   ]
 }
