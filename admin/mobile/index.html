@@ -230,7 +230,7 @@
     var emailInput = document.getElementById('mob-email');
     var passInput = document.getElementById('mob-pass');
     var loginErr = document.getElementById('mob-login-err');
-    var sb = window.THAJVI_SUPABASE;
+    var sb = window.getOrInitSupabase ? window.getOrInitSupabase() : window.THAJVI_SUPABASE;
 
     function showApp() {
       document.getElementById('mob-login').style.display = 'none';
