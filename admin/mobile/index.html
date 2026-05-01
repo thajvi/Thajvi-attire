@@ -806,7 +806,7 @@
     function githubUpdate(file, content, message) {
       return fetch('/api/github-update', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPass },
+        headers: { 'Content-Type': 'application/json', 'x-admin-pass': 'thajvi2024' },
         body: JSON.stringify({ file: file, content: content, message: message })
       })
       .then(function(r) { return r.json(); })
