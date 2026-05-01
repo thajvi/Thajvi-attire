@@ -96,7 +96,10 @@
 
   // ===== GET ALL ORDERS (admin) =====
   window.getAllOrdersFromSupabase = function(filters) {
-    if (!isEnabled()) return Promise.resolve([]);
+    if (!isEnabled()) {
+      console.log('Supabase orders disabled - tier:', !!window.THAJVI_TIER, 'feature:', window.THAJVI_TIER && window.THAJVI_TIER.features.supabaseDatabase, 'client:', !!getSupabase());
+      return Promise.resolve([]);
+    }
 
     var sb = getSupabase();
     var query = sb.from('orders').select('*, order_items(*)').order('created_at', { ascending: false });
@@ -121,8 +124,9 @@
     }
 
     return query.then(function(res) {
+      if (res.error) console.error('Orders query error:', res.error);
       return res.error ? [] : (res.data || []);
-    }).catch(function() { return []; });
+    }).catch(function(err) { console.error('Orders query catch:', err); return []; });
   };
 
   // ===== UPDATE ORDER STATUS (admin) =====
