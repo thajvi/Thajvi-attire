@@ -215,6 +215,30 @@
         "veryLowThreshold": 3
       },
       "description": "COTTON MATERIAL\nMEHANDI GREEN \nCOLLAR V NECK WITH BOX PLEATE\nSIDE SLITTED WITHOUT LINING \nSTRAIGHT BOTTOM WITH ELASTIC\n"
+    },
+    {
+      "badge": "New Arrival",
+      "fabric": "COTTON",
+      "occasion": "Daily Wear",
+      "price": "849+SHIPPING",
+      "name": "BLUE COD ORD SET",
+      "featured": false,
+      "sizes": "46",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/blue-kurthi.jpeg",
+      "stock": "Limited Stock",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 2,
+          "XL": 2,
+          "XXL": 3
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "COTTON CO ORD SET\n3/4 SLEEVES \nSIDE SLITTED WITHOUT LINING \nCOLLAR V NECK WITH BOX PLEATED \nSTRIGHT BOTTOM WITH ELASTIC"
     }
   ]
 }
