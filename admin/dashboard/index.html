@@ -137,8 +137,8 @@
 
     <!-- Stats -->
     <div class="dash-stats" id="dash-stats">
-      <div class="dash-stat"><div class="dash-stat-num" id="stat-today-orders">-</div><div class="dash-stat-label">Today's Orders</div></div>
-      <div class="dash-stat"><div class="dash-stat-num" id="stat-today-revenue">-</div><div class="dash-stat-label">Today's Revenue</div></div>
+      <div class="dash-stat"><div class="dash-stat-num" id="stat-today-orders">-</div><div class="dash-stat-label" id="stat-orders-label">Today's Orders</div></div>
+      <div class="dash-stat"><div class="dash-stat-num" id="stat-today-revenue">-</div><div class="dash-stat-label" id="stat-revenue-label">Today's Revenue</div></div>
       <div class="dash-stat warn"><div class="dash-stat-num" id="stat-pending">-</div><div class="dash-stat-label">Pending</div></div>
       <div class="dash-stat warn"><div class="dash-stat-num" id="stat-to-ship">-</div><div class="dash-stat-label">To Ship</div></div>
     </div>
@@ -226,14 +226,34 @@
 
     // Stats
     function loadStats() {
-      if (typeof getRevenueSummary !== 'function') return;
-      getRevenueSummary().then(function(data) {
-        if (!data) return;
-        document.getElementById('stat-today-orders').textContent = data.today_orders || 0;
-        document.getElementById('stat-today-revenue').textContent = '\u20B9' + ((data.today_revenue || 0).toLocaleString('en-IN'));
-        document.getElementById('stat-pending').textContent = data.pending_orders || 0;
-        document.getElementById('stat-to-ship').textContent = data.to_ship || 0;
+      // Initial stats load uses today filter
+      if (typeof getAllOrdersFromSupabase !== 'function') return;
+      getAllOrdersFromSupabase({ today: true }).then(function(orders) {
+        updateStatsFromOrders(orders);
       });
+    }
+
+    function updateStatsFromOrders(orders) {
+      var totalOrders = orders.length;
+      var revenue = 0;
+      var pending = 0;
+      var toShip = 0;
+      for (var i = 0; i < orders.length; i++) {
+        var o = orders[i];
+        if (o.payment_status === 'paid') revenue += (o.total || 0);
+        if (o.payment_status === 'pending' || o.payment_status === 'pending_verification') pending++;
+        if (o.shipping_status === 'pending' && o.payment_status === 'paid') toShip++;
+      }
+      document.getElementById('stat-today-orders').textContent = totalOrders;
+      document.getElementById('stat-today-revenue').textContent = '\u20B9' + revenue.toLocaleString('en-IN');
+      document.getElementById('stat-pending').textContent = pending;
+      document.getElementById('stat-to-ship').textContent = toShip;
+
+      // Update labels based on filter
+      var labels = { all: 'All', today: "Today's", week: "This Week's", pending: 'Pending', packed: 'Packed', shipped: 'Shipped', delivered: 'Delivered', pending_upi: 'Pending UPI' };
+      var label = labels[currentFilter] || 'All';
+      document.getElementById('stat-orders-label').textContent = label + ' Orders';
+      document.getElementById('stat-revenue-label').textContent = label + ' Revenue';
     }
 
     // Orders
@@ -253,6 +273,7 @@
       getAllOrdersFromSupabase(filters).then(function(orders) {
         allOrders = orders;
         renderOrders(orders);
+        updateStatsFromOrders(orders);
       });
     }
 
