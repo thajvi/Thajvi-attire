@@ -287,6 +287,30 @@
         "veryLowThreshold": 3
       },
       "description": "MUL CHANDERI TOP BOTTOM DUPPATTA\nA LINE PATTERN WITH HEAVY EMBROIDERY WORK ON YOKE AND SLEEVENDS \n3/4 SLEEVES \nU V NECK PATTERN \nSTRAIGHT BOTTOM WITH ELASTIC \nSOFT MUL CHANDERI DUPPATA WITH EMBROIDERY WORK "
+    },
+    {
+      "badge": "Bestseller",
+      "fabric": "MUL CHANDERI",
+      "occasion": "Festive",
+      "price": "1299+SHIPPING",
+      "name": "MUL CHNADERI 3 PIECE SET",
+      "featured": false,
+      "sizes": "46-47",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/brown-chembarathi.jpeg",
+      "stock": "Selling Fast",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 0,
+          "XL": 0,
+          "XXL": 2
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "MUL CHANDERI 3 PIECE SET \nCOLLAR NECK \nALINE TOP\n3/4 SLEEVES \nEMBROIDERY WORK ON SLEEVES AND DHAMEN AREA \nSTRAIGHT BOTTOM\nSIMPLE EMBROIDERY DUPPATTA"
     }
   ]
 }
