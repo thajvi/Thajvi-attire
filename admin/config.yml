@@ -99,6 +99,8 @@ collections:
           - { name: "video_url", label: "Video URL", widget: "string", required: false, hint: "Paste a YouTube link (e.g. https://youtu.be/XXXX) or Instagram Reel link (e.g. https://www.instagram.com/reel/XXXX). YouTube embeds directly on page. Instagram shows a click-through card." }
           - { name: "video_heading", label: "Video Section Heading", widget: "string", default: "Our Story", required: false, hint: "Heading shown above the video" }
           - { name: "video_subtext", label: "Video Section Subtext", widget: "string", default: "Watch how we handpick every saree with love and care.", required: false, hint: "Description shown under the heading" }
+          - { name: "shipping_cost", label: "Shipping Charge (₹)", widget: "number", default: 80, value_type: "int", min: 0, hint: "Shipping cost in ₹ for orders below free shipping threshold. Set 0 for always free shipping." }
+          - { name: "free_shipping_threshold", label: "Free Shipping Above (₹)", widget: "number", default: 999, value_type: "int", min: 0, hint: "Orders above this amount get free shipping. Set 0 to always charge shipping." }
           - name: "payment"
             label: "Payment Settings"
             widget: "object"

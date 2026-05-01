@@ -165,6 +165,13 @@ var _siteConfigReady = fetch('data/site.json')
   .then(function(res) { return res.json(); })
   .then(function(site) {
     if (site.payment && site.payment.upiEnabled) { UPI_ENABLED = true; }
+    // Apply shipping config from CMS
+    if (typeof ThajviCart !== 'undefined' && ThajviCart.setShippingConfig) {
+      ThajviCart.setShippingConfig(
+        typeof site.shipping_cost === 'number' ? site.shipping_cost : 80,
+        typeof site.free_shipping_threshold === 'number' ? site.free_shipping_threshold : 999
+      );
+    }
     return site;
   })
   .catch(function() { return {}; });

@@ -36,6 +36,8 @@
   "video_url": "",
   "video_heading": "Our Story",
   "video_subtext": "Watch our brand story.",
+  "shipping_cost": 80,
+  "free_shipping_threshold": 999,
   "payment": {
     "upiEnabled": true,
     "upiId": "thanvijithesh5@okhdfcbank",

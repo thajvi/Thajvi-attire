@@ -191,6 +191,12 @@ var ThajviCart = (function() {
 
   // ===== PUBLIC API =====
 
+  function setShippingConfig(cost, threshold) {
+    if (typeof cost === 'number' && cost >= 0) SHIPPING_COST = cost;
+    if (typeof threshold === 'number' && threshold >= 0) FREE_SHIPPING_THRESHOLD = threshold;
+    notifyListeners();
+  }
+
   return {
     init: initCart,
     get: getCart,
@@ -206,7 +212,9 @@ var ThajviCart = (function() {
     freeShippingProgress: getFreeShippingProgress,
     formatPrice: formatPrice,
     onChange: onChange,
-    FREE_SHIPPING_THRESHOLD: FREE_SHIPPING_THRESHOLD
+    setShippingConfig: setShippingConfig,
+    get FREE_SHIPPING_THRESHOLD() { return FREE_SHIPPING_THRESHOLD; },
+    get SHIPPING_COST() { return SHIPPING_COST; }
   };
 
 })();
