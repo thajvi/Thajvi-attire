@@ -239,6 +239,30 @@
         "veryLowThreshold": 3
       },
       "description": "COTTON CO ORD SET\n3/4 SLEEVES \nSIDE SLITTED WITHOUT LINING \nCOLLAR V NECK WITH BOX PLEATED \nSTRIGHT BOTTOM WITH ELASTIC"
+    },
+    {
+      "badge": "Bestseller",
+      "fabric": "SOFT SILK",
+      "occasion": "Festive",
+      "price": "2199+ SHIPPING",
+      "name": "PARTY WEAR SALWAR SET",
+      "featured": false,
+      "sizes": "46 -47",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/black-chembarathi.jpeg",
+      "stock": "Only a Few Left",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 1,
+          "L": 0,
+          "XL": 1,
+          "XXL": 0
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "BLACK SILK SALWAR SET\n3/4 SLEEVES\nU,V NECK WITH HEAVY BEEDS WORK\nPLAIN BLACK COLOUR BOTTOM WITH SLITTED TOP\nBANARASI  DUPPATTA "
     }
   ]
 }
