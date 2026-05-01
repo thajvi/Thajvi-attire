@@ -263,6 +263,30 @@
         "veryLowThreshold": 3
       },
       "description": "BLACK SILK SALWAR SET\n3/4 SLEEVES\nU,V NECK WITH HEAVY BEEDS WORK\nPLAIN BLACK COLOUR BOTTOM WITH SLITTED TOP\nBANARASI  DUPPATTA "
+    },
+    {
+      "badge": "Bestseller",
+      "fabric": "MUL CHANDERI",
+      "occasion": "Daily Wear",
+      "price": "1299+SHIPPING",
+      "name": "PURE MUL CHANDERI 3 PIECE SET",
+      "featured": false,
+      "sizes": "46-47",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/pink-chembarathi.jpeg",
+      "stock": "Selling Fast",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 0,
+          "XL": 1,
+          "XXL": 0
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "MUL CHANDERI TOP BOTTOM DUPPATTA\nA LINE PATTERN WITH HEAVY EMBROIDERY WORK ON YOKE AND SLEEVENDS \n3/4 SLEEVES \nU V NECK PATTERN \nSTRAIGHT BOTTOM WITH ELASTIC \nSOFT MUL CHANDERI DUPPATA WITH EMBROIDERY WORK "
     }
   ]
 }
