@@ -167,6 +167,54 @@
         "veryLowThreshold": 3
       },
       "description": "A LINE PATTERN \n3/4 SLEEVES\nV NECK WITH BOX PLEATED\nSTRAIGHT BOTTOM WITH ELASTIC \nTOP WITHOUT LINING"
+    },
+    {
+      "badge": "Bestseller",
+      "fabric": "COTTON",
+      "occasion": "Daily Wear",
+      "price": "699",
+      "name": "COTTON FEEDING FRIENDLY TOP TOP",
+      "featured": false,
+      "sizes": "46",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/maroon-kurthi.jpeg",
+      "stock": "Only a Few Left",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 1,
+          "XL": 2,
+          "XXL": 2
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "COTTON \nCOLLAR NECK KURTHI \nA LINE PATTERN \n3/4 SLEEVES \n"
+    },
+    {
+      "badge": "Bestseller",
+      "fabric": "COTTON",
+      "occasion": "Daily Wear",
+      "price": "849+ SHIPPING ",
+      "name": "MEHANDI GREEN CO ORD SET",
+      "featured": false,
+      "sizes": "46",
+      "whatsapp": "918129651993",
+      "photo": "assets/images/mehandi-green.jpeg",
+      "stock": "Only a Few Left",
+      "inventory": {
+        "sizes": {
+          "S": 0,
+          "M": 0,
+          "L": 1,
+          "XL": 2,
+          "XXL": 2
+        },
+        "lowStockThreshold": 5,
+        "veryLowThreshold": 3
+      },
+      "description": "COTTON MATERIAL\nMEHANDI GREEN \nCOLLAR V NECK WITH BOX PLEATE\nSIDE SLITTED WITHOUT LINING \nSTRAIGHT BOTTOM WITH ELASTIC\n"
     }
   ]
 }
