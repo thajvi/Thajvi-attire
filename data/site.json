@@ -52,7 +52,7 @@
   "catalogue_message": "Hi! I'd like to receive your full catalogue. Please send it to me. Thank you!",
   "countdown_enabled": false,
   "instagram_handle": "@thajvi_attire_",
-  "hero_image": "",
+  "hero_image": "assets/images/gold-chembarathi.jpeg",
   "site_url": "https://thajviattire.com",
   "trust_badges": [
     {
@@ -75,7 +75,7 @@
   "catalogue_subtext": "Get our latest catalogue with all designs and prices sent directly to your WhatsApp.",
   "journal": [],
   "catalogue_mode": "manual",
-  "brand_photo": "",
+  "brand_photo": "assets/images/shirt-maxi-dress.jpeg",
   "countdown_date": "",
   "video_enabled": false,
   "video_heading": "Our Story",
