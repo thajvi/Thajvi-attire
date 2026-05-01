@@ -118,9 +118,10 @@
   <div class="dash-login" id="dash-login">
     <h1>Admin Dashboard</h1>
     <p>Thajvi Attire</p>
-    <input type="password" id="dash-pass" placeholder="Enter password" />
+    <input type="email" id="dash-email" placeholder="Email" style="margin-bottom:10px;" />
+    <input type="password" id="dash-pass" placeholder="Password" />
     <button id="dash-login-btn">Login</button>
-    <p class="dash-login-err" id="dash-login-err">Incorrect password</p>
+    <p class="dash-login-err" id="dash-login-err"></p>
   </div>
 
   <!-- Dashboard -->
@@ -197,22 +198,54 @@
   <script src="../../assets/js/supabase-orders.js"></script>
   <script>
   (function() {
-    var ADMIN_PASS = 'thajvi2024';
     var currentFilter = 'all';
     var allOrders = [];
+    var sb = window.getOrInitSupabase ? window.getOrInitSupabase() : window.THAJVI_SUPABASE;
 
     // Login
     var loginBtn = document.getElementById('dash-login-btn');
+    var emailInput = document.getElementById('dash-email');
     var passInput = document.getElementById('dash-pass');
+    var loginErr = document.getElementById('dash-login-err');
+
+    function showDash() {
+      document.getElementById('dash-login').style.display = 'none';
+      document.getElementById('dash').style.display = 'block';
+      loadDashboard();
+    }
+
+    // Check if already logged in
+    if (sb) {
+      sb.auth.getSession().then(function(res) {
+        if (res.data.session) showDash();
+      });
+    }
+
     function tryLogin() {
-      if (passInput.value === ADMIN_PASS) {
-        document.getElementById('dash-login').style.display = 'none';
-        document.getElementById('dash').style.display = 'block';
-        loadDashboard();
-      } else {
-        document.getElementById('dash-login-err').style.display = 'block';
-        passInput.value = '';
+      if (!sb) {
+        loginErr.textContent = 'Database not configured';
+        loginErr.style.display = 'block';
+        return;
       }
+      var email = emailInput.value.trim();
+      var pass = passInput.value;
+      if (!email || !pass) {
+        loginErr.textContent = 'Enter email and password';
+        loginErr.style.display = 'block';
+        return;
+      }
+      loginBtn.textContent = 'Logging in...';
+      loginBtn.disabled = true;
+      sb.auth.signInWithPassword({ email: email, password: pass }).then(function(res) {
+        if (res.error) {
+          loginErr.textContent = res.error.message;
+          loginErr.style.display = 'block';
+          loginBtn.textContent = 'Login';
+          loginBtn.disabled = false;
+        } else {
+          showDash();
+        }
+      });
     }
     loginBtn.addEventListener('click', tryLogin);
     passInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryLogin(); });

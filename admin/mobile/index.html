@@ -223,6 +223,7 @@
     var productsData = null;
     var siteData = null;
     var activeTab = 'dashboard';
+    var authToken = null;
     var REPO_RAW = 'https://raw.githubusercontent.com/thajvi/Thajvi-attire/main/';
 
     // ===== SUPABASE AUTH LOGIN =====
@@ -242,7 +243,13 @@
     // Check if already logged in
     if (sb) {
       sb.auth.getSession().then(function(res) {
-        if (res.data.session) showApp();
+        if (res.data.session) {
+          authToken = res.data.session.access_token;
+          showApp();
+        }
+      });
+      sb.auth.onAuthStateChange(function(event, session) {
+        authToken = session ? session.access_token : null;
       });
     }
 
@@ -268,6 +275,7 @@
           loginBtn.textContent = 'Login';
           loginBtn.disabled = false;
         } else {
+          authToken = res.data.session.access_token;
           showApp();
         }
       });
@@ -804,9 +812,11 @@
 
     // ===== GITHUB UPDATE =====
     function githubUpdate(file, content, message) {
+      var headers = { 'Content-Type': 'application/json' };
+      if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
       return fetch('/api/github-update', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-pass': 'thajvi2024' },
+        headers: headers,
         body: JSON.stringify({ file: file, content: content, message: message })
       })
       .then(function(r) { return r.json(); })

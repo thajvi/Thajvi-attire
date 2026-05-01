@@ -5,9 +5,34 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Auth check
-  var adminPass = process.env.ADMIN_PASSWORD || 'thajvi2024';
-  if (req.headers['x-admin-pass'] !== adminPass) {
+  // Auth check — verify Supabase JWT or fall back to env var password
+  var authorized = false;
+
+  // Option 1: Supabase Bearer token
+  var authHeader = req.headers['authorization'] || '';
+  if (authHeader.startsWith('Bearer ')) {
+    var token = authHeader.slice(7);
+    try {
+      var supabaseUrl = process.env.SUPABASE_URL || 'https://kqrtyygwonozakvbiujv.supabase.co';
+      var supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxcnR5eWd3b25vemFrdmJpdWp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTc0ODUsImV4cCI6MjA5Mjg5MzQ4NX0.MarhU_IRvWuAro2XE0wLS9mZIBeR3aStQstOo43E5w8';
+      // Verify token by calling Supabase auth endpoint
+      var userRes = await fetch(supabaseUrl + '/auth/v1/user', {
+        headers: { 'Authorization': 'Bearer ' + token, 'apikey': supabaseKey }
+      });
+      if (userRes.ok) authorized = true;
+    } catch (e) {
+      // Token verification failed, continue to next method
+    }
+  }
+
+  // Option 2: Legacy password via env var (not hardcoded)
+  if (!authorized && process.env.ADMIN_PASSWORD) {
+    if (req.headers['x-admin-pass'] === process.env.ADMIN_PASSWORD) {
+      authorized = true;
+    }
+  }
+
+  if (!authorized) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

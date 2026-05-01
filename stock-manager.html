@@ -17,7 +17,8 @@
   <!-- Login Screen -->
   <div class="sm-login" id="sm-login">
     <h1 class="sm-title">Stock Manager</h1>
-    <p style="color:#888;font-size:0.85rem;">Enter admin password</p>
+    <p style="color:#888;font-size:0.85rem;">Login to manage stock</p>
+    <input type="email" id="sm-email" placeholder="Email" style="margin-bottom:10px;" />
     <input type="password" id="sm-password" placeholder="Password" />
     <button class="sm-login-btn" id="sm-login-btn">Login</button>
     <p class="sm-login-error" id="sm-login-error" style="display:none;"></p>
@@ -45,30 +46,59 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/cart.js"></script>
   <script src="assets/js/inventory.js"></script>
   <script>
   (function() {
-    // ⚠️ Change this password!
-    var ADMIN_PASSWORD = 'thajvi2024';
     var productsData = [];
+    var sb = window.getOrInitSupabase ? window.getOrInitSupabase() : window.THAJVI_SUPABASE;
 
     // Login
     var loginBtn = document.getElementById('sm-login-btn');
+    var emailInput = document.getElementById('sm-email');
     var passInput = document.getElementById('sm-password');
     var loginError = document.getElementById('sm-login-error');
 
+    function showStockManager() {
+      document.getElementById('sm-login').style.display = 'none';
+      document.getElementById('sm-page').style.display = 'block';
+      loadProducts();
+    }
+
+    // Check if already logged in
+    if (sb) {
+      sb.auth.getSession().then(function(res) {
+        if (res.data.session) showStockManager();
+      });
+    }
+
     function tryLogin() {
-      if (passInput.value === ADMIN_PASSWORD) {
-        document.getElementById('sm-login').style.display = 'none';
-        document.getElementById('sm-page').style.display = 'block';
-        loadProducts();
-      } else {
-        loginError.textContent = 'Incorrect password';
+      if (!sb) {
+        loginError.textContent = 'Database not configured';
         loginError.style.display = 'block';
-        passInput.value = '';
-        passInput.focus();
+        return;
       }
+      var email = emailInput.value.trim();
+      var pass = passInput.value;
+      if (!email || !pass) {
+        loginError.textContent = 'Enter email and password';
+        loginError.style.display = 'block';
+        return;
+      }
+      loginBtn.textContent = 'Logging in...';
+      loginBtn.disabled = true;
+      sb.auth.signInWithPassword({ email: email, password: pass }).then(function(res) {
+        if (res.error) {
+          loginError.textContent = res.error.message;
+          loginError.style.display = 'block';
+          loginBtn.textContent = 'Login';
+          loginBtn.disabled = false;
+        } else {
+          showStockManager();
+        }
+      });
     }
     loginBtn.addEventListener('click', tryLogin);
     passInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryLogin(); });
