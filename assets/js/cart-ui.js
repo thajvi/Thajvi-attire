@@ -268,39 +268,51 @@
   // Called from main.js when "Add to Cart" is clicked
   window.handleAddToCart = function(product, btnElement) {
     if (!product.size) {
-      // Shake the size selector area
-      var card = btnElement.closest('.saree-card');
-      if (card) {
-        var sizeArea = card.querySelector('div[style*="display:flex"][style*="gap:8px"]');
-        if (sizeArea) {
-          sizeArea.style.animation = 'btnShake 0.5s ease';
-          setTimeout(function() { sizeArea.style.animation = ''; }, 600);
+      if (btnElement) {
+        // Shake the size selector area
+        var card = btnElement.closest('.saree-card');
+        if (card) {
+          var sizeArea = card.querySelector('div[style*="display:flex"][style*="gap:8px"]');
+          if (sizeArea) {
+            sizeArea.style.animation = 'btnShake 0.5s ease';
+            setTimeout(function() { sizeArea.style.animation = ''; }, 600);
+          }
         }
+        // Show tooltip
+        btnElement.classList.add('no-size');
+        var origText = btnElement.textContent;
+        btnElement.textContent = 'Please select a size';
+        setTimeout(function() {
+          btnElement.textContent = origText;
+          btnElement.classList.remove('no-size');
+        }, 1500);
+      } else {
+        alert('Please select a size first!');
       }
-      // Show tooltip
-      btnElement.classList.add('no-size');
-      var origText = btnElement.textContent;
-      btnElement.textContent = 'Please select a size';
-      setTimeout(function() {
-        btnElement.textContent = origText;
-        btnElement.classList.remove('no-size');
-      }, 1500);
       return;
     }
 
     // Loading state
-    btnElement.disabled = true;
-    btnElement.textContent = 'Adding...';
-    btnElement.classList.add('loading');
+    if (btnElement) {
+      btnElement.disabled = true;
+      btnElement.textContent = 'Adding...';
+      btnElement.classList.add('loading');
+    }
 
     setTimeout(function() {
       var result = ThajviCart.add(product);
 
       if (result === true) {
-        // Success state
-        btnElement.textContent = 'Added \u2713';
-        btnElement.classList.remove('loading');
-        btnElement.classList.add('success');
+        if (btnElement) {
+          btnElement.textContent = 'Added \u2713';
+          btnElement.classList.remove('loading');
+          btnElement.classList.add('success');
+          setTimeout(function() {
+            btnElement.textContent = 'Add to Cart';
+            btnElement.classList.remove('success');
+            btnElement.disabled = false;
+          }, 1500);
+        }
 
         // Bounce cart icon
         var cartBtn = document.querySelector('.nav-cart-btn');
@@ -312,30 +324,27 @@
         // Show toast
         showToast(product);
 
-        // Reset button after 1.5s
-        setTimeout(function() {
-          btnElement.textContent = 'Add to Cart';
-          btnElement.classList.remove('success');
-          btnElement.disabled = false;
-        }, 1500);
-
       } else if (result === 'oos') {
-        btnElement.textContent = 'Out of Stock';
-        btnElement.classList.remove('loading');
-        btnElement.classList.add('no-size');
-        setTimeout(function() {
-          btnElement.textContent = 'Add to Cart';
-          btnElement.classList.remove('no-size');
-          btnElement.disabled = false;
-        }, 1500);
+        if (btnElement) {
+          btnElement.textContent = 'Out of Stock';
+          btnElement.classList.remove('loading');
+          btnElement.classList.add('no-size');
+          setTimeout(function() {
+            btnElement.textContent = 'Add to Cart';
+            btnElement.classList.remove('no-size');
+            btnElement.disabled = false;
+          }, 1500);
+        }
 
       } else {
-        btnElement.textContent = 'Max qty reached';
-        setTimeout(function() {
-          btnElement.textContent = 'Add to Cart';
-          btnElement.disabled = false;
-          btnElement.classList.remove('loading');
-        }, 1500);
+        if (btnElement) {
+          btnElement.textContent = 'Max qty reached';
+          setTimeout(function() {
+            btnElement.textContent = 'Add to Cart';
+            btnElement.disabled = false;
+            btnElement.classList.remove('loading');
+          }, 1500);
+        }
       }
     }, 300);
   };
