@@ -633,20 +633,33 @@ function showUpiModal(order) {
     qrContainer.style.display = 'none';
   }
 
-  // Build WhatsApp message
+  // Build WhatsApp message with FULL order details
   var items = '';
   for (var i = 0; i < order.items.length; i++) {
     var it = order.items[i];
-    items += '- ' + it.name + ' (Size: ' + it.size + ') x' + it.quantity + '\n';
+    items += '\u2022 *' + it.name + '*\n  Size: ' + it.size + ' | Qty: ' + it.quantity + ' | ' + ThajviCart.formatPrice(it.price * it.quantity) + '\n';
   }
-  var waMsg = 'Hi! \uD83D\uDE4F\n\n' +
-    'I have placed an order and am paying via UPI.\n\n' +
-    'Order ID: ' + order.orderId + '\n' +
-    'Amount: ' + ThajviCart.formatPrice(order.total) + '\n' +
+  var waMsg = '\uD83D\uDCB3 *UPI PAYMENT ORDER \u2014 ' + STORE_CONFIG.storeName + '*\n' +
+    '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n' +
+    '*Order ID:* ' + order.orderId + '\n' +
+    '*Payment:* UPI (Pending Verification)\n\n' +
+    '\uD83D\uDC64 *Customer:*\n' +
     'Name: ' + order.customer.name + '\n' +
-    'Phone: ' + order.customer.phone + '\n\n' +
-    'Items:\n' + items + '\n' +
-    'I will share the payment screenshot here. Please confirm my order. \uD83D\uDE4F';
+    'Phone: ' + order.customer.phone + '\n' +
+    (order.customer.email ? 'Email: ' + order.customer.email + '\n' : '') + '\n' +
+    '\uD83D\uDCE6 *Items:*\n' + items + '\n' +
+    '\uD83D\uDCB0 *Pricing:*\n' +
+    'Subtotal: ' + ThajviCart.formatPrice(order.pricing.subtotal) + '\n' +
+    'Shipping: ' + (order.pricing.shipping === 0 ? 'FREE \u2705' : ThajviCart.formatPrice(order.pricing.shipping)) + '\n' +
+    '*Total: ' + ThajviCart.formatPrice(order.total) + '*\n\n' +
+    '\uD83D\uDCCD *Delivery Address:*\n' +
+    order.customer.address.line1 + '\n' +
+    (order.customer.address.line2 ? order.customer.address.line2 + '\n' : '') +
+    order.customer.address.city + ', ' + order.customer.address.state + '\n' +
+    'Pincode: ' + order.customer.address.pincode + '\n' +
+    (order.customer.instructions ? '\n\uD83D\uDCDD *Instructions:* ' + order.customer.instructions + '\n' : '') +
+    '\n\uD83D\uDE4F I will share the payment screenshot here. Please confirm my order.\n' +
+    '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
   document.getElementById('upi-whatsapp-btn').href =
     'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(waMsg);
 
@@ -733,11 +746,35 @@ function initUpiModal() {
         localStorage.setItem('thajvi_last_order', JSON.stringify(localOrder));
       } catch(e) {}
 
-      // Send UTR info via WhatsApp
-      var waMsg = 'Hi! I have paid for order ' + orderId + '.\n' +
-        'UPI Transaction ID: ' + utrValue + '\n' +
-        'Please verify and confirm my order.';
-      window.open('https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(waMsg), '_blank');
+      // Send UTR info via WhatsApp with full order details
+      var utrMsg = '\u2705 *UPI PAYMENT DONE*\n\n' +
+        '*Order ID:* ' + orderId + '\n' +
+        '*UPI Transaction ID:* ' + utrValue + '\n' +
+        '*Amount:* ' + document.getElementById('upi-amount').textContent + '\n';
+      try {
+        var lo = JSON.parse(localStorage.getItem('thajvi_last_order') || '{}');
+        if (lo.customer) {
+          utrMsg += '\n\uD83D\uDC64 *Customer:*\n' +
+            'Name: ' + lo.customer.name + '\n' +
+            'Phone: ' + lo.customer.phone + '\n';
+          if (lo.items) {
+            utrMsg += '\n\uD83D\uDCE6 *Items:*\n';
+            for (var k = 0; k < lo.items.length; k++) {
+              var itm = lo.items[k];
+              utrMsg += '\u2022 ' + itm.name + ' (Size: ' + itm.size + ') x' + itm.quantity + '\n';
+            }
+          }
+          if (lo.customer.address) {
+            utrMsg += '\n\uD83D\uDCCD *Delivery Address:*\n' +
+              lo.customer.address.line1 + '\n' +
+              (lo.customer.address.line2 ? lo.customer.address.line2 + '\n' : '') +
+              lo.customer.address.city + ', ' + lo.customer.address.state + '\n' +
+              'Pincode: ' + lo.customer.address.pincode + '\n';
+          }
+        }
+      } catch(e) {}
+      utrMsg += '\nPlease verify and confirm my order. \uD83D\uDE4F';
+      window.open('https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(utrMsg), '_blank');
 
       window.location.href = 'order-success.html';
     });

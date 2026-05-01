@@ -291,16 +291,113 @@
       document.querySelectorAll('.mob-tab').forEach(function(t) { t.classList.remove('active'); });
       document.getElementById('tab-' + tab).classList.add('active');
       document.getElementById('mob-page-title').textContent = titles[tab] || 'Admin';
+      if (tab === 'orders') { clearOrderBadge(); loadOrders(); }
     }
 
     // ===== REFRESH =====
     document.getElementById('mob-refresh').addEventListener('click', loadAll);
+
+    var lastKnownOrderCount = -1;
+    var orderPollInterval = null;
 
     function loadAll() {
       loadDashboard();
       loadProducts();
       loadOrders();
       loadSettings();
+      startOrderPolling();
+    }
+
+    // ===== NEW ORDER POLLING + ALERTS =====
+    function startOrderPolling() {
+      if (orderPollInterval) clearInterval(orderPollInterval);
+      // Request notification permission
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+      orderPollInterval = setInterval(checkForNewOrders, 30000);
+    }
+
+    function checkForNewOrders() {
+      if (typeof getAllOrdersFromSupabase !== 'function') return;
+      getAllOrdersFromSupabase({ today: true }).then(function(orders) {
+        var count = orders.length;
+        if (lastKnownOrderCount === -1) {
+          lastKnownOrderCount = count;
+          return;
+        }
+        if (count > lastKnownOrderCount) {
+          var newCount = count - lastKnownOrderCount;
+          lastKnownOrderCount = count;
+          playOrderChime();
+          showOrderBadge(newCount);
+          // Browser notification
+          if ('Notification' in window && Notification.permission === 'granted') {
+            var latest = orders[0];
+            new Notification('New Order!', {
+              body: (latest.order_id || 'Order') + ' — \u20B9' + ((latest.total || 0).toLocaleString('en-IN')) + ' from ' + (latest.customer_name || 'Customer'),
+              icon: '../../assets/favicon/web-app-manifest-192x192.png'
+            });
+          }
+          // Auto-refresh orders if on orders tab
+          if (activeTab === 'orders') loadOrders();
+          if (activeTab === 'dashboard') loadDashboard();
+        } else {
+          lastKnownOrderCount = count;
+        }
+      });
+    }
+
+    function playOrderChime() {
+      try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.5);
+        // Second tone
+        setTimeout(function() {
+          var osc2 = ctx.createOscillator();
+          var gain2 = ctx.createGain();
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.frequency.value = 1100;
+          osc2.type = 'sine';
+          gain2.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+          osc2.start(ctx.currentTime);
+          osc2.stop(ctx.currentTime + 0.5);
+        }, 200);
+      } catch(e) {}
+    }
+
+    var orderBadgeCount = 0;
+    function showOrderBadge(count) {
+      orderBadgeCount += count;
+      var ordersBtn = document.querySelector('.mob-tab-btn[data-tab="orders"]');
+      if (!ordersBtn) return;
+      var badge = ordersBtn.querySelector('.mob-new-badge');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'mob-new-badge';
+        badge.style.cssText = 'position:absolute;top:4px;right:50%;transform:translateX(14px);background:#F44336;color:#fff;font-size:0.55rem;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;';
+        ordersBtn.style.position = 'relative';
+        ordersBtn.appendChild(badge);
+      }
+      badge.textContent = orderBadgeCount;
+      badge.style.display = 'flex';
+    }
+
+    function clearOrderBadge() {
+      orderBadgeCount = 0;
+      var badge = document.querySelector('.mob-new-badge');
+      if (badge) badge.style.display = 'none';
     }
 
     // ===== DASHBOARD =====
@@ -408,6 +505,31 @@
         var payClass = 'mob-badge-' + (o.payment_status || 'pending');
         var isUpiPending = o.payment_method === 'upi' && o.payment_status === 'pending_verification';
 
+        // Build full items list
+        var itemsList = '';
+        if (o.order_items && o.order_items.length) {
+          for (var j = 0; j < o.order_items.length; j++) {
+            var oi = o.order_items[j];
+            itemsList += '<div style="font-size:0.72rem;color:#aaa;">\u2022 ' + esc(oi.product_name) + ' (Size: ' + esc(oi.size) + ') x' + oi.quantity + '</div>';
+          }
+        }
+
+        // Build address
+        var addr = '';
+        if (o.address_line1) {
+          addr = '<div style="font-size:0.7rem;color:#888;margin-top:6px;">\uD83D\uDCCD ' +
+            esc(o.address_line1) +
+            (o.address_line2 ? ', ' + esc(o.address_line2) : '') +
+            ', ' + esc(o.city || '') + ', ' + esc(o.state || '') +
+            ' - ' + esc(o.pincode || '') + '</div>';
+        }
+
+        // UTR display
+        var utrInfo = '';
+        if (o.utr_number) {
+          utrInfo = '<div style="font-size:0.7rem;color:#4CAF50;margin-top:4px;">UTR: ' + esc(o.utr_number) + '</div>';
+        }
+
         html +=
           '<div class="mob-card">' +
             '<div class="mob-card-header">' +
@@ -415,14 +537,20 @@
               '<div class="mob-card-price">\u20B9' + ((o.total || 0).toLocaleString('en-IN')) + '</div>' +
             '</div>' +
             '<div class="mob-order-row"><span>' + (o.customer_name || '-') + '</span><span>' + dateStr + '</span></div>' +
-            (items ? '<div class="mob-order-row" style="color:#666;">' + esc(items) + '</div>' : '') +
+            '<div class="mob-order-row" style="color:#C9A84C;">\uD83D\uDCDE ' + esc(o.customer_phone || '') + '</div>' +
+            itemsList +
+            addr +
+            utrInfo +
+            (o.delivery_instructions ? '<div style="font-size:0.7rem;color:#FFB347;margin-top:4px;">\uD83D\uDCDD ' + esc(o.delivery_instructions) + '</div>' : '') +
             '<div class="mob-order-badges">' +
               '<span class="mob-badge ' + payClass + '">' + (o.payment_status || 'pending') + '</span>' +
               '<span class="mob-badge mob-badge-' + (o.shipping_status || 'pending') + '">' + (o.shipping_status || 'pending') + '</span>' +
+              '<span class="mob-badge" style="background:rgba(100,100,100,0.15);color:#aaa;">' + (o.payment_method || 'whatsapp') + '</span>' +
             '</div>' +
             '<div class="mob-card-actions">' +
               (isUpiPending ? '<button class="mob-btn mob-btn-green" onclick="markPaid(\'' + o.order_id + '\',this)">Mark Paid</button>' : '') +
               '<button class="mob-btn" onclick="openShipSheet(\'' + o.order_id + '\',\'' + (o.shipping_status || 'pending') + '\')">Shipping</button>' +
+              '<a class="mob-btn" href="tel:' + esc(o.customer_phone || '') + '" style="text-decoration:none;">\uD83D\uDCDE Call</a>' +
             '</div>' +
           '</div>';
       }
