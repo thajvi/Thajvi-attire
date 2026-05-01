@@ -7,6 +7,7 @@
   'use strict';
 
   function getSupabase() {
+    if (window.getOrInitSupabase) return window.getOrInitSupabase();
     return window.THAJVI_SUPABASE;
   }
 
