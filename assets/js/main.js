@@ -304,6 +304,14 @@ _siteConfigReady.then(function() {
     // Remove skeleton placeholders
     grid.querySelectorAll('.skeleton-card').forEach(function(el) { el.remove(); });
 
+    // Sort: New Arrivals first, then Bestsellers, then rest
+    var badgeOrder = { 'New Arrival': 0, 'Bestseller': 1 };
+    products.sort(function(a, b) {
+      var oa = badgeOrder[a.badge] !== undefined ? badgeOrder[a.badge] : 2;
+      var ob = badgeOrder[b.badge] !== undefined ? badgeOrder[b.badge] : 2;
+      return oa - ob;
+    });
+
     products.forEach(function(item) {
   const phone = (item.whatsapp || WHATSAPP_NUMBER).replace(/[^\d]/g, '');
   var selectedSize = '';
