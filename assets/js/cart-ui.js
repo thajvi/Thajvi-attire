@@ -6,6 +6,13 @@
 (function() {
   'use strict';
 
+  function escapeHTML(str) {
+    if (!str) return '';
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
   // ===== CART ICON IN NAVBAR =====
 
   function createCartIcon() {
@@ -143,22 +150,26 @@
     for (var i = 0; i < cart.length; i++) {
       var item = cart[i];
       var lineTotal = item.price * item.quantity;
+      var eName = escapeHTML(item.name);
+      var eId = escapeHTML(item.id);
+      var eSize = escapeHTML(item.size);
+      var eImg = escapeHTML(item.image);
       html +=
-        '<div class="cart-item" data-id="' + item.id + '">' +
+        '<div class="cart-item" data-id="' + eId + '">' +
           '<div class="cart-item-img">' +
-            (item.image ? '<img src="' + item.image + '" alt="' + item.name + '" />' : '<div class="cart-item-img-placeholder"></div>') +
+            (item.image ? '<img src="' + eImg + '" alt="' + eName + '" />' : '<div class="cart-item-img-placeholder"></div>') +
           '</div>' +
           '<div class="cart-item-details">' +
             '<div class="cart-item-top">' +
-              '<h4 class="cart-item-name">' + item.name + '</h4>' +
-              '<button class="cart-item-remove" data-id="' + item.id + '" aria-label="Remove ' + item.name + '">&times;</button>' +
+              '<h4 class="cart-item-name">' + eName + '</h4>' +
+              '<button class="cart-item-remove" data-id="' + eId + '" aria-label="Remove ' + eName + '">&times;</button>' +
             '</div>' +
-            '<p class="cart-item-size">Size: ' + item.size + '</p>' +
+            '<p class="cart-item-size">Size: ' + eSize + '</p>' +
             '<div class="cart-item-bottom">' +
               '<div class="cart-qty-control">' +
-                '<button class="cart-qty-btn" data-action="decrease" data-id="' + item.id + '" data-qty="' + item.quantity + '">−</button>' +
+                '<button class="cart-qty-btn" data-action="decrease" data-id="' + eId + '" data-qty="' + item.quantity + '">−</button>' +
                 '<span class="cart-qty-num">' + item.quantity + '</span>' +
-                '<button class="cart-qty-btn" data-action="increase" data-id="' + item.id + '" data-qty="' + item.quantity + '">+</button>' +
+                '<button class="cart-qty-btn" data-action="increase" data-id="' + eId + '" data-qty="' + item.quantity + '">+</button>' +
               '</div>' +
               '<span class="cart-item-price">' + ThajviCart.formatPrice(lineTotal) + '</span>' +
             '</div>' +

@@ -20,6 +20,9 @@
     if (!isEnabled()) {
       return Promise.resolve({ success: false, reason: 'disabled' });
     }
+    if (!order || !order.orderId || !order.customer || !order.customer.name || !order.customer.phone) {
+      return Promise.resolve({ success: false, reason: 'missing_fields' });
+    }
 
     var sb = getSupabase();
 

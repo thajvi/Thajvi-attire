@@ -36,6 +36,45 @@ Total work: 30 seconds
 ═══════════════════════════════
 */
 
+function escapeHTML(str) {
+  if (!str) return '';
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function parsePrice(priceStr) {
+  if (typeof priceStr === 'number') return priceStr;
+  var num = String(priceStr).replace(/[^\d.]/g, '');
+  return parseFloat(num) || 0;
+}
+
+function validateCartPrices() {
+  return fetch('data/products.json')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var products = data.items;
+      var cart = ThajviCart.get();
+      for (var i = 0; i < cart.length; i++) {
+        var cartItem = cart[i];
+        var product = products.find(function(p) {
+          return p.name === cartItem.name;
+        });
+        if (product) {
+          var realPrice = parsePrice(product.price);
+          var cartPrice = parsePrice(cartItem.price);
+          if (realPrice > 0 && cartPrice !== realPrice) {
+            return { valid: false, item: cartItem.name, expected: realPrice, got: cartPrice };
+          }
+        }
+      }
+      return { valid: true };
+    })
+    .catch(function() {
+      return { valid: true };
+    });
+}
+
 var STORE_CONFIG = {
   whatsappNumber: '918129651993',
   storeName: 'Thajvi Attire',
@@ -167,12 +206,12 @@ function renderOrderSummary() {
     html +=
       '<div class="summary-item">' +
         '<div class="summary-item-img">' +
-          (item.image ? '<img src="' + item.image + '" alt="' + item.name + '"/>' : '<div class="summary-item-placeholder"></div>') +
+          (item.image ? '<img src="' + escapeHTML(item.image) + '" alt="' + escapeHTML(item.name) + '"/>' : '<div class="summary-item-placeholder"></div>') +
           '<span class="summary-item-qty">' + item.quantity + '</span>' +
         '</div>' +
         '<div class="summary-item-info">' +
-          '<p class="summary-item-name">' + item.name + '</p>' +
-          '<p class="summary-item-size">Size: ' + item.size + '</p>' +
+          '<p class="summary-item-name">' + escapeHTML(item.name) + '</p>' +
+          '<p class="summary-item-size">Size: ' + escapeHTML(item.size) + '</p>' +
         '</div>' +
         '<span class="summary-item-price">' + ThajviCart.formatPrice(item.price * item.quantity) + '</span>' +
       '</div>';
@@ -441,16 +480,39 @@ function setButtonLoading(loading) {
 }
 
 // ===== PLACE ORDER =====
+var isSubmitting = false;
+
 function handlePlaceOrder() {
-  if (!validateForm()) return;
+  if (isSubmitting) return;
+  isSubmitting = true;
+  if (!validateForm()) { isSubmitting = false; return; }
 
   if (selectedPaymentMethod === 'cod' && !isCodAvailable()) {
     showError('COD not available for your location. Please select WhatsApp order.');
+    isSubmitting = false;
+    return;
+  }
+
+  var cart = ThajviCart.get();
+  if (cart.length === 0) {
+    showError('Your cart is empty. Please add items before checking out.');
+    isSubmitting = false;
     return;
   }
 
   setButtonLoading(true);
 
+  validateCartPrices().then(function(result) {
+    if (!result.valid) {
+      showError('Price mismatch detected for "' + result.item + '". Please clear your cart and re-add items.');
+      setButtonLoading(false);
+      return;
+    }
+    proceedWithOrder();
+  });
+}
+
+function proceedWithOrder() {
   var order = collectOrderData();
   order.paymentMethod = selectedPaymentMethod;
   order.codCharge = getCodCharge();
@@ -524,7 +586,8 @@ function saveOrderLocally(order) {
 function handleWhatsAppOrder(order) {
   var msg = buildWhatsAppMessage(order);
   var url = 'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(msg);
-  window.open(url, '_blank');
+  var win = window.open(url, '_blank');
+  if (!win) { showError('Please allow popups to send your order via WhatsApp.'); setButtonLoading(false); return; }
   ThajviCart.clear();
   setTimeout(function() { window.location.href = 'order-success.html'; }, 500);
 }
@@ -562,7 +625,8 @@ function buildWhatsAppMessage(order) {
 function handleCodOrder(order) {
   var msg = buildCodWhatsApp(order);
   var url = 'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(msg);
-  window.open(url, '_blank');
+  var win = window.open(url, '_blank');
+  if (!win) { showError('Please allow popups to send your order via WhatsApp.'); setButtonLoading(false); return; }
   ThajviCart.clear();
   setTimeout(function() { window.location.href = 'order-success.html'; }, 500);
 }
@@ -680,6 +744,20 @@ function showUpiModal(order) {
   // Show modal + lock body scroll
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+
+  // Focus trap for accessibility
+  var closeBtn = document.getElementById('upi-modal-close');
+  if (closeBtn) setTimeout(function() { closeBtn.focus(); }, 100);
+  var focusable = modal.querySelectorAll('button, input, a[href], [tabindex]:not([tabindex="-1"])');
+  if (focusable.length) {
+    var first = focusable[0], last = focusable[focusable.length - 1];
+    modal._focusTrap = function(e) {
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    modal.addEventListener('keydown', modal._focusTrap);
+  }
 }
 
 function initUpiModal() {
