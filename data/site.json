@@ -32,7 +32,7 @@
   "countdown_label": "Sale ends in",
   "video_subtext": "Watch our brand story.",
   "catalogue_enabled": false,
-  "video_url": "",
+  "video_url": "https://www.instagram.com/reel/DUQiftjEg0w/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
   "catalogue_heading": "Explore Our Full Collection",
   "free_shipping_threshold": 999,
   "footer_collections": [
@@ -77,7 +77,7 @@
   "catalogue_mode": "manual",
   "brand_photo": "assets/images/shirt-maxi-dress.jpeg",
   "countdown_date": "",
-  "video_enabled": false,
+  "video_enabled": true,
   "video_heading": "Our Story",
   "shipping_cost": 0
 }
