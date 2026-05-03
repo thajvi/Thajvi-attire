@@ -401,6 +401,16 @@
         notes: document.getElementById('modal-notes').value
       };
 
+      // Payment verification reminder when marking as paid
+      var order = allOrders.find(function(o) { return o.order_id === orderId; });
+      if (updates.payment_status === 'paid' && order && order.payment_status !== 'paid') {
+        var total = order.total || 0;
+        var method = order.payment_method || 'unknown';
+        if (!confirm('\u26A0\uFE0F PAYMENT VERIFICATION\n\nOrder: ' + orderId + '\nAmount: \u20B9' + total.toLocaleString('en-IN') + '\nMethod: ' + method.toUpperCase() + '\n\nHave you verified that the received payment matches \u20B9' + total.toLocaleString('en-IN') + '?\n\nClick OK only after confirming the payment amount.')) {
+          return;
+        }
+      }
+
       this.textContent = 'Saving...';
       this.disabled = true;
       var btn = this;
@@ -421,7 +431,9 @@
 
     // Mark UPI as Paid
     window.markUpiPaid = function(orderId, btn) {
-      if (!confirm('Mark order ' + orderId + ' as paid? This cannot be undone.')) return;
+      var order = allOrders.find(function(o) { return o.order_id === orderId; });
+      var total = order ? (order.total || 0) : 0;
+      if (!confirm('\u26A0\uFE0F PAYMENT VERIFICATION\n\nOrder: ' + orderId + '\nAmount: \u20B9' + total.toLocaleString('en-IN') + '\n\nHave you verified that the UPI payment received matches \u20B9' + total.toLocaleString('en-IN') + '?\n\nClick OK only after confirming.')) return;
       btn.textContent = 'Saving...';
       btn.disabled = true;
       updateOrderInSupabase(orderId, { payment_status: 'paid' }).then(function(res) {

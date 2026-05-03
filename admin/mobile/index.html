@@ -556,7 +556,7 @@
               '<span class="mob-badge" style="background:rgba(100,100,100,0.15);color:#aaa;">' + (o.payment_method || 'whatsapp') + '</span>' +
             '</div>' +
             '<div class="mob-card-actions">' +
-              (isUpiPending ? '<button class="mob-btn mob-btn-green" onclick="markPaid(\'' + o.order_id + '\',this)">Mark Paid</button>' : '') +
+              (isUpiPending ? '<button class="mob-btn mob-btn-green" onclick="markPaid(\'' + o.order_id + '\',this,' + (o.total || 0) + ')">Mark Paid</button>' : '') +
               '<button class="mob-btn" onclick="openShipSheet(\'' + o.order_id + '\',\'' + (o.shipping_status || 'pending') + '\')">Shipping</button>' +
               '<a class="mob-btn" href="tel:' + esc(o.customer_phone || '') + '" style="text-decoration:none;">\uD83D\uDCDE Call</a>' +
             '</div>' +
@@ -620,8 +620,9 @@
     }
 
     // ===== ACTIONS =====
-    window.markPaid = function(orderId, btn) {
-      if (!confirm('Mark ' + orderId + ' as paid?')) return;
+    window.markPaid = function(orderId, btn, total) {
+      total = total || 0;
+      if (!confirm('\u26A0\uFE0F PAYMENT VERIFICATION\n\nOrder: ' + orderId + '\nAmount: \u20B9' + total.toLocaleString('en-IN') + '\n\nHave you verified that the UPI payment received matches \u20B9' + total.toLocaleString('en-IN') + '?\n\nTap OK only after confirming.')) return;
       btn.textContent = 'Saving...';
       btn.disabled = true;
       updateOrderInSupabase(orderId, { payment_status: 'paid' }).then(function(res) {
