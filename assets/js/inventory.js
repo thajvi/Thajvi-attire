@@ -13,23 +13,9 @@ var ThajviInventory = (function() {
 
   // ===== INIT =====
   // Called with products array from products.json fetch
+  // Always rebuilds from products.json to reflect CMS stock changes
   function init(products) {
     if (!products || !products.length) return;
-
-    // Try loading from cache first
-    try {
-      var stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        var data = JSON.parse(stored);
-        if (Date.now() - data.timestamp < CACHE_EXPIRY && data.inventory) {
-          inventory = data.inventory;
-          initialized = true;
-          return;
-        }
-      }
-    } catch (e) { /* rebuild */ }
-
-    // Build from products data
     buildFromProducts(products);
     initialized = true;
   }
