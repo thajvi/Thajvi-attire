@@ -181,6 +181,8 @@
       <input type="text" id="modal-tracking" placeholder="Enter tracking number" />
       <label>Courier</label>
       <select id="modal-courier"><option value="">Select Courier</option><option value="Delhivery">Delhivery</option><option value="DTDC">DTDC</option><option value="BlueDart">BlueDart</option><option value="India Post">India Post</option><option value="Shadowfax">Shadowfax</option><option value="Other">Other</option></select>
+      <label>UPI Transaction ID (UTR)</label>
+      <input type="text" id="modal-utr" placeholder="No UTR submitted" readonly style="opacity:0.7;cursor:default;" />
       <label>Notes</label>
       <textarea id="modal-notes" rows="3" placeholder="Internal notes..."></textarea>
       <input type="hidden" id="modal-order-id" />
@@ -341,7 +343,7 @@
             '<td><div class="dash-customer">' + (o.customer_name || '-') + '</div><div class="dash-phone">' + (o.customer_phone || '') + '</div></td>' +
             '<td><div class="dash-items">' + (itemsSummary || '-') + '</div></td>' +
             '<td>\u20B9' + ((o.total || 0).toLocaleString('en-IN')) + '</td>' +
-            '<td><span class="badge ' + payBadge + '">' + (o.payment_status || 'pending') + '</span></td>' +
+            '<td><span class="badge ' + payBadge + '">' + (o.payment_status || 'pending') + '</span>' + (o.utr_number ? '<div style="font-size:0.65rem;color:#888;margin-top:3px;">UTR: ' + o.utr_number + '</div>' : '') + '</td>' +
             '<td><span class="badge ' + shipBadge + '">' + (o.shipping_status || 'pending') + '</span></td>' +
             '<td><div class="dash-action">' +
               '<button class="dash-btn-sm" onclick="openEditModal(\'' + o.order_id + '\')">Edit</button>' +
@@ -379,6 +381,7 @@
       document.getElementById('modal-shipping').value = order.shipping_status || 'pending';
       document.getElementById('modal-tracking').value = order.tracking_number || '';
       document.getElementById('modal-courier').value = order.courier || '';
+      document.getElementById('modal-utr').value = order.utr_number || '';
       document.getElementById('modal-notes').value = order.notes || '';
       document.getElementById('modal-order-id').value = orderId;
       document.getElementById('modal-bg').classList.add('open');
