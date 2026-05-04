@@ -76,16 +76,20 @@
   "catalogue_subtext": "Get our latest catalogue with all designs and prices sent directly to your WhatsApp.",
   "journal": [
     {
-      "image": "assets/images/a.jpeg"
+      "image": "assets/images/a.jpeg",
+      "reelUrl": "https://www.instagram.com/reel/DWBlnHIEjdX/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
     },
     {
-      "image": "assets/images/b-.jpeg"
+      "image": "assets/images/b-.jpeg",
+      "reelUrl": "https://www.instagram.com/reel/DU23O6gEmaw/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
     },
     {
-      "image": "assets/images/c.jpeg"
+      "image": "assets/images/c.jpeg",
+      "reelUrl": "https://www.instagram.com/reel/DUdOHD3Eowt/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
     },
     {
-      "image": "assets/images/d.jpeg"
+      "image": "assets/images/d.jpeg",
+      "reelUrl": "https://www.instagram.com/reel/DUqd8D8EnGf/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
     }
   ],
   "catalogue_mode": "manual",
