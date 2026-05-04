@@ -50,6 +50,7 @@
     }
   ],
   "catalogue_message": "Hi! I'd like to receive your full catalogue. Please send it to me. Thank you!",
+  "video_cover": "assets/images/logo.jpeg",
   "countdown_enabled": false,
   "instagram_handle": "@thajvi_attire_",
   "hero_image": "assets/images/123.jpeg",
