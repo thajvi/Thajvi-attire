@@ -34,13 +34,13 @@
       "sizes": "S, M, L, XL, XXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/pink-blossom.jpeg",
-      "stock": "Out of Stock",
+      "stock": "Only a Few Left",
       "inventory": {
         "sizes": {
           "S": 0,
-          "M": 1,
+          "M": 0,
           "L": 0,
-          "XL": 0,
+          "XL": 1,
           "XXL": 0
         },
         "lowStockThreshold": 5,
