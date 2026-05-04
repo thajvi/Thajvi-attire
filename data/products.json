@@ -4,7 +4,7 @@
       "badge": "Bestseller",
       "fabric": "COTTON",
       "occasion": "Daily Wear",
-      "price": "1+SHIPPING",
+      "price": "1",
       "name": "MUD BROWN CO ORD SET",
       "featured": false,
       "sizes": "S, M, L, XL, XXL",
@@ -13,11 +13,11 @@
       "stock": "Selling Fast",
       "inventory": {
         "sizes": {
-          "S": 1,
-          "M": 1,
-          "L": 6,
+          "S": 0,
+          "M": 0,
+          "L": 0,
           "XL": 2,
-          "XXL": 1
+          "XXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
