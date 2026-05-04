@@ -208,8 +208,8 @@
           "S": 0,
           "M": 0,
           "L": 1,
-          "XL": 2,
-          "XXL": 2
+          "XL": 1,
+          "XXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
