@@ -73,7 +73,20 @@
     }
   ],
   "catalogue_subtext": "Get our latest catalogue with all designs and prices sent directly to your WhatsApp.",
-  "journal": [],
+  "journal": [
+    {
+      "image": "assets/images/4.jpeg"
+    },
+    {
+      "image": "assets/images/2.jpeg"
+    },
+    {
+      "image": "assets/images/3.jpeg"
+    },
+    {
+      "image": "assets/images/scren-shrt1.jpeg"
+    }
+  ],
   "catalogue_mode": "manual",
   "brand_photo": "assets/images/shirt-maxi-dress.jpeg",
   "countdown_date": "",
