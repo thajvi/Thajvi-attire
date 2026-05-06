@@ -24,7 +24,7 @@ collections:
               - { name: "name", label: "Product Name", widget: "string" }
               - { name: "description", label: "Description", widget: "text" }
               - { name: "price", label: "Price", widget: "string", hint: "Include symbol, e.g. ₹1499 or DM for Price" }
-              - { name: "sizes", label: "Available Sizes", widget: "string", default: "S, M, L, XL, XXL", hint: "Comma-separated sizes shown as buttons. e.g. S, M, L, XL, XXL — Do NOT enter measurements here" }
+              - { name: "sizes", label: "Available Sizes", widget: "string", default: "S, M, L, XL, XXL, XXXL", hint: "Comma-separated sizes shown as buttons. e.g. S, M, L, XL, XXL, XXXL — Do NOT enter measurements here" }
               - { name: "photo", label: "Product Photo", widget: "image", required: false, hint: "Upload a product photo" }
               - { name: "badge", label: "Badge", widget: "select", options: ["", "Bestseller", "New Arrival"], default: "", required: false, hint: "Optional badge shown on product card" }
               - { name: "fabric", label: "Material", widget: "string", required: false, hint: "e.g. Handloom Cotton, Kasavu, Tissue, Silk" }
@@ -48,6 +48,7 @@ collections:
                       - { name: "L", label: "L — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of L size units available" }
                       - { name: "XL", label: "XL — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of XL size units available" }
                       - { name: "XXL", label: "XXL — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of XXL size units available" }
+                      - { name: "XXXL", label: "XXXL — Stock", widget: "number", default: 0, value_type: "int", min: 0, hint: "Number of XXXL size units available" }
                   - { name: "lowStockThreshold", label: "Low Stock Warning At", widget: "number", default: 5, value_type: "int", min: 1, required: false, hint: "Show 'Only X left!' when stock is at or below this number" }
                   - { name: "veryLowThreshold", label: "Urgent Warning At", widget: "number", default: 3, value_type: "int", min: 1, required: false, hint: "Show urgent warning when stock is at or below this number" }
 

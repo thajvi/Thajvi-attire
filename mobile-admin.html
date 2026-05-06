@@ -353,7 +353,7 @@
         if (p.inventory && p.inventory.sizes) {
           var sz = p.inventory.sizes;
           var parts = [];
-          ['S','M','L','XL','XXL'].forEach(function(s) {
+          ['S','M','L','XL','XXL','XXXL'].forEach(function(s) {
             if (sz[s] !== undefined) {
               var cls = sz[s] === 0 ? 'color:#F44336' : (sz[s] <= 3 ? 'color:#FFB347' : 'color:#4CAF50');
               parts.push('<span style="' + cls + '">' + s + ':' + sz[s] + '</span>');
@@ -544,10 +544,10 @@
 
     window.openSizeStockSheet = function(idx) {
       var p = productsData.items[idx];
-      if (!p.inventory) p.inventory = { sizes: { S: 0, M: 0, L: 0, XL: 0, XXL: 0 }, lowStockThreshold: 5, veryLowThreshold: 3 };
-      if (!p.inventory.sizes) p.inventory.sizes = { S: 0, M: 0, L: 0, XL: 0, XXL: 0 };
+      if (!p.inventory) p.inventory = { sizes: { S: 0, M: 0, L: 0, XL: 0, XXL: 0, XXXL: 0 }, lowStockThreshold: 5, veryLowThreshold: 3 };
+      if (!p.inventory.sizes) p.inventory.sizes = { S: 0, M: 0, L: 0, XL: 0, XXL: 0, XXXL: 0 };
 
-      var sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+      var sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
       var html = '<h3>' + esc(p.name) + '</h3><label>Stock per Size</label><div class="mob-size-grid">';
 
       for (var i = 0; i < sizes.length; i++) {

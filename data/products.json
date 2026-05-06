@@ -7,7 +7,7 @@
       "price": "1",
       "name": "MUD BROWN CO ORD SET",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/mud-brown.jpeg",
       "stock": "Selling Fast",
@@ -17,7 +17,8 @@
           "M": 0,
           "L": 0,
           "XL": 2,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -31,7 +32,7 @@
       "price": "950+shipping",
       "name": "PINK BLOSSOM",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/pink-blossom.jpeg",
       "stock": "Only a Few Left",
@@ -41,7 +42,8 @@
           "M": 0,
           "L": 0,
           "XL": 1,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -55,7 +57,7 @@
       "price": "799 FREE SHIPPING ",
       "name": "BLUE SHIRT MODEL  MAXI DRESS",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/shirt-maxi-dress.jpeg",
       "stock": "Limited Stock",
@@ -65,7 +67,8 @@
           "M": 0,
           "L": 0,
           "XL": 0,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -79,7 +82,7 @@
       "price": "999 FREE SHIPPING",
       "name": "MUL COTTON MAXI DRESS",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/vishu-frock.jpeg",
       "stock": "Only a Few Left",
@@ -89,7 +92,8 @@
           "M": 0,
           "L": 1,
           "XL": 1,
-          "XXL": 1
+          "XXL": 1,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -103,7 +107,7 @@
       "price": "699+ SHIPPING",
       "name": "COMFY COTTON SHORT KURTHI CO ORDS",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/yellow-short-kurtgha-cords.jpeg",
       "stock": "Only a Few Left",
@@ -113,7 +117,8 @@
           "M": 0,
           "L": 0,
           "XL": 0,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -127,7 +132,7 @@
       "price": "699+SHIPPING",
       "name": "BLUE TULIP",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/tulip.jpeg",
       "stock": "Only a Few Left",
@@ -137,7 +142,8 @@
           "M": 0,
           "L": 0,
           "XL": 0,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -151,7 +157,7 @@
       "price": "599+SHIPPING",
       "name": "RAYON CO ORDS ",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/rayon-violet.jpeg",
       "stock": "Only a Few Left",
@@ -161,7 +167,8 @@
           "M": 1,
           "L": 0,
           "XL": 1,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -175,7 +182,7 @@
       "price": "699",
       "name": "COTTON FEEDING FRIENDLY TOP TOP",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/maroon-kurthi.jpeg",
       "stock": "Only a Few Left",
@@ -185,7 +192,8 @@
           "M": 0,
           "L": 1,
           "XL": 2,
-          "XXL": 2
+          "XXL": 2,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -199,7 +207,7 @@
       "price": "849+ SHIPPING ",
       "name": "MEHANDI GREEN CO ORD SET",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/mehandi-green.jpeg",
       "stock": "Only a Few Left",
@@ -209,7 +217,8 @@
           "M": 0,
           "L": 1,
           "XL": 1,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -223,7 +232,7 @@
       "price": "849+SHIPPING",
       "name": "BLUE COD ORD SET",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/blue-kurthi.jpeg",
       "stock": "Limited Stock",
@@ -233,7 +242,8 @@
           "M": 0,
           "L": 2,
           "XL": 2,
-          "XXL": 3
+          "XXL": 3,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -247,7 +257,7 @@
       "price": "2199+ SHIPPING",
       "name": "PARTY WEAR SALWAR SET",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/black-chembarathi.jpeg",
       "stock": "Only a Few Left",
@@ -257,7 +267,8 @@
           "M": 1,
           "L": 0,
           "XL": 1,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -271,7 +282,7 @@
       "price": "1299+SHIPPING",
       "name": "PURE MUL CHANDERI 3 PIECE SET",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/pink-chembarathi.jpeg",
       "stock": "Selling Fast",
@@ -281,7 +292,8 @@
           "M": 0,
           "L": 0,
           "XL": 1,
-          "XXL": 0
+          "XXL": 0,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -295,7 +307,7 @@
       "price": "1299+SHIPPING",
       "name": "MUL CHNADERI 3 PIECE SET",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/brown-chembarathi.jpeg",
       "stock": "Selling Fast",
@@ -305,7 +317,8 @@
           "M": 0,
           "L": 0,
           "XL": 0,
-          "XXL": 2
+          "XXL": 2,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -319,7 +332,7 @@
       "price": "2600+ SHIPPING ",
       "name": "YELLOW GERMAN RAYON COTTON  3 PIECE SET ",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/yellow-chembarathi.jpeg",
       "stock": "Selling Fast",
@@ -329,7 +342,8 @@
           "M": 0,
           "L": 0,
           "XL": 0,
-          "XXL": 1
+          "XXL": 1,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3
@@ -343,7 +357,7 @@
       "price": "2400+SHIPPING",
       "name": "GOLDEN GLITTER",
       "featured": false,
-      "sizes": "S, M, L, XL, XXL",
+      "sizes": "S, M, L, XL, XXL, XXXL",
       "whatsapp": "918129651993",
       "photo": "assets/images/gold-chembarathi.jpeg",
       "stock": "Selling Fast",
@@ -353,7 +367,8 @@
           "M": 0,
           "L": 1,
           "XL": 1,
-          "XXL": 1
+          "XXL": 1,
+          "XXXL": 0
         },
         "lowStockThreshold": 5,
         "veryLowThreshold": 3

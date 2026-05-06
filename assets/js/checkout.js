@@ -686,6 +686,7 @@ function showUpiModal(order) {
     '&pn=' + encodeURIComponent(STORE_CONFIG.upiName) +
     '&am=' + Math.round(order.total) +
     '&cu=INR' +
+    '&tr=' + encodeURIComponent(order.orderId) +
     '&tn=' + encodeURIComponent(order.orderId);
 
   // Set "Open UPI App" button

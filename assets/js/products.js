@@ -14,7 +14,7 @@
 //      Example:  photo: "assets/images/products/green-kurti.jpg"
 //
 //   SIZES: Type the available sizes separated by commas
-//      Example:  sizes: "M, L, XL, XXL"
+//      Example:  sizes: "M, L, XL, XXL, XXXL"
 //
 //   BADGE OPTIONS (leave empty "" for no badge):
 //      badge: "Bestseller"
@@ -42,7 +42,7 @@ const products = [
     name:        "Cotton Kurtha",
     description: "Breathable premium cotton — comfortable for all-day wear. Available in multiple colours.",
     price:       "₹XXX",
-    sizes:       "M, L, XL, XXL",
+    sizes:       "M, L, XL, XXL, XXXL",
     photo:       "",              // e.g. "assets/images/products/cotton-kurtha.jpg"
     badge:       "Bestseller",
     fabric:      "Pure Cotton",
@@ -55,7 +55,7 @@ const products = [
     name:        "Mul Chanderia Line Top",
     description: "Light & flowy Mul Chanderia fabric with elegant line embroidery. Perfect for festivals.",
     price:       "₹XXX",
-    sizes:       "M, L, XL, XXL",
+    sizes:       "M, L, XL, XXL, XXXL",
     photo:       "",
     badge:       "New Arrival",
     fabric:      "Mul Chanderia",
@@ -68,7 +68,7 @@ const products = [
     name:        "Printed Floral Kurta Set",
     description: "Beautiful floral print kurta with matching pants — ready to wear, effortlessly stylish.",
     price:       "₹XXX",
-    sizes:       "M, L, XL, XXL",
+    sizes:       "M, L, XL, XXL, XXXL",
     photo:       "",
     badge:       "",
     fabric:      "Cotton Blend",
@@ -81,7 +81,7 @@ const products = [
     name:        "Embroidered A-Line Kurti",
     description: "Handcrafted floral embroidery on a flattering A-line silhouette. Great for occasions.",
     price:       "₹XXX",
-    sizes:       "M, L, XL, XXL",
+    sizes:       "M, L, XL, XXL, XXXL",
     photo:       "",
     badge:       "Bestseller",
     fabric:      "Cotton",
@@ -94,7 +94,7 @@ const products = [
     name:        "Straight Cut Printed Kurti",
     description: "Classic straight cut in vibrant prints — pair with pants or jeans for a chic look.",
     price:       "₹XXX",
-    sizes:       "M, L, XL, XXL",
+    sizes:       "M, L, XL, XXL, XXXL",
     photo:       "",
     badge:       "New Arrival",
     fabric:      "Rayon",
@@ -107,7 +107,7 @@ const products = [
     name:        "Festive Embroidered Set",
     description: "Heavy embroidery with rich fabric — curated for weddings, parties & special occasions.",
     price:       "₹XXX",
-    sizes:       "M, L, XL, XXL",
+    sizes:       "M, L, XL, XXL, XXXL",
     photo:       "",
     badge:       "",
     fabric:      "Chanderi Silk",
