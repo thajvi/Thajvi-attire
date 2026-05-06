@@ -689,15 +689,6 @@ function showUpiModal(order) {
     '&tn=' + encodeURIComponent(order.orderId);
   var upiLink = 'upi://pay?' + upiQuery;
 
-  // Set app-specific href links only — no JS click handlers so UPI apps trust the user tap
-  var gpayBtn = document.getElementById('upi-app-gpay');
-  var phonepeBtn = document.getElementById('upi-app-phonepe');
-  var paytmBtn = document.getElementById('upi-app-paytm');
-  var otherBtn = document.getElementById('upi-app-btn');
-  if (gpayBtn) gpayBtn.href = 'tez://upi/pay?' + upiQuery;
-  if (phonepeBtn) phonepeBtn.href = 'phonepe://pay?' + upiQuery;
-  if (paytmBtn) paytmBtn.href = 'paytmmp://pay?' + upiQuery;
-  if (otherBtn) otherBtn.href = upiLink;
 
   // Generate QR code (only if a real UPI ID is configured)
   var qrContainer = document.getElementById('upi-qr-canvas').parentElement;
