@@ -681,13 +681,14 @@ function showUpiModal(order) {
   document.getElementById('upi-id-display').textContent = STORE_CONFIG.upiId;
   document.getElementById('upi-verify-time').textContent = STORE_CONFIG.upiVerificationTime;
 
-  // Build UPI link
-  var upiLink = 'upi://pay?pa=' + encodeURIComponent(STORE_CONFIG.upiId) +
-    '&pn=' + encodeURIComponent(STORE_CONFIG.upiName) +
+  // Build UPI link — use raw values for pa/pn/tn to avoid encoding issues with some UPI apps
+  var upiLink = 'upi://pay?pa=' + STORE_CONFIG.upiId +
+    '&pn=' + STORE_CONFIG.upiName.replace(/\s/g, '+') +
     '&am=' + Math.round(order.total) +
     '&cu=INR' +
-    '&tr=' + encodeURIComponent(order.orderId) +
-    '&tn=' + encodeURIComponent(order.orderId);
+    '&tr=' + order.orderId +
+    '&tn=' + order.orderId +
+    '&mode=02';
 
   // Set "Open UPI App" button
   document.getElementById('upi-app-btn').href = upiLink;
