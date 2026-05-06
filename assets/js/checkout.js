@@ -681,15 +681,44 @@ function showUpiModal(order) {
   document.getElementById('upi-id-display').textContent = STORE_CONFIG.upiId;
   document.getElementById('upi-verify-time').textContent = STORE_CONFIG.upiVerificationTime;
 
-  // Build UPI link
-  var upiLink = 'upi://pay?pa=' + encodeURIComponent(STORE_CONFIG.upiId) +
+  // Build UPI params
+  var amt = Math.round(order.total);
+  var upiQuery = 'pa=' + encodeURIComponent(STORE_CONFIG.upiId) +
     '&pn=' + encodeURIComponent(STORE_CONFIG.upiName) +
-    '&am=' + Math.round(order.total) +
-    '&cu=INR' +
+    '&am=' + amt + '&cu=INR' +
     '&tn=' + encodeURIComponent(order.orderId);
+  var upiLink = 'upi://pay?' + upiQuery;
 
-  // Set "Open UPI App" button
-  document.getElementById('upi-app-btn').href = upiLink;
+  // App-specific intent links for reliable payment launch
+  var gpayBtn = document.getElementById('upi-app-gpay');
+  var phonepeBtn = document.getElementById('upi-app-phonepe');
+  var paytmBtn = document.getElementById('upi-app-paytm');
+  var otherBtn = document.getElementById('upi-app-btn');
+
+  if (gpayBtn) {
+    gpayBtn.href = 'tez://upi/pay?' + upiQuery;
+    gpayBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'tez://upi/pay?' + upiQuery;
+    });
+  }
+  if (phonepeBtn) {
+    phonepeBtn.href = 'phonepe://pay?' + upiQuery;
+    phonepeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'phonepe://pay?' + upiQuery;
+    });
+  }
+  if (paytmBtn) {
+    paytmBtn.href = 'paytmmp://pay?' + upiQuery;
+    paytmBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'paytmmp://pay?' + upiQuery;
+    });
+  }
+  if (otherBtn) {
+    otherBtn.href = upiLink;
+  }
 
   // Generate QR code (only if a real UPI ID is configured)
   var qrContainer = document.getElementById('upi-qr-canvas').parentElement;
