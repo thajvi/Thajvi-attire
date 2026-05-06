@@ -682,27 +682,14 @@ function showUpiModal(order) {
   document.getElementById('upi-verify-time').textContent = STORE_CONFIG.upiVerificationTime;
 
   // Build UPI link
-  var upiParams = 'pa=' + STORE_CONFIG.upiId +
-    '&pn=' + STORE_CONFIG.upiName.replace(/\s/g, '+') +
+  var upiLink = 'upi://pay?pa=' + encodeURIComponent(STORE_CONFIG.upiId) +
+    '&pn=' + encodeURIComponent(STORE_CONFIG.upiName) +
     '&am=' + Math.round(order.total) +
     '&cu=INR' +
-    '&tr=' + order.orderId +
-    '&tn=' + order.orderId;
-  var upiLink = 'upi://pay?' + upiParams;
+    '&tn=' + encodeURIComponent(order.orderId);
 
-  // Set "Open UPI App" button — use intent:// on Android for reliable app launch
-  var upiBtn = document.getElementById('upi-app-btn');
-  upiBtn.href = upiLink;
-  upiBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    var isAndroid = /android/i.test(navigator.userAgent);
-    if (isAndroid) {
-      var intentLink = 'intent://pay?' + upiParams + '#Intent;scheme=upi;end';
-      window.location.href = intentLink;
-    } else {
-      window.location.href = upiLink;
-    }
-  });
+  // Set "Open UPI App" button
+  document.getElementById('upi-app-btn').href = upiLink;
 
   // Generate QR code (only if a real UPI ID is configured)
   var qrContainer = document.getElementById('upi-qr-canvas').parentElement;
