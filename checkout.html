@@ -107,54 +107,37 @@
               <div class="checkout-section">
                 <h3 class="section-title">Payment Method</h3>
 
-                <!-- WhatsApp — always visible -->
-                <div class="payment-method-card active" id="whatsapp-payment" data-method="whatsapp">
+                <!-- Razorpay — primary payment method -->
+                <div class="payment-method-card active" id="razorpay-payment" data-method="razorpay">
                   <div class="payment-method-radio"><div class="radio-dot active"></div></div>
                   <div class="payment-method-info">
-                    <div class="payment-method-name">&nbsp;WhatsApp Order</div>
-                    <div class="payment-method-desc">Complete order via WhatsApp. Pay on confirmation.</div>
-                    <div class="payment-badges">
-                      <span class="badge">Safe</span>
-                      <span class="badge">Personal Service</span>
-                      <span class="badge">Instant Confirm</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- UPI Direct — hidden by default, enabled via site.json -->
-                <div class="payment-method-card hidden" id="upi-payment" data-method="upi">
-                  <div class="payment-method-radio"><div class="radio-dot"></div></div>
-                  <div class="payment-method-info">
-                    <div class="payment-method-name">&nbsp;Pay via UPI</div>
-                    <div class="payment-method-desc">Pay directly using GPay, PhonePe, Paytm or any UPI app</div>
+                    <div class="payment-method-name">&nbsp;Pay Online</div>
+                    <div class="payment-method-desc">Pay securely using UPI, cards, or net banking</div>
                     <div class="payment-badges">
                       <span class="badge">GPay</span>
                       <span class="badge">PhonePe</span>
-                      <span class="badge">Paytm</span>
-                      <span class="badge">BHIM</span>
+                      <span class="badge">Cards</span>
+                      <span class="badge">UPI</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- COD — hidden by default -->
-                <div class="payment-method-card cod-option hidden" id="cod-payment" data-method="cod">
+                <!-- WhatsApp — secondary option -->
+                <div class="payment-method-card" id="whatsapp-payment" data-method="whatsapp">
                   <div class="payment-method-radio"><div class="radio-dot"></div></div>
                   <div class="payment-method-info">
-                    <div class="payment-method-name">&nbsp;Cash on Delivery <span class="cod-charge-badge">+₹30</span></div>
-                    <div class="payment-method-desc">Pay cash when your order arrives at your doorstep.</div>
-                    <div class="cod-state-notice hidden" id="cod-state-notice">
-                      <span class="notice-icon">&#9888;&#65039;</span>
-                      <span id="cod-notice-text">COD available for Kerala orders only</span>
-                    </div>
-                    <div class="cod-available-notice hidden" id="cod-available-notice">
-                      <span>COD available for your location</span>
+                    <div class="payment-method-name">&nbsp;Order via WhatsApp</div>
+                    <div class="payment-method-desc">Place order on WhatsApp. Pay later on confirmation.</div>
+                    <div class="payment-badges">
+                      <span class="badge">Personal Service</span>
+                      <span class="badge">Instant Confirm</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <!-- Submit -->
-              <button type="submit" class="checkout-submit-btn" id="place-order-btn">Place Order via WhatsApp &rarr;</button>
+              <button type="submit" class="checkout-submit-btn" id="place-order-btn">Pay Now &rarr;</button>
               <p class="checkout-secure-note">Your information is safe and secure</p>
 
             </form>
@@ -177,10 +160,6 @@
               <!-- Price breakdown -->
               <div class="price-row"><span>Subtotal</span><span id="summary-subtotal">₹0</span></div>
               <div class="price-row"><span>Shipping</span><span id="summary-shipping">₹80</span></div>
-              <div class="price-row hidden" id="cod-charge-row">
-                <span>COD Charges <span class="info-tooltip" title="Cash on Delivery handling charge">&#9432;</span></span>
-                <span class="amount cod-charge">+₹30</span>
-              </div>
               <div class="price-divider"></div>
               <div class="price-row total-row"><span>Total</span><span id="order-total" class="total-amount">₹0</span></div>
               <p class="cart-tax-note">Inclusive of all taxes</p>
@@ -211,8 +190,8 @@
   <script src="assets/js/cart.js"></script>
   <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/supabase-orders.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-  <script src="assets/js/checkout.js?v=20260506d"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="assets/js/checkout.js?v=20260512"></script>
   <script>
     // Mobile hamburger
     var hamburger = document.getElementById('hamburger');
@@ -225,64 +204,6 @@
     }
   </script>
 
-  <!-- UPI Payment Modal -->
-  <div class="upi-modal hidden" id="upi-modal" role="dialog" aria-labelledby="upi-modal-title">
-    <div class="upi-modal-content">
-      <button class="upi-modal-close" id="upi-modal-close" aria-label="Close">&times;</button>
-      <h2 id="upi-modal-title" class="upi-modal-title">Complete Your Payment</h2>
-      <p class="upi-modal-subtitle">Order ID: <strong id="upi-order-id"></strong></p>
-
-      <div class="upi-amount-box">
-        <span class="upi-amount-label">Amount to Pay</span>
-        <span class="upi-amount" id="upi-amount">&#8377;0</span>
-      </div>
-
-      <div class="upi-qr-container">
-        <canvas id="upi-qr-canvas"></canvas>
-        <p class="upi-qr-hint">Scan with any UPI app</p>
-      </div>
-
-      <div class="upi-divider"><span>OR</span></div>
-
-      <div class="upi-id-box">
-        <span class="upi-id-label">UPI ID</span>
-        <div class="upi-id-row">
-          <span class="upi-id-value" id="upi-id-display"></span>
-          <button class="upi-copy-btn" id="upi-copy-btn">Copy</button>
-        </div>
-      </div>
-
-      <div class="upi-manual-steps">
-        <p class="upi-manual-hint">Copy the UPI ID above, open your UPI app, and pay manually.</p>
-      </div>
-
-      <div class="upi-instructions">
-        <h4>After Payment:</h4>
-        <ol>
-          <li>Take a screenshot of your payment confirmation</li>
-          <li>Click the button below to send it on WhatsApp</li>
-          <li>We'll confirm your order within <span id="upi-verify-time">30 minutes</span></li>
-        </ol>
-      </div>
-
-      <a href="#" class="upi-whatsapp-btn" id="upi-whatsapp-btn" target="_blank" rel="noopener">
-        Send Screenshot on WhatsApp &rarr;
-      </a>
-
-      <p class="upi-phone-hint" id="upi-phone-hint">
-        Paid from your phone after scanning QR? Send payment screenshot directly on WhatsApp to <strong id="upi-wa-number"></strong> from your phone.
-      </p>
-
-      <div class="upi-skip-section">
-        <p class="upi-skip-label">Already paid? Enter your UPI transaction ID:</p>
-        <div class="upi-utr-row">
-          <input type="text" id="upi-utr-input" placeholder="e.g. 412345678901" class="upi-utr-input">
-          <button id="upi-utr-submit" class="upi-utr-btn">Submit</button>
-        </div>
-        <p class="upi-utr-error hidden" id="upi-utr-error">Please enter a valid transaction ID (min 6 characters)</p>
-      </div>
-    </div>
-  </div>
 
 </body>
 </html>

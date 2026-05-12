@@ -235,7 +235,7 @@
         '<div class="cart-toast-icon">\u2713</div>' +
         '<div class="cart-toast-text">' +
           '<p class="cart-toast-title">Added to Cart</p>' +
-          '<p class="cart-toast-detail">' + product.name + ' — Size ' + product.size + '</p>' +
+          '<p class="cart-toast-detail">' + escapeHTML(product.name) + ' — Size ' + escapeHTML(product.size) + '</p>' +
         '</div>' +
         '<button class="cart-toast-close" aria-label="Close">&times;</button>' +
       '</div>' +

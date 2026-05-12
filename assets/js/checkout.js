@@ -111,7 +111,7 @@ var STORE_CONFIG = {
 };
 
 // Default selected payment method
-var selectedPaymentMethod = 'whatsapp';
+var selectedPaymentMethod = 'razorpay';
 
 // ===== INDIAN STATES LIST =====
 var INDIAN_STATES = [
@@ -222,34 +222,8 @@ function renderOrderSummary() {
 
 // ===== PAYMENT METHODS =====
 function initPaymentMethods() {
-  var codOption = document.getElementById('cod-payment');
-  var upiOption = document.getElementById('upi-payment');
-  var hasMultipleMethods = false;
-
-  // Show UPI if enabled
-  if (STORE_CONFIG.upiEnabled && upiOption && STORE_CONFIG.upiId && STORE_CONFIG.upiId.indexOf('@') !== -1) {
-    upiOption.classList.remove('hidden');
-    hasMultipleMethods = true;
-  } else if (upiOption) {
-    upiOption.classList.add('hidden');
-  }
-
-  // Show COD if enabled
-  if (STORE_CONFIG.codEnabled && codOption) {
-    codOption.classList.remove('hidden');
-    hasMultipleMethods = true;
-
-    var stateField = document.getElementById('state');
-    if (stateField) {
-      stateField.addEventListener('change', checkCodAvailability);
-    }
-  } else if (codOption) {
-    codOption.classList.add('hidden');
-  }
-
-  if (hasMultipleMethods) {
-    setupPaymentMethodSelection();
-  }
+  // Razorpay (primary) + WhatsApp (secondary) — always visible
+  setupPaymentMethodSelection();
 }
 
 function setupPaymentMethodSelection() {
@@ -381,14 +355,11 @@ function updateSubmitButton() {
   var total = getGrandTotal();
 
   switch (selectedPaymentMethod) {
+    case 'razorpay':
+      btn.textContent = 'Pay ' + ThajviCart.formatPrice(total) + ' Now \u2192';
+      break;
     case 'whatsapp':
       btn.textContent = 'Place Order via WhatsApp \u2192';
-      break;
-    case 'upi':
-      btn.textContent = 'Place Order & Pay via UPI \u2192';
-      break;
-    case 'cod':
-      btn.textContent = 'Place COD Order \u2192 Pay ' + ThajviCart.formatPrice(total) + ' on Delivery';
       break;
     default:
       btn.textContent = 'Place Order \u2192';
@@ -512,6 +483,15 @@ function handlePlaceOrder() {
   });
 }
 
+function saveOrderToSupabaseIfEnabled(order) {
+  if (typeof saveOrderToSupabase === 'function' && window.THAJVI_TIER && window.THAJVI_TIER.features.supabaseDatabase) {
+    saveOrderToSupabase(order).then(function(result) {
+      if (result.success) console.log('Order saved to Supabase');
+      else if (result.reason !== 'disabled') console.log('Supabase save failed - local backup saved');
+    }).catch(function(err) { console.log('Supabase error:', err); });
+  }
+}
+
 function proceedWithOrder() {
   var order = collectOrderData();
   order.paymentMethod = selectedPaymentMethod;
@@ -523,14 +503,11 @@ function proceedWithOrder() {
     order.paymentStatus = 'pending_verification';
   }
 
-  saveOrderLocally(order);
-
-  // Save to Supabase (Tier 2+ feature)
-  if (typeof saveOrderToSupabase === 'function' && window.THAJVI_TIER && window.THAJVI_TIER.features.supabaseDatabase) {
-    saveOrderToSupabase(order).then(function(result) {
-      if (result.success) console.log('Order saved to Supabase');
-      else if (result.reason !== 'disabled') console.log('Supabase save failed - local backup saved');
-    }).catch(function(err) { console.log('Supabase error:', err); });
+  // For Razorpay: defer save until after payment verification (no ghost orders)
+  // For all other methods: save immediately (WhatsApp/UPI/COD don't have server verification)
+  if (selectedPaymentMethod !== 'razorpay') {
+    saveOrderLocally(order);
+    saveOrderToSupabaseIfEnabled(order);
   }
 
   switch (selectedPaymentMethod) {
@@ -543,9 +520,122 @@ function proceedWithOrder() {
     case 'cod':
       handleCodOrder(order);
       break;
+    case 'razorpay':
+      handleRazorpayOrder(order);
+      break;
     default:
       handleWhatsAppOrder(order);
   }
+}
+
+// ===== RAZORPAY PAYMENT =====
+// Sends items array to api/create-order.js for server-side price computation.
+// The server reads data/products.json to compute the total — never trusts client amount.
+// Limitation: client-side code only gates entry to this flow; actual security is in the server endpoint.
+function handleRazorpayOrder(order) {
+  var cart = ThajviCart.get();
+  var items = cart.map(function(item) {
+    return {
+      productId: item.productId,
+      size: item.size,
+      quantity: item.quantity
+    };
+  });
+
+  fetch('/api/create-order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ items: items })
+  })
+  .then(function(res) { return res.json().then(function(data) { return { status: res.status, data: data }; }); })
+  .then(function(result) {
+    if (result.status !== 200) {
+      var msg = result.data.message || result.data.error || 'Payment failed';
+      if (result.data.error === 'items_unavailable') {
+        msg = 'Some items are out of stock. Please update your cart.';
+      }
+      showError(msg);
+      setButtonLoading(false);
+      isSubmitting = false;
+      return;
+    }
+
+    var options = {
+      key: STORE_CONFIG.razorpayKey,
+      amount: result.data.amount,
+      currency: result.data.currency,
+      order_id: result.data.orderId,
+      name: STORE_CONFIG.storeName,
+      prefill: {
+        name: order.customer.name,
+        contact: order.customer.phone,
+        email: order.customer.email
+      },
+      handler: function(response) {
+        // Verify payment signature server-side BEFORE saving the order
+        fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          })
+        })
+        .then(function(res) { return res.json().then(function(d) { return { status: res.status, data: d }; }); })
+        .then(function(vResult) {
+          if (vResult.status !== 200 || !vResult.data.verified) {
+            console.error('Payment verification failed:', vResult.data.reason);
+            showError('Payment verification failed. If money was deducted, please contact us on WhatsApp with your payment ID: ' + response.razorpay_payment_id);
+            setButtonLoading(false);
+            isSubmitting = false;
+            return;
+          }
+          // Signature verified — now safe to save order
+          order.razorpayPaymentId = response.razorpay_payment_id;
+          order.razorpayOrderId = response.razorpay_order_id;
+          order.paymentStatus = 'paid';
+          saveOrderLocally(order);
+          saveOrderToSupabaseIfEnabled(order);
+
+          // Auto-reduce stock in products.json (fire-and-forget — don't block checkout)
+          fetch('/api/reduce-stock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: items, orderId: order.orderId })
+          }).catch(function(e) { console.log('Stock reduction failed:', e); });
+
+          ThajviCart.clear();
+          window.location.href = 'order-success.html';
+        })
+        .catch(function() {
+          showError('Could not verify payment. Please contact us on WhatsApp with your payment ID: ' + response.razorpay_payment_id);
+          setButtonLoading(false);
+          isSubmitting = false;
+        });
+      },
+      modal: {
+        ondismiss: function() {
+          setButtonLoading(false);
+          isSubmitting = false;
+        }
+      }
+    };
+
+    if (typeof Razorpay !== 'undefined') {
+      var rzp = new Razorpay(options);
+      rzp.open();
+    } else {
+      showError('Payment gateway not loaded. Please refresh and try again.');
+      setButtonLoading(false);
+      isSubmitting = false;
+    }
+  })
+  .catch(function() {
+    showError('Could not connect to payment server. Please try again.');
+    setButtonLoading(false);
+    isSubmitting = false;
+  });
 }
 
 function collectOrderData() {
