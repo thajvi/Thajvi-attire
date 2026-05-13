@@ -2,39 +2,6 @@
 //   THAJVI ATTIRE — Checkout (checkout.js)
 // ============================================
 
-/*
-═══════════════════════════════
-TO ACTIVATE COD:
-
-1. Open js/checkout.js
-2. Find STORE_CONFIG object
-3. Change this line:
-   codEnabled: false,
-   TO:
-   codEnabled: true,
-
-4. Optional: Add more states
-   codAvailableStates: [
-     "Kerala",
-     "Tamil Nadu",
-     "Karnataka",
-   ],
-
-5. Optional: Change COD charge
-   codCharge: 30,
-   (currently ₹30)
-
-6. Save file
-7. Deploy to Vercel
-8. COD option appears instantly!
-
-TO DEACTIVATE COD:
-Change codEnabled back to false
-COD option hides instantly
-
-Total work: 30 seconds
-═══════════════════════════════
-*/
 
 function escapeHTML(str) {
   if (!str) return '';
@@ -78,36 +45,7 @@ function validateCartPrices() {
 var STORE_CONFIG = {
   whatsappNumber: '918129651993',
   storeName: 'Thajvi Attire',
-  razorpayKey: 'YOUR_KEY_HERE',
-
-  // ─────────────────────────
-  // COD SETTINGS
-  // To ENABLE COD:
-  // Change codEnabled: false
-  // to codEnabled: true
-  // That's it. One line change.
-  // ─────────────────────────
-  codEnabled: false,
-  codCharge: 30,
-  codAvailableStates: [
-    'Kerala'
-    // Add more states if needed:
-    // , 'Tamil Nadu'
-    // , 'Karnataka'
-  ],
-  codMinOrder: 0,
-  codMaxOrder: 5000,
-
-  // ─────────────────────────
-  // UPI SETTINGS
-  // Loaded from site.json at runtime.
-  // No manual changes needed here.
-  // ─────────────────────────
-  upiEnabled: false,
-  upiId: '',
-  upiName: '',
-  upiNote: '',
-  upiVerificationTime: '30 minutes'
+  razorpayKey: 'YOUR_KEY_HERE'
 };
 
 // Default selected payment method
@@ -154,18 +92,10 @@ function initCheckout() {
   populateStates();
   renderOrderSummary();
 
-  // Load UPI config from site.json, then init payment methods
+  // Load shipping config from site.json, then init payment methods
   fetch('data/site.json')
     .then(function(res) { return res.json(); })
     .then(function(site) {
-      if (site.payment) {
-        STORE_CONFIG.upiEnabled = site.payment.upiEnabled || false;
-        STORE_CONFIG.upiId = site.payment.upiId || '';
-        STORE_CONFIG.upiName = site.payment.upiName || '';
-        STORE_CONFIG.upiNote = site.payment.upiNote || '';
-        STORE_CONFIG.upiVerificationTime = site.payment.upiVerificationTime || '30 minutes';
-      }
-      // Apply shipping config from CMS
       if (typeof ThajviCart !== 'undefined' && ThajviCart.setShippingConfig) {
         ThajviCart.setShippingConfig(
           typeof site.shipping_cost === 'number' ? site.shipping_cost : 80,
@@ -173,12 +103,11 @@ function initCheckout() {
         );
       }
     })
-    .catch(function() { /* UPI stays disabled */ })
+    .catch(function() { /* use defaults */ })
     .then(function() {
       initPaymentMethods();
       updateSubmitButton();
       setupFormValidation();
-      initUpiModal();
     });
 }
 
@@ -230,8 +159,6 @@ function setupPaymentMethodSelection() {
   var methods = document.querySelectorAll('.payment-method-card:not(.hidden)');
   methods.forEach(function(method) {
     method.addEventListener('click', function() {
-      if (this.dataset.method === 'cod' && !isCodAvailable()) return;
-
       methods.forEach(function(m) {
         m.classList.remove('active');
         var dot = m.querySelector('.radio-dot');
@@ -254,81 +181,23 @@ function selectPaymentMethod(method) {
   if (card) card.click();
 }
 
-// ===== COD AVAILABILITY =====
-function isCodAvailable() {
-  var sel = document.getElementById('state');
-  if (!sel || !sel.value) return false;
-  var subtotal = ThajviCart.subtotal();
-  if (STORE_CONFIG.codMaxOrder > 0 && subtotal > STORE_CONFIG.codMaxOrder) return false;
-  if (STORE_CONFIG.codMinOrder > 0 && subtotal < STORE_CONFIG.codMinOrder) return false;
-  return STORE_CONFIG.codAvailableStates.indexOf(sel.value) !== -1;
-}
-
-function checkCodAvailability() {
-  if (!STORE_CONFIG.codEnabled) return;
-  var codCard = document.getElementById('cod-payment');
-  var stateNotice = document.getElementById('cod-state-notice');
-  var availableNotice = document.getElementById('cod-available-notice');
-  var sel = document.getElementById('state');
-
-  if (!sel || !sel.value) {
-    if (stateNotice) stateNotice.classList.add('hidden');
-    if (availableNotice) availableNotice.classList.add('hidden');
-    return;
-  }
-
-  if (isCodAvailable()) {
-    if (codCard) codCard.classList.remove('cod-unavailable');
-    if (stateNotice) stateNotice.classList.add('hidden');
-    if (availableNotice) availableNotice.classList.remove('hidden');
-  } else {
-    if (selectedPaymentMethod === 'cod') selectPaymentMethod('whatsapp');
-    if (codCard) codCard.classList.add('cod-unavailable');
-    if (availableNotice) availableNotice.classList.add('hidden');
-    if (stateNotice) stateNotice.classList.remove('hidden');
-    var noticeText = document.getElementById('cod-notice-text');
-    if (noticeText) {
-      noticeText.textContent = 'COD available for ' + STORE_CONFIG.codAvailableStates.join(', ') + ' only';
-    }
-  }
-}
-
 // ===== ORDER TOTAL =====
-function getCodCharge() {
-  if (selectedPaymentMethod === 'cod' && STORE_CONFIG.codEnabled && isCodAvailable()) {
-    return STORE_CONFIG.codCharge;
-  }
-  return 0;
-}
-
 function getGrandTotal() {
-  return ThajviCart.total() + getCodCharge();
+  return ThajviCart.total();
 }
 
 function updateOrderTotal() {
   var subtotal = ThajviCart.subtotal();
   var shipping = ThajviCart.shipping();
-  var codCharge = getCodCharge();
   var total = getGrandTotal();
 
   var subtotalEl = document.getElementById('summary-subtotal');
   var shippingEl = document.getElementById('summary-shipping');
   var totalEl = document.getElementById('order-total');
-  var codRow = document.getElementById('cod-charge-row');
 
   if (subtotalEl) subtotalEl.textContent = ThajviCart.formatPrice(subtotal);
   if (shippingEl) shippingEl.innerHTML = shipping === 0 ? '<span style="color:#25d366;font-weight:600;">FREE</span>' : ThajviCart.formatPrice(shipping);
   if (totalEl) totalEl.textContent = ThajviCart.formatPrice(total);
-
-  if (codRow) {
-    if (codCharge > 0) {
-      codRow.classList.remove('hidden');
-      var amt = codRow.querySelector('.amount');
-      if (amt) amt.textContent = '+' + ThajviCart.formatPrice(codCharge);
-    } else {
-      codRow.classList.add('hidden');
-    }
-  }
 
   // Shipping progress
   var remaining = ThajviCart.freeShippingRemaining();
@@ -458,12 +327,6 @@ function handlePlaceOrder() {
   isSubmitting = true;
   if (!validateForm()) { isSubmitting = false; return; }
 
-  if (selectedPaymentMethod === 'cod' && !isCodAvailable()) {
-    showError('COD not available for your location. Please select WhatsApp order.');
-    isSubmitting = false;
-    return;
-  }
-
   var cart = ThajviCart.get();
   if (cart.length === 0) {
     showError('Your cart is empty. Please add items before checking out.');
@@ -495,33 +358,21 @@ function saveOrderToSupabaseIfEnabled(order) {
 function proceedWithOrder() {
   var order = collectOrderData();
   order.paymentMethod = selectedPaymentMethod;
-  order.codCharge = getCodCharge();
   order.total = getGrandTotal();
 
-  // Set payment status based on method
-  if (selectedPaymentMethod === 'upi') {
-    order.paymentStatus = 'pending_verification';
-  }
-
   // For Razorpay: defer save until after payment verification (no ghost orders)
-  // For all other methods: save immediately (WhatsApp/UPI/COD don't have server verification)
+  // For WhatsApp: save immediately (no server verification)
   if (selectedPaymentMethod !== 'razorpay') {
     saveOrderLocally(order);
     saveOrderToSupabaseIfEnabled(order);
   }
 
   switch (selectedPaymentMethod) {
-    case 'whatsapp':
-      handleWhatsAppOrder(order);
-      break;
-    case 'upi':
-      handleUpiOrder(order);
-      break;
-    case 'cod':
-      handleCodOrder(order);
-      break;
     case 'razorpay':
       handleRazorpayOrder(order);
+      break;
+    case 'whatsapp':
+      handleWhatsAppOrder(order);
       break;
     default:
       handleWhatsAppOrder(order);
@@ -579,7 +430,9 @@ function handleRazorpayOrder(order) {
           body: JSON.stringify({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature
+            razorpay_signature: response.razorpay_signature,
+            items: items,
+            orderId: order.orderId
           })
         })
         .then(function(res) { return res.json().then(function(d) { return { status: res.status, data: d }; }); })
@@ -597,14 +450,6 @@ function handleRazorpayOrder(order) {
           order.paymentStatus = 'paid';
           saveOrderLocally(order);
           saveOrderToSupabaseIfEnabled(order);
-
-          // Auto-reduce stock in products.json (fire-and-forget — don't block checkout)
-          fetch('/api/reduce-stock', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: items, orderId: order.orderId })
-          }).catch(function(e) { console.log('Stock reduction failed:', e); });
-
           ThajviCart.clear();
           window.location.href = 'order-success.html';
         })
@@ -711,261 +556,8 @@ function buildWhatsAppMessage(order) {
     '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
 }
 
-// ===== COD ORDER =====
-function handleCodOrder(order) {
-  var msg = buildCodWhatsApp(order);
-  var url = 'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(msg);
-  var win = window.open(url, '_blank');
-  if (!win) { showError('Please allow popups to send your order via WhatsApp.'); setButtonLoading(false); return; }
-  ThajviCart.clear();
-  setTimeout(function() { window.location.href = 'order-success.html'; }, 500);
-}
-
-function buildCodWhatsApp(order) {
-  var items = '';
-  for (var i = 0; i < order.items.length; i++) {
-    var it = order.items[i];
-    items += '\u2022 ' + it.name + '\n  Size: ' + it.size + ' | Qty: ' + it.quantity + ' | ' + ThajviCart.formatPrice(it.price * it.quantity) + '\n';
-  }
-
-  return '\uD83D\uDCB5 *COD ORDER \u2014 ' + STORE_CONFIG.storeName + '*\n' +
-    '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n' +
-    '*Order ID:* ' + order.orderId + '\n' +
-    '*Payment:* CASH ON DELIVERY \uD83D\uDCB5\n\n' +
-    '\uD83D\uDC64 *Customer Details:*\n' +
-    'Name: ' + order.customer.name + '\n' +
-    'Phone: ' + order.customer.phone + '\n' +
-    (order.customer.email ? 'Email: ' + order.customer.email + '\n' : '') + '\n' +
-    '\uD83D\uDCE6 *Items Ordered:*\n' + items + '\n' +
-    '\uD83D\uDCB0 *Price Breakdown:*\n' +
-    'Subtotal: ' + ThajviCart.formatPrice(order.pricing.subtotal) + '\n' +
-    'Shipping: ' + (order.pricing.shipping === 0 ? 'FREE \u2705' : ThajviCart.formatPrice(order.pricing.shipping)) + '\n' +
-    'COD Charges: ' + ThajviCart.formatPrice(order.codCharge) + '\n' +
-    '*Collect at Door: ' + ThajviCart.formatPrice(order.total) + '*\n\n' +
-    '\uD83D\uDCCD *Delivery Address:*\n' +
-    order.customer.address.line1 + '\n' +
-    (order.customer.address.line2 ? order.customer.address.line2 + '\n' : '') +
-    order.customer.address.city + ', ' + order.customer.address.state + '\n' +
-    'Pincode: ' + order.customer.address.pincode + '\n' +
-    (order.customer.instructions ? '\n\uD83D\uDCDD *Instructions:* ' + order.customer.instructions + '\n' : '') +
-    '\n\u26A0\uFE0F *Please confirm this COD order with customer before shipping!*\n' +
-    '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
-}
-
-// ===== UPI ORDER =====
-function handleUpiOrder(order) {
-  ThajviCart.clear();
-
-  // Show UPI modal
-  showUpiModal(order);
-  setButtonLoading(false);
-}
-
-function showUpiModal(order) {
-  var modal = document.getElementById('upi-modal');
-  if (!modal) return;
-
-  // Populate fields
-  document.getElementById('upi-order-id').textContent = order.orderId;
-  document.getElementById('upi-amount').textContent = ThajviCart.formatPrice(order.total);
-  document.getElementById('upi-id-display').textContent = STORE_CONFIG.upiId;
-  document.getElementById('upi-verify-time').textContent = STORE_CONFIG.upiVerificationTime;
-
-  // Build UPI params
-  var amt = Math.round(order.total);
-  var upiQuery = 'pa=' + encodeURIComponent(STORE_CONFIG.upiId) +
-    '&pn=' + encodeURIComponent(STORE_CONFIG.upiName) +
-    '&am=' + amt + '&cu=INR' +
-    '&tn=' + encodeURIComponent(order.orderId);
-  var upiLink = 'upi://pay?' + upiQuery;
 
 
-  // Generate QR code (only if a real UPI ID is configured)
-  var qrContainer = document.getElementById('upi-qr-canvas').parentElement;
-  var isRealUpi = STORE_CONFIG.upiId && STORE_CONFIG.upiId !== 'yourname@okaxis' && STORE_CONFIG.upiId.indexOf('@') !== -1;
-  if (isRealUpi && typeof QRCode !== 'undefined' && QRCode.toCanvas) {
-    qrContainer.style.display = '';
-    var canvas = document.getElementById('upi-qr-canvas');
-    QRCode.toCanvas(canvas, upiLink, { width: 220, margin: 1 }, function(err) {
-      if (err) console.log('QR generation error:', err);
-    });
-  } else {
-    qrContainer.style.display = 'none';
-  }
-
-  // Build WhatsApp message with FULL order details
-  var items = '';
-  for (var i = 0; i < order.items.length; i++) {
-    var it = order.items[i];
-    items += '\u2022 *' + it.name + '*\n  Size: ' + it.size + ' | Qty: ' + it.quantity + ' | ' + ThajviCart.formatPrice(it.price * it.quantity) + '\n';
-  }
-  var waMsg = '\uD83D\uDCB3 *UPI PAYMENT ORDER \u2014 ' + STORE_CONFIG.storeName + '*\n' +
-    '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n' +
-    '*Order ID:* ' + order.orderId + '\n' +
-    '*Payment:* UPI (Pending Verification)\n\n' +
-    '\uD83D\uDC64 *Customer:*\n' +
-    'Name: ' + order.customer.name + '\n' +
-    'Phone: ' + order.customer.phone + '\n' +
-    (order.customer.email ? 'Email: ' + order.customer.email + '\n' : '') + '\n' +
-    '\uD83D\uDCE6 *Items:*\n' + items + '\n' +
-    '\uD83D\uDCB0 *Pricing:*\n' +
-    'Subtotal: ' + ThajviCart.formatPrice(order.pricing.subtotal) + '\n' +
-    'Shipping: ' + (order.pricing.shipping === 0 ? 'FREE \u2705' : ThajviCart.formatPrice(order.pricing.shipping)) + '\n' +
-    '*Total: ' + ThajviCart.formatPrice(order.total) + '*\n\n' +
-    '\uD83D\uDCCD *Delivery Address:*\n' +
-    order.customer.address.line1 + '\n' +
-    (order.customer.address.line2 ? order.customer.address.line2 + '\n' : '') +
-    order.customer.address.city + ', ' + order.customer.address.state + '\n' +
-    'Pincode: ' + order.customer.address.pincode + '\n' +
-    (order.customer.instructions ? '\n\uD83D\uDCDD *Instructions:* ' + order.customer.instructions + '\n' : '') +
-    '\n\uD83D\uDE4F I will share the payment screenshot here. Please confirm my order.\n' +
-    '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
-  document.getElementById('upi-whatsapp-btn').href =
-    'https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(waMsg);
-
-  // Show WhatsApp number for desktop users who scanned QR on phone
-  var waNumEl = document.getElementById('upi-wa-number');
-  if (waNumEl && STORE_CONFIG.whatsappNumber) {
-    var num = STORE_CONFIG.whatsappNumber.replace(/^91/, '+91 ');
-    waNumEl.textContent = num;
-  }
-
-  // Show modal + lock body scroll
-  modal.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-
-  // Focus trap for accessibility
-  var closeBtn = document.getElementById('upi-modal-close');
-  if (closeBtn) setTimeout(function() { closeBtn.focus(); }, 100);
-  var focusable = modal.querySelectorAll('button, input, a[href], [tabindex]:not([tabindex="-1"])');
-  if (focusable.length) {
-    var first = focusable[0], last = focusable[focusable.length - 1];
-    modal._focusTrap = function(e) {
-      if (e.key !== 'Tab') return;
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    };
-    modal.addEventListener('keydown', modal._focusTrap);
-  }
-}
-
-function initUpiModal() {
-  // Close button — just close modal, stay on checkout
-  var closeBtn = document.getElementById('upi-modal-close');
-  if (closeBtn) {
-    closeBtn.addEventListener('click', function() {
-      if (confirm('Cancel UPI payment? You can choose another payment method.')) {
-        var modal = document.getElementById('upi-modal');
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
-      }
-    });
-  }
-
-  // Copy button
-  var copyBtn = document.getElementById('upi-copy-btn');
-  if (copyBtn) {
-    copyBtn.addEventListener('click', function() {
-      var upiId = STORE_CONFIG.upiId;
-      navigator.clipboard.writeText(upiId).then(function() {
-        copyBtn.textContent = 'Copied!';
-        setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
-      }).catch(function() {
-        // Fallback: temporary input + execCommand
-        var tempInput = document.createElement('input');
-        tempInput.value = upiId;
-        tempInput.style.position = 'fixed';
-        tempInput.style.opacity = '0';
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        try {
-          document.execCommand('copy');
-          copyBtn.textContent = 'Copied!';
-          setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
-        } catch(e) {
-          copyBtn.textContent = 'Select & Copy';
-        }
-        document.body.removeChild(tempInput);
-      });
-    });
-  }
-
-  // UTR submit (replaces old skip link)
-  var utrSubmit = document.getElementById('upi-utr-submit');
-  if (utrSubmit) {
-    utrSubmit.addEventListener('click', function() {
-      var utrInput = document.getElementById('upi-utr-input');
-      var utrError = document.getElementById('upi-utr-error');
-      var utrValue = (utrInput.value || '').trim();
-
-      if (utrValue.length < 6) {
-        utrError.classList.remove('hidden');
-        utrInput.focus();
-        return;
-      }
-      utrError.classList.add('hidden');
-
-      // Get current order ID from the modal
-      var orderId = document.getElementById('upi-order-id').textContent;
-
-      // Save UTR to Supabase
-      if (typeof updateOrderInSupabase === 'function') {
-        updateOrderInSupabase(orderId, { utr_number: utrValue });
-      }
-
-      // Save UTR locally
-      try {
-        var localOrder = JSON.parse(localStorage.getItem('thajvi_last_order') || '{}');
-        localOrder.utrNumber = utrValue;
-        localStorage.setItem('thajvi_last_order', JSON.stringify(localOrder));
-      } catch(e) {}
-
-      // Send UTR info via WhatsApp with full order details
-      var utrMsg = '\u2705 *UPI PAYMENT DONE*\n\n' +
-        '*Order ID:* ' + orderId + '\n' +
-        '*UPI Transaction ID:* ' + utrValue + '\n' +
-        '*Amount:* ' + document.getElementById('upi-amount').textContent + '\n';
-      try {
-        var lo = JSON.parse(localStorage.getItem('thajvi_last_order') || '{}');
-        if (lo.customer) {
-          utrMsg += '\n\uD83D\uDC64 *Customer:*\n' +
-            'Name: ' + lo.customer.name + '\n' +
-            'Phone: ' + lo.customer.phone + '\n';
-          if (lo.items) {
-            utrMsg += '\n\uD83D\uDCE6 *Items:*\n';
-            for (var k = 0; k < lo.items.length; k++) {
-              var itm = lo.items[k];
-              utrMsg += '\u2022 ' + itm.name + ' (Size: ' + itm.size + ') x' + itm.quantity + '\n';
-            }
-          }
-          if (lo.customer.address) {
-            utrMsg += '\n\uD83D\uDCCD *Delivery Address:*\n' +
-              lo.customer.address.line1 + '\n' +
-              (lo.customer.address.line2 ? lo.customer.address.line2 + '\n' : '') +
-              lo.customer.address.city + ', ' + lo.customer.address.state + '\n' +
-              'Pincode: ' + lo.customer.address.pincode + '\n';
-          }
-        }
-      } catch(e) {}
-      utrMsg += '\nPlease verify and confirm my order. \uD83D\uDE4F';
-      window.open('https://wa.me/' + STORE_CONFIG.whatsappNumber + '?text=' + encodeURIComponent(utrMsg), '_blank');
-
-      window.location.href = 'order-success.html';
-    });
-  }
-
-  // Close on Escape
-  document.addEventListener('keydown', function(e) {
-    var modal = document.getElementById('upi-modal');
-    if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-      if (confirm('Cancel UPI payment? You can choose another payment method.')) {
-        var m = document.getElementById('upi-modal');
-        m.classList.add('hidden');
-        document.body.style.overflow = '';
-      }
-    }
-  });
-}
 
 // ===== INIT ON LOAD =====
 if (document.readyState === 'loading') {
