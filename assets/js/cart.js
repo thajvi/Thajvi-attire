@@ -221,3 +221,20 @@ var ThajviCart = (function() {
 
 // Initialize cart on load
 ThajviCart.init();
+
+// Load shipping config from site.json (single source of truth)
+// Falls back to hardcoded defaults (999/80) if fetch fails
+(function() {
+  try {
+    fetch('data/site.json')
+      .then(function(r) { return r.json(); })
+      .then(function(site) {
+        var cost = typeof site.shipping_cost === 'number' ? site.shipping_cost : undefined;
+        var threshold = typeof site.free_shipping_threshold === 'number' ? site.free_shipping_threshold : undefined;
+        if (cost !== undefined || threshold !== undefined) {
+          ThajviCart.setShippingConfig(cost || 80, threshold || 999);
+        }
+      })
+      .catch(function() { /* use hardcoded defaults */ });
+  } catch (e) { /* fetch not available — use defaults */ }
+})();
