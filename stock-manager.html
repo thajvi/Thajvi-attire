@@ -11,6 +11,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="stylesheet" href="assets/css/inventory.css" />
+  <style>
+    .sync-banner { border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+    .sync-banner-yellow { background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.35); }
+    .sync-banner-blue { background: rgba(100,149,237,0.1); border: 1px solid rgba(100,149,237,0.3); }
+    .sync-banner-title { font-size: 0.9rem; font-weight: 600; color: #E8D5A0; margin-bottom: 8px; }
+    .sync-banner-blue .sync-banner-title { color: #7BA7E8; }
+    .sync-banner-list { font-size: 0.8rem; color: #aaa; line-height: 1.7; margin-bottom: 12px; }
+    .sync-banner-btn { padding: 8px 18px; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'Jost', sans-serif; }
+    .sync-banner-btn-yellow { background: #C9A84C; color: #0A0A0A; }
+    .sync-banner-btn-yellow:hover { background: #B8973F; }
+    .sync-banner-btn-red { background: transparent; color: #E57373; border: 1px solid #E57373; padding: 4px 12px; font-size: 0.72rem; margin-left: 8px; }
+    .sync-banner-btn-red:hover { background: rgba(229,115,115,0.1); }
+    .orphan-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .orphan-info { font-size: 0.8rem; color: #aaa; }
+    .orphan-stock { font-size: 0.72rem; color: #888; margin-left: 8px; }
+  </style>
 </head>
 <body>
 
@@ -29,6 +45,9 @@
     <div class="container">
       <h1 class="sm-title">Stock Manager</h1>
       <p class="sm-subtitle">Update product stock — synced to Supabase</p>
+
+      <!-- Sync banners inserted here by JS -->
+      <div id="sync-banners"></div>
 
       <!-- Overview Cards -->
       <div class="sm-overview" id="sm-overview"></div>
@@ -49,22 +68,24 @@
   <script src="assets/js/supabase-client.js"></script>
   <script>
   (function() {
-    var stockData = {}; // { sku: { name, sizes: { S: { stock_qty, sold_qty }, ... } } }
+    var stockData = {};
     var sb = window.getOrInitSupabase ? window.getOrInitSupabase() : window.THAJVI_SUPABASE;
 
-    // Login
     var loginBtn = document.getElementById('sm-login-btn');
     var emailInput = document.getElementById('sm-email');
     var passInput = document.getElementById('sm-password');
     var loginError = document.getElementById('sm-login-error');
 
+    function makeSku(name) {
+      return String(name).trim().toLowerCase().replace(/\s+/g, '-');
+    }
+
     function showStockManager() {
       document.getElementById('sm-login').style.display = 'none';
       document.getElementById('sm-page').style.display = 'block';
-      loadStock();
+      loadStockAndSync();
     }
 
-    // Check if already logged in
     if (sb) {
       sb.auth.getSession().then(function(res) {
         if (res.data.session) showStockManager();
@@ -100,18 +121,28 @@
     loginBtn.addEventListener('click', tryLogin);
     passInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryLogin(); });
 
-    // Load stock from Supabase products_stock table
-    function loadStock() {
+    // ===== LOAD STOCK + SYNC CHECK =====
+    function loadStockAndSync() {
       if (!sb) return;
-      sb.from('products_stock').select('*').order('sku').order('size').then(function(res) {
-        if (res.error) {
-          showMsg('Failed to load stock: ' + res.error.message);
+
+      // Fetch products.json and Supabase stock in parallel
+      Promise.all([
+        fetch('data/products.json').then(function(r) { return r.json(); }).catch(function() { return { items: [] }; }),
+        sb.from('products_stock').select('*').order('sku').order('size')
+      ]).then(function(results) {
+        var productsJson = results[0];
+        var supaResult = results[1];
+
+        if (supaResult.error) {
+          showMsg('Failed to load stock: ' + supaResult.error.message);
           return;
         }
-        // Group by sku
+
+        // Build stockData from Supabase
         stockData = {};
-        for (var i = 0; i < res.data.length; i++) {
-          var row = res.data[i];
+        var supaRows = supaResult.data;
+        for (var i = 0; i < supaRows.length; i++) {
+          var row = supaRows[i];
           if (!stockData[row.sku]) {
             stockData[row.sku] = { name: row.product_name, sizes: {} };
           }
@@ -121,16 +152,173 @@
             id: row.id
           };
         }
+
+        // Build canonical list from products.json
+        var canonical = {}; // { sku: { name, sizes: [S, M, ...] } }
+        var items = productsJson.items || [];
+        for (var j = 0; j < items.length; j++) {
+          var item = items[j];
+          var sku = makeSku(item.name);
+          var sizes = (item.sizes || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+          canonical[sku] = { name: item.name, sizes: sizes };
+        }
+
+        // Detect needsSync: canonical entries missing from Supabase
+        var needsSync = [];
+        for (var cSku in canonical) {
+          if (!canonical.hasOwnProperty(cSku)) continue;
+          var cProduct = canonical[cSku];
+          for (var si = 0; si < cProduct.sizes.length; si++) {
+            var cSize = cProduct.sizes[si];
+            if (!stockData[cSku] || !stockData[cSku].sizes[cSize]) {
+              needsSync.push({ sku: cSku, product_name: cProduct.name, size: cSize });
+            }
+          }
+        }
+
+        // Detect orphans: Supabase rows not in canonical
+        var orphans = [];
+        for (var oSku in stockData) {
+          if (!stockData.hasOwnProperty(oSku)) continue;
+          for (var oSize in stockData[oSku].sizes) {
+            if (!stockData[oSku].sizes.hasOwnProperty(oSize)) continue;
+            if (!canonical[oSku] || canonical[oSku].sizes.indexOf(oSize) === -1) {
+              orphans.push({
+                sku: oSku,
+                product_name: stockData[oSku].name || oSku,
+                size: oSize,
+                stock_qty: stockData[oSku].sizes[oSize].stock_qty
+              });
+            }
+          }
+        }
+
+        renderSyncBanners(needsSync, orphans);
         renderAll();
       });
     }
 
+    // ===== SYNC BANNERS =====
+    function renderSyncBanners(needsSync, orphans) {
+      var container = document.getElementById('sync-banners');
+      var html = '';
+
+      // Yellow banner: new products need stock setup
+      if (needsSync.length > 0) {
+        // Group by product name
+        var grouped = {};
+        for (var i = 0; i < needsSync.length; i++) {
+          var ns = needsSync[i];
+          if (!grouped[ns.sku]) grouped[ns.sku] = { name: ns.product_name, sizes: [] };
+          grouped[ns.sku].sizes.push(ns.size);
+        }
+
+        html += '<div class="sync-banner sync-banner-yellow">';
+        html += '<div class="sync-banner-title">' + needsSync.length + ' new product entries need stock setup</div>';
+        html += '<div class="sync-banner-list">';
+        for (var gSku in grouped) {
+          if (!grouped.hasOwnProperty(gSku)) continue;
+          html += grouped[gSku].name + ' — needs setup for sizes: ' + grouped[gSku].sizes.join(', ') + '<br>';
+        }
+        html += '</div>';
+        html += '<button class="sync-banner-btn sync-banner-btn-yellow" id="sync-setup-btn">Set up stock entries</button>';
+        html += '</div>';
+      }
+
+      // Blue banner: orphan stock entries
+      if (orphans.length > 0) {
+        html += '<div class="sync-banner sync-banner-blue">';
+        html += '<div class="sync-banner-title">' + orphans.length + ' orphan stock entries (products no longer in catalog)</div>';
+        html += '<div id="orphan-list">';
+        for (var oi = 0; oi < orphans.length; oi++) {
+          var o = orphans[oi];
+          html += '<div class="orphan-row" id="orphan-' + oi + '">';
+          html += '<span class="orphan-info">' + o.product_name + ' — ' + o.size;
+          html += '<span class="orphan-stock">(stock: ' + o.stock_qty + ')</span></span>';
+          html += '<button class="sync-banner-btn sync-banner-btn-red" data-orphan-idx="' + oi + '">Delete entry</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+
+      // Bind "Set up stock entries" button
+      var setupBtn = document.getElementById('sync-setup-btn');
+      if (setupBtn) {
+        setupBtn.addEventListener('click', function() {
+          setupBtn.textContent = 'Creating ' + needsSync.length + ' stock entries...';
+          setupBtn.disabled = true;
+
+          var rows = needsSync.map(function(ns) {
+            return {
+              sku: ns.sku,
+              product_name: ns.product_name,
+              size: ns.size,
+              stock_qty: 0,
+              reserved_qty: 0,
+              sold_qty: 0,
+              low_stock_threshold: 5
+            };
+          });
+
+          sb.from('products_stock').insert(rows).then(function(res) {
+            if (res.error) {
+              setupBtn.textContent = 'Error: ' + res.error.message;
+              setupBtn.disabled = false;
+            } else {
+              showMsg(needsSync.length + ' stock entries created!');
+              loadStockAndSync(); // Reload everything
+            }
+          });
+        });
+      }
+
+      // Bind orphan delete buttons
+      var deleteBtns = container.querySelectorAll('[data-orphan-idx]');
+      deleteBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var idx = parseInt(this.dataset.orphanIdx);
+          var o = orphans[idx];
+          if (!confirm('Delete stock entry for "' + o.product_name + '" size ' + o.size + '?\nCurrent stock: ' + o.stock_qty + ' units.\nThis cannot be undone.')) return;
+
+          var self = this;
+          self.textContent = 'Deleting...';
+          self.disabled = true;
+
+          sb.from('products_stock')
+            .delete()
+            .eq('sku', o.sku)
+            .eq('size', o.size)
+            .then(function(res) {
+              if (res.error) {
+                self.textContent = 'Error';
+                self.disabled = false;
+              } else {
+                var row = document.getElementById('orphan-' + idx);
+                if (row) row.remove();
+                // Update orphan count in banner title
+                var remaining = container.querySelectorAll('.orphan-row').length;
+                if (remaining === 0) {
+                  var blueBanner = container.querySelector('.sync-banner-blue');
+                  if (blueBanner) blueBanner.remove();
+                } else {
+                  var title = container.querySelector('.sync-banner-blue .sync-banner-title');
+                  if (title) title.textContent = remaining + ' orphan stock entries (products no longer in catalog)';
+                }
+              }
+            });
+        });
+      });
+    }
+
+    // ===== RENDER =====
     function renderAll() {
       renderOverview();
       renderProducts();
     }
 
-    // Overview cards
     function renderOverview() {
       var totalUnits = 0, lowCount = 0, oosCount = 0, totalSold = 0;
 
@@ -153,7 +341,6 @@
         '<div class="sm-stat"><div class="sm-stat-num">' + totalSold + '</div><div class="sm-stat-label">Total Sold</div></div>';
     }
 
-    // Render product cards
     function renderProducts() {
       var container = document.getElementById('sm-products');
       var html = '';
@@ -195,7 +382,6 @@
 
       container.innerHTML = html;
 
-      // Bind +/- buttons
       container.querySelectorAll('.sm-qty-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
           var sku2 = this.dataset.sku;
@@ -211,7 +397,7 @@
       });
     }
 
-    // Save All — writes to Supabase products_stock
+    // ===== SAVE ALL =====
     document.getElementById('sm-save-all').addEventListener('click', function() {
       if (!sb) { showMsg('Database not connected'); return; }
 
@@ -260,14 +446,14 @@
                 } else {
                   showMsg(updates.length + ' size(s) updated!');
                 }
-                loadStock(); // Reload to show fresh data
+                loadStockAndSync();
               }
             });
         })(updates[i]);
       }
     });
 
-    // Export CSV
+    // ===== EXPORT CSV =====
     document.getElementById('sm-export').addEventListener('click', function() {
       var csv = 'Product,SKU,Size,Stock,Sold\n';
       for (var sku in stockData) {
