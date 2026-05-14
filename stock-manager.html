@@ -86,9 +86,18 @@
       loadStockAndSync();
     }
 
+    function lockToLogin() {
+      document.getElementById('sm-page').style.display = 'none';
+      document.getElementById('sm-login').style.display = '';
+      stockData = {};
+    }
+
     if (sb) {
       sb.auth.getSession().then(function(res) {
         if (res.data.session) showStockManager();
+      });
+      sb.auth.onAuthStateChange(function(event) {
+        if (event === 'SIGNED_OUT') lockToLogin();
       });
     }
 
